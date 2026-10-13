@@ -10,11 +10,12 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;1,400&family=Source+Sans+3:wght@400;600&display=swap">
 <link rel="stylesheet" href="../assets/site.css">
 <link rel="stylesheet" href="../assets/bar.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&family=Mulish:wght@500;600&display=swap">
 <style>
-/* Vermeer daylight: a sheet of paper on a plaster wall lit from a window on the left; ultramarine rules, lead-tin yellow marks.
-   Printing gives just the sheet. */
+/* A clean sheet, floating in the water at about fifteen metres (assets/water.js). Ultramarine rules,
+   lead-tin yellow marks. Printing gives just the sheet. */
 :root{
-  --wall:#e6dfcd; --bg:var(--wall); --paper:#fbf8f1; --ink:#211d17; --dim:#6a6151; --line:#d8cfbb;
+  --wall:#e6dfcd; --paper:#fbf8f1; --bg:var(--paper); --ink:#211d17; --dim:#6a6151; --line:#d8cfbb;
   --ultra:#24418a; --tin:#c9a22e; --acc:var(--ultra);
   --light:rgba(255,248,226,.8);
   --f-disp:'Spectral',Georgia,serif; --f-body:'Source Sans 3',system-ui,sans-serif;
@@ -23,16 +24,15 @@
 @media (prefers-color-scheme:dark){:root{
   --wall:#1d1b17; --paper:#24221d; --ink:#ece4d2; --dim:#a69b87; --line:#3a352b;
   --ultra:#93abe8; --tin:#e2c25a; --light:rgba(150,170,210,.10); color-scheme:dark}}
-body{background:linear-gradient(112deg,var(--light) 0%,transparent 50%) fixed,var(--wall)}
+body{background:#0b2a33}
+.page{background:var(--paper)}
 
-.tools{display:flex;justify-content:flex-end;gap:16px;max-width:860px;margin:28px auto 10px;padding-inline:clamp(16px,5vw,48px);font-size:.9rem}
+.tools{display:flex;justify-content:flex-end;gap:16px;padding:22px clamp(20px,6vw,72px) 0;font-size:.9rem}
 .tools{align-items:center}.tools .note{margin-right:auto;color:var(--dim);font-style:italic;font-family:var(--f-disp)}
 .tools button{font:600 .9rem var(--f-body);color:var(--ultra);background:none;border:1px solid var(--line);border-radius:4px;padding:6px 14px;cursor:pointer}
 .tools button:hover{border-color:var(--ultra)}
 
-.sheet{max-width:860px;margin:0 auto 64px;background:var(--paper);padding:clamp(28px,6vw,64px) clamp(20px,6vw,72px);
-  box-shadow:0 1px 0 var(--line),18px 24px 60px -30px rgba(60,48,30,.35);font-size:15.5px;line-height:1.6}
-@media (max-width:900px){.sheet{margin-inline:clamp(0px,3vw,24px)}}
+.sheet{padding:clamp(20px,4vw,40px) clamp(20px,6vw,72px) clamp(28px,6vw,56px);font-size:15.5px;line-height:1.6}
 
 .head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 32px;align-items:end;padding-bottom:22px;border-bottom:2px solid var(--ultra)}
 .head h1{font-size:clamp(2rem,5vw,2.7rem);font-weight:400}
@@ -63,7 +63,8 @@ body{background:linear-gradient(112deg,var(--light) 0%,transparent 50%) fixed,va
 @media print{
   @page{size:A4;margin:14mm}
   body{background:#fff}
-  .bar,.tools,footer.foot{display:none}
+  .bar,.tools,footer.foot,.backdrop{display:none}
+  .page{margin:0;box-shadow:none;background:#fff;max-width:none}
   .sheet{box-shadow:none;margin:0;padding:0;max-width:none;background:#fff;color:#000;font-size:10.5pt}
   :root{--ink:#000;--dim:#444;--ultra:#24418a;--tin:#c9a22e;--line:#ccc}
   .todo{outline:none;background:none}
@@ -71,9 +72,11 @@ body{background:linear-gradient(112deg,var(--light) 0%,transparent 50%) fixed,va
 }
 </style>
 </head>
-<body>
+<body data-depth="12,18">
+<canvas class="backdrop" id="water" aria-hidden="true"></canvas>
+<div class="page">
 <header class="bar"><div class="bar-in">
-  <nav class="sites" aria-label="Sites"><a class="here" href="../" aria-current="true">Jason Summers</a><a class="away" href="https://bucatini-mickey.github.io/" title="Bucatini Mickey: films, games, photos and other hobbies">BM</a></nav>
+  <nav class="sites" aria-label="Sites"><a class="here" href="../" aria-current="true"><span class="seal" aria-hidden="true">JS</span>Jason Summers</a><a class="away" href="https://bucatini-mickey.github.io/" title="Bucatini Mickey: films, games, photos and other hobbies">BM</a></nav>
   <nav class="pages" aria-label="Pages"><a href="../">Home</a><a href="../research/">Research</a><a href="./" aria-current="page">CV</a><a href="../links/">Links</a></nav>
 </div></header>
 
@@ -145,5 +148,7 @@ body{background:linear-gradient(112deg,var(--light) 0%,transparent 50%) fixed,va
 </article>
 
 <footer class="foot"><div class="wrap"><span>© Jason M. Summers</span><span><a href="../">Home</a></span></div></footer>
+</div>
+<script src="../assets/water.js"></script>
 </body>
 </html>

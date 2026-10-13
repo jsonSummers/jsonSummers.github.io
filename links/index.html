@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;1,300&family=Source+Sans+3:wght@400;600&display=swap">
 <link rel="stylesheet" href="../assets/site.css">
 <link rel="stylesheet" href="../assets/bar.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&family=Mulish:wght@500;600&display=swap">
 <style>
 /* Girl with a Pearl Earring: a dark green-black ground, one light from the upper left,
    ultramarine and lead-tin yellow from the turban, ochre from the jacket, madder from the lips, and the pearl. Always dark. */
@@ -21,10 +22,11 @@
   --light:rgba(236,214,170,.10);
   --acc:var(--tin);
   --f-disp:'Spectral',Georgia,serif; --f-body:'Source Sans 3',system-ui,sans-serif;
-  --measure:760px;
+  
   color-scheme:dark;
 }
-body{background:radial-gradient(70vmax 60vmax at 14% 6%,var(--light),transparent 70%) fixed,var(--ground)}
+body{background:#0b2a33}
+.page{background:radial-gradient(90% 60% at 14% 0%,var(--light),transparent 70%),var(--ground)}
 
 .intro{display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(20px,5vw,48px);align-items:center;padding-block:clamp(48px,12vh,120px) 40px}
 .intro h1{font-size:clamp(2.4rem,6vw,3.6rem);font-weight:300}
@@ -53,13 +55,15 @@ body{background:radial-gradient(70vmax 60vmax at 14% 6%,var(--light),transparent
 @media (max-width:520px){.links a{grid-template-columns:minmax(0,1fr)}.links span{text-align:left}}
 </style>
 </head>
-<body>
+<body data-depth="18,24">
+<canvas class="backdrop" id="water" aria-hidden="true"></canvas>
+<div class="page">
 <header class="bar"><div class="bar-in">
-  <nav class="sites" aria-label="Sites"><a class="here" href="../" aria-current="true">Jason Summers</a><a class="away" href="https://bucatini-mickey.github.io/" title="Bucatini Mickey: films, games, photos and other hobbies">BM</a></nav>
+  <nav class="sites" aria-label="Sites"><a class="here" href="../" aria-current="true"><span class="seal" aria-hidden="true">JS</span>Jason Summers</a><a class="away" href="https://bucatini-mickey.github.io/" title="Bucatini Mickey: films, games, photos and other hobbies">BM</a></nav>
   <nav class="pages" aria-label="Pages"><a href="../">Home</a><a href="../research/">Research</a><a href="../cv/">CV</a><a href="./" aria-current="page">Links</a></nav>
 </div></header>
 
-<main class="wrap">
+<main class="wrap" style="max-width:none;padding-inline:clamp(20px,5vw,56px)">
   <div class="intro">
     <div class="pearl" role="img" aria-label="A pearl, after Vermeer's Girl with a Pearl Earring"></div>
     <div><h1>Links</h1><p>Where else to find me, work first.</p></div>
@@ -84,6 +88,8 @@ body{background:radial-gradient(70vmax 60vmax at 14% 6%,var(--light),transparent
   </section>
 </main>
 
-<footer class="foot"><div class="wrap"><span>© Jason M. Summers</span><span><a href="../">Home</a></span></div></footer>
+<footer class="foot" style="border-top:1px solid var(--line);margin-top:56px"><div class="wrap" style="max-width:none;padding-inline:clamp(20px,5vw,56px)"><span>© Jason M. Summers</span><span><a href="../">Home</a></span></div></footer>
+</div>
+<script src="../assets/water.js"></script>
 </body>
 </html>
