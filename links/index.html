@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Links · Jason M. Summers</title>
+<meta name="description" content="Where to find Jason M. Summers: Scholar, GitHub, LinkedIn, and the hobby side.">
+<meta name="theme-color" content="#0f110d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;1,300&family=Source+Sans+3:wght@400;600&display=swap">
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/bar.css">
+<style>
+/* Girl with a Pearl Earring: a dark green-black ground, one light from the upper left,
+   ultramarine and lead-tin yellow from the turban, ochre from the jacket, madder from the lips, and the pearl. Always dark. */
+:root{
+  --ground:#0f110d; --bg:var(--ground);
+  --ink:#ece0c6; --dim:#a39a86; --line:#2a2b24;
+  --ultra:#7f9fdc; --tin:#dcb64e; --ochre:#b48a4a; --madder:#c86a58; --collar:#e7e2d4;
+  --light:rgba(236,214,170,.10);
+  --acc:var(--tin);
+  --f-disp:'Spectral',Georgia,serif; --f-body:'Source Sans 3',system-ui,sans-serif;
+  --measure:760px;
+  color-scheme:dark;
+}
+body{background:radial-gradient(70vmax 60vmax at 14% 6%,var(--light),transparent 70%) fixed,var(--ground)}
+
+.intro{display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(20px,5vw,48px);align-items:center;padding-block:clamp(48px,12vh,120px) 40px}
+.intro h1{font-size:clamp(2.4rem,6vw,3.6rem);font-weight:300}
+.intro p{margin:12px 0 0;color:var(--dim);font:300 1.15rem/1.6 var(--f-disp)}
+
+/* the pearl: a grey drop with one sharp white highlight at the upper left, the white collar reflected along
+   its lower edge, and the outer edge left to dissolve into the dark, as Vermeer painted it with almost no outline */
+.pearl{width:clamp(72px,12vw,120px);aspect-ratio:1/1.1;border-radius:50%/47% 47% 53% 53%;flex:none;
+  background:
+    radial-gradient(9% 8% at 34% 27%,#fff 0 45%,rgba(255,255,255,.6) 70%,transparent 100%),
+    radial-gradient(62% 26% at 48% 100%,color-mix(in srgb,var(--collar) 85%,transparent) 0 30%,transparent 100%),
+    radial-gradient(90% 90% at 30% 30%,#73766f 0%,#4a4c46 40%,#2b2d28 72%,var(--ground) 100%);
+  -webkit-mask:radial-gradient(closest-side at 44% 50%,#000 72%,rgba(0,0,0,.4) 90%,transparent 100%);
+          mask:radial-gradient(closest-side at 44% 50%,#000 72%,rgba(0,0,0,.4) 90%,transparent 100%)}
+
+.group{padding-top:40px}
+.group h2{font:600 .74rem/1 var(--f-body);letter-spacing:.18em;text-transform:uppercase;color:var(--c);margin-bottom:14px}
+.group.pro{--c:var(--ultra)} .group.own{--c:var(--madder)}
+.links{list-style:none;margin:0;padding:0}
+.links a{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:baseline;padding:16px 2px;border-top:1px solid var(--line);text-decoration:none}
+.links li:last-child a{border-bottom:1px solid var(--line)}
+.links b{font:400 1.35rem/1.2 var(--f-disp)}
+.links span{color:var(--dim);font-size:.92rem;text-align:right;overflow-wrap:anywhere}
+.links a:hover b{color:var(--c)}
+.links a:hover span{color:var(--ink)}
+@media (max-width:520px){.links a{grid-template-columns:minmax(0,1fr)}.links span{text-align:left}}
+</style>
+</head>
+<body>
+<header class="bar"><div class="bar-in">
+  <nav class="sites" aria-label="Sites"><a class="here" href="../" aria-current="true">Jason Summers</a><a class="away" href="https://bucatini-mickey.github.io/" title="Bucatini Mickey: films, games, photos and other hobbies">BM</a></nav>
+  <nav class="pages" aria-label="Pages"><a href="../">Home</a><a href="../research/">Research</a><a href="../cv/">CV</a><a href="./" aria-current="page">Links</a></nav>
+</div></header>
+
+<main class="wrap">
+  <div class="intro">
+    <div class="pearl" role="img" aria-label="A pearl, after Vermeer's Girl with a Pearl Earring"></div>
+    <div><h1>Links</h1><p>Where else to find me, work first.</p></div>
+  </div>
+
+  <section class="group pro">
+    <h2>Professional</h2>
+    <ul class="links">
+      <li><a href="#" class="todo"><b>Google Scholar</b><span>publications and citations</span></a></li>
+      <li><a href="https://github.com/jsonSummers"><b>GitHub</b><span>github.com/jsonSummers</span></a></li>
+      <li><a href="#" class="todo"><b>LinkedIn</b><span>linkedin.com/in/…</span></a></li>
+      <li><a href="#" class="todo"><b>ORCID</b><span>0000-…</span></a></li>
+      <li><a href="#" class="todo"><b>Email</b><span>only if you want it public</span></a></li>
+    </ul>
+  </section>
+
+  <section class="group own">
+    <h2>Personal</h2>
+    <ul class="links">
+      <li><a href="https://bucatini-mickey.github.io/"><b>Bucatini Mickey</b><span>films, games, photos, writing, paintings</span></a></li>
+      <li><a href="#" class="todo"><b>Instagram</b><span>@…</span></a></li>
+      <li><a href="https://letterboxd.com/bucatini_mickey/"><b>Letterboxd</b><span>bucatini_mickey</span></a></li>
+    </ul>
+  </section>
+</main>
+
+<footer class="foot"><div class="wrap"><span>© Jason M. Summers</span><span><a href="../">Home</a></span></div></footer>
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Research · Jason M. Summers</title>
+<meta name="description" content="PhD research by Jason M. Summers: underwater image enhancement, feature matching and visual SLAM.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/bar.css">
+<style>
+/* The descent. The page starts at the surface in the home page's autumn light and sinks as you scroll.
+   Water absorbs each colour at its own rate (red first, then green; blue lasts), so the background,
+   the accents and the autumn swatches in the gauge are all computed from depth with Beer-Lambert attenuation. */
+:root{
+  --bg:#f0e8d8; --ink:#2b221a; --dim:#76695a; --line:rgba(43,34,26,.18);
+  --russet:#a9481f; --acc:var(--russet);
+  --f-disp:'Spectral',Georgia,serif; --f-body:'Source Sans 3',system-ui,sans-serif; --f-mono:'IBM Plex Mono',ui-monospace,monospace;
+  --measure:760px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{--bg:#3b2c1f;--ink:#f1e7d4;--dim:#c4b398;--line:rgba(241,231,212,.18);--russet:#e08a58;color-scheme:dark}}
+body{transition:none}
+
+header.intro{padding-block:clamp(56px,14vh,140px) 40px}
+header.intro h1{font-size:clamp(2.6rem,7vw,4.4rem);font-weight:300;margin:18px 0 22px}
+header.intro .lede{font:300 clamp(1.15rem,2.1vw,1.35rem)/1.6 var(--f-disp);margin:0;max-width:44ch}
+.surface{height:1px;background:var(--line);margin-top:56px}
+
+section{padding-block:clamp(72px,16vh,160px) 0}
+section h2{font-size:clamp(1.7rem,4vw,2.3rem);font-weight:400;margin:14px 0 18px}
+section p{margin:0 0 1em}
+.mark{font:500 .74rem/1 var(--f-mono);letter-spacing:.08em;color:var(--dim)}
+
+.pub{display:grid;gap:8px;padding:22px 0;border-top:1px solid var(--line)}
+.pub:last-child{border-bottom:1px solid var(--line)}
+.pub h3{font:400 1.35rem/1.3 var(--f-disp)}
+.pub .who,.pub .where{margin:0;color:var(--dim)}
+.pub .who b{color:var(--ink);font-weight:600}
+.pub .where{font-style:italic;font-family:var(--f-disp)}
+.pub .acts{display:flex;gap:18px;flex-wrap:wrap;font-weight:600;font-size:.92rem;margin:4px 0 0}
+.pub .acts a{color:var(--acc);text-decoration:none}
+.pub .acts a:hover{text-decoration:underline}
+.pub .sum{margin:6px 0 0;color:var(--dim);font-size:.97rem}
+
+.code{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.code li{display:grid;grid-template-columns:minmax(0,13em) minmax(0,1fr);gap:4px 20px;padding:14px 0;border-top:1px solid var(--line)}
+.code li:last-child{border-bottom:1px solid var(--line)}
+.code a{font:500 .95rem var(--f-mono);color:var(--acc);text-decoration:none;overflow-wrap:anywhere}
+.code a:hover{text-decoration:underline}
+.code span{color:var(--dim)}
+@media (max-width:560px){.code li{grid-template-columns:minmax(0,1fr)}}
+
+.profiles{display:flex;gap:10px 28px;flex-wrap:wrap;font-weight:600}
+.profiles a{color:var(--acc);text-decoration:none}
+.seabed{padding-block:clamp(120px,30vh,280px) 24px;text-align:center;color:var(--dim)}
+.seabed a{color:var(--acc)}
+
+/* depth gauge: metres, what is left of each channel, and the home page's autumn colours as they look at this depth */
+.gauge{position:fixed;right:clamp(12px,3vw,32px);top:50%;transform:translateY(-50%);z-index:4;width:132px;padding:14px 14px 12px;border:1px solid var(--line);border-radius:8px;
+  background:color-mix(in srgb,var(--bg) 70%,transparent);backdrop-filter:blur(6px);font:500 .7rem/1.2 var(--f-mono);color:var(--dim)}
+.gauge .m{font:300 2rem/1 var(--f-disp);color:var(--ink);font-variant-numeric:tabular-nums}
+.gauge .m small{font:500 .75rem var(--f-mono);color:var(--dim);margin-left:4px}
+.gauge .ch{display:grid;grid-template-columns:1.2em minmax(0,1fr) 2.6em;align-items:center;gap:6px;margin-top:8px}
+.gauge .ch i{display:block;height:4px;border-radius:2px;background:var(--line);overflow:hidden}
+.gauge .ch i b{display:block;height:100%;width:100%;transform-origin:0 50%}
+.gauge .ch output{text-align:right;font-variant-numeric:tabular-nums}
+.gauge .sw{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:12px}
+.gauge .sw span{aspect-ratio:1;border-radius:50%}
+.gauge .cap{margin-top:6px;letter-spacing:.04em}
+@media (max-width:1180px){
+  .gauge{top:auto;bottom:10px;right:10px;transform:none;width:auto;display:grid;grid-template-columns:auto auto;gap:4px 14px;align-items:center;padding:8px 12px}
+  .gauge .m{font-size:1.4rem;grid-row:span 2}
+  .gauge .bars{display:none}
+  .gauge .sw{margin:0;width:84px}
+  .gauge .cap{margin:0}
+}
+</style>
+</head>
+<body>
+<header class="bar"><div class="bar-in">
+  <nav class="sites" aria-label="Sites"><a class="here" href="../" aria-current="true">Jason Summers</a><a class="away" href="https://bucatini-mickey.github.io/" title="Bucatini Mickey: films, games, photos and other hobbies">BM</a></nav>
+  <nav class="pages" aria-label="Pages"><a href="../">Home</a><a href="./" aria-current="page">Research</a><a href="../cv/">CV</a><a href="../links/">Links</a></nav>
+</div></header>
+
+<main class="wrap">
+  <header class="intro">
+    <p class="eyebrow">PhD work · Swansea University</p>
+    <h1>Research</h1>
+    <p class="lede">Cameras are cheap, light and passive, which makes them the natural eyes for small underwater vehicles. The water makes them hard to use: it takes the colours away, adds haze, and fills the view with drifting particles. My PhD asks what that does to the vision a vehicle relies on to know where it is.</p>
+    <div class="surface" aria-hidden="true"></div>
+  </header>
+
+  <section>
+    <p class="mark" data-at>0 m</p>
+    <h2>Why the colour goes</h2>
+    <p>Water absorbs each wavelength at its own rate. Red is mostly gone within the first few metres, orange and yellow follow, and green lasts much longer, which is why deep water and most underwater footage look blue-green. Scattering adds a veil of light between the camera and everything it looks at, and the veil thickens with distance.</p>
+    <p>This page is doing the same thing. As you scroll you sink, and the autumn colours from the front page are taken away in the order the sea takes them. The gauge shows how much of each channel is left.</p>
+  </section>
+
+  <section>
+    <p class="mark" data-at>m</p>
+    <h2>Does enhancement help a machine see?</h2>
+    <p>Underwater image enhancement methods restore colour and contrast, and they are usually judged on how good the result looks to a person. A vehicle does not need a pretty picture. It needs to find the same points in frame after frame so it can track its motion and build a map.</p>
+    <p>My work measures enhancement by that standard: how stable feature matches stay between nearby frames, how far apart two frames can be and still be matched, and what a method does to a full visual SLAM system running on real underwater video.</p>
+  </section>
+
+  <section id="publications">
+    <p class="mark" data-at>m</p>
+    <h2>Publications</h2>
+    <article class="pub">
+      <h3>Impact of Underwater Image Enhancement on Feature Matching</h3>
+      <p class="who"><b>Jason M. Summers</b>, Mark W. Jones, Catherine Seale</p>
+      <p class="where">Sensors 25 (22), 6966 · 2025</p>
+      <p class="sum">Introduces two measures, local matching stability and furthest matchable frame, and a framework for judging enhancement methods by what they do to frame matching. Run through ORB-SLAM3, methods that look better to people often make the map and trajectory worse.</p>
+      <p class="acts"><a href="https://doi.org/10.3390/s25226966">Paper (open access) ↗</a><a href="https://arxiv.org/abs/2507.21715">arXiv ↗</a></p>
+    </article>
+    <article class="pub">
+      <h3><span class="todo">In preparation: title to add when you are ready</span></h3>
+      <p class="who"><b>Jason M. Summers</b>, Mark W. Jones</p>
+      <p class="where">Manuscript in preparation</p>
+    </article>
+  </section>
+
+  <section>
+    <p class="mark" data-at>m</p>
+    <h2>Code</h2>
+    <ul class="code">
+      <li><a href="https://github.com/jsonSummers/SeaSnow-GAN">SeaSnow-GAN</a><span>A GAN that removes marine snow, the drifting particles that speckle underwater images.</span></li>
+      <li><a href="https://github.com/jsonSummers/UW-HVAE">UW-HVAE</a><span>An underwater hierarchical variational autoencoder.</span></li>
+      <li><a href="https://github.com/jsonSummers/orbdock">orbdock</a><span>A Docker setup for running ORB-SLAM3.</span></li>
+      <li><a href="https://github.com/jsonSummers/ORB_SLAM_3_plot_map">ORB_SLAM_3_plot_map</a><span>Changes to ORB-SLAM3 that stream the 3D map points out live for plotting.</span></li>
+    </ul>
+  </section>
+
+  <section>
+    <p class="mark" data-at>m</p>
+    <h2>Profiles</h2>
+    <p class="profiles"><a href="#" class="todo">Google Scholar</a><a href="#" class="todo">ORCID</a><a href="https://github.com/jsonSummers">GitHub</a><a href="#" class="todo">LinkedIn</a></p>
+  </section>
+
+  <p class="seabed">You have reached the bottom. <a href="#top" onclick="scrollTo({top:0});return false">Back to the surface ↑</a></p>
+</main>
+
+<aside class="gauge" aria-label="Depth gauge">
+  <div class="m"><span id="dm">0</span><small>m</small></div>
+  <div class="bars">
+    <div class="ch"><span>R</span><i><b id="br" style="background:#d4533a"></b></i><output id="or">100%</output></div>
+    <div class="ch"><span>G</span><i><b id="bg" style="background:#5f9e4a"></b></i><output id="og">100%</output></div>
+    <div class="ch"><span>B</span><i><b id="bb" style="background:#3f6fc4"></b></i><output id="ob">100%</output></div>
+  </div>
+  <div class="sw" id="sw" title="Russet, chanterelle, fly agaric and moss, as seen at this depth"><span></span><span></span><span></span><span></span></div>
+  <div class="cap">autumn, at depth</div>
+</aside>
+
+<script>
+/* Beer-Lambert: what survives to depth d of each channel is exp(-K*d). K per metre for clear coastal water (green carries furthest),
+   roughly red 600-700 nm, green 500-570 nm, blue 450-490 nm. The page bottom is MAX metres down. */
+(function(){
+  const K=[0.38,0.055,0.045], MAX=60, root=document.documentElement;
+  const dark=matchMedia('(prefers-color-scheme: dark)');
+  const hex=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
+  const css=c=>`rgb(${c.map(v=>Math.round(Math.max(0,Math.min(255,v)))).join(',')})`;
+  const autumn=['#a9481f','#d9902a','#b8322a','#5f7531'].map(hex);
+  const deep=[2,6,14]; // what the eye still sees in the dark: a little scattered blue
+  const T=d=>K.map(k=>Math.exp(-k*d));
+  const atDepth=(c,t)=>c.map((v,i)=>v*t[i]+deep[i]*(1-t[i]));
+  const lum=c=>{const l=c.map(v=>{v/=255;return v<=.03928?v/12.92:((v+.055)/1.055)**2.4});return .2126*l[0]+.7152*l[1]+.0722*l[2]};
+  const sw=[...document.querySelectorAll('#sw span')], marks=[...document.querySelectorAll('[data-at]')];
+  const $=id=>document.getElementById(id);
+  let surface;
+  function readSurface(){root.style.removeProperty('--bg');surface=hex(getComputedStyle(root).getPropertyValue('--bg').trim())}
+  function depthAt(y){const h=document.documentElement.scrollHeight-innerHeight;return h>0?Math.max(0,Math.min(1,y/h))*MAX:0}
+  function frame(){
+    const d=depthAt(scrollY), t=T(d), bg=atDepth(surface,t), light=lum(bg)<.2;
+    root.style.setProperty('--bg',css(bg));
+    root.style.setProperty('--ink',light?'#e8eef2':'');
+    root.style.setProperty('--dim',light?'#9fb3c2':'');
+    root.style.setProperty('--line',light?'rgba(232,238,242,.16)':'');
+    root.style.setProperty('--acc',light?css(atDepth([255,200,150],t).map((v,i)=>Math.max(v,[150,200,235][i]))):'');
+    $('dm').textContent=d<10?d.toFixed(1):Math.round(d);
+    ['r','g','b'].forEach((k,i)=>{$('b'+k).style.transform=`scaleX(${t[i]})`;$('o'+k).textContent=Math.round(t[i]*100)+'%'});
+    autumn.forEach((c,i)=>sw[i].style.background=css(atDepth(c,t)));
+  }
+  function labelMarks(){marks.forEach(m=>{const y=m.getBoundingClientRect().top+scrollY-innerHeight*.5;m.textContent=Math.round(depthAt(Math.max(0,y)))+' m'})}
+  let q=false; addEventListener('scroll',()=>{if(!q){q=true;requestAnimationFrame(()=>{q=false;frame()})}},{passive:true});
+  addEventListener('resize',()=>{labelMarks();frame()});
+  dark.addEventListener?.('change',()=>{readSurface();frame()});
+  readSurface(); labelMarks(); frame();
+  document.fonts?.ready.then(()=>{labelMarks();frame()});
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+/* Jason M. Summers: shared base. Each page sets its own theme tokens; this file only lays things out. */
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 17px/1.7 var(--f-body);text-rendering:optimizeLegibility}
+a{color:inherit;text-underline-offset:3px;text-decoration-thickness:1px}
+a:hover{color:var(--acc)}
+:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+img{max-width:100%;display:block}
+h1,h2,h3{font-family:var(--f-disp);font-weight:500;line-height:1.15;margin:0}
+.wrap{max-width:var(--measure,1040px);margin:0 auto;padding-inline:clamp(16px,5vw,48px)}
+
+.eyebrow{font:600 .72rem/1 var(--f-body);letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin:0}
+.todo{background:color-mix(in srgb,var(--acc) 18%,transparent);outline:1px dashed var(--acc);padding:0 .3em;border-radius:2px}
+footer.foot{padding-block:28px 40px;color:var(--dim);font-size:.85rem}
+footer.foot .wrap{display:flex;justify-content:space-between;gap:12px 24px;flex-wrap:wrap}
+footer.foot a{text-decoration:none}
+@media (prefers-reduced-motion:no-preference){html{scroll-behavior:smooth}}

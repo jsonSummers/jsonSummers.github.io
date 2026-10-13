@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>CV · Jason M. Summers</title>
+<meta name="description" content="Curriculum vitae of Jason M. Summers, PhD researcher in underwater computer vision.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;1,400&family=Source+Sans+3:wght@400;600&display=swap">
+<link rel="stylesheet" href="../assets/site.css">
+<link rel="stylesheet" href="../assets/bar.css">
+<style>
+/* Vermeer daylight: a sheet of paper on a plaster wall lit from a window on the left; ultramarine rules, lead-tin yellow marks.
+   Printing gives just the sheet. */
+:root{
+  --wall:#e6dfcd; --bg:var(--wall); --paper:#fbf8f1; --ink:#211d17; --dim:#6a6151; --line:#d8cfbb;
+  --ultra:#24418a; --tin:#c9a22e; --acc:var(--ultra);
+  --light:rgba(255,248,226,.8);
+  --f-disp:'Spectral',Georgia,serif; --f-body:'Source Sans 3',system-ui,sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root{
+  --wall:#1d1b17; --paper:#24221d; --ink:#ece4d2; --dim:#a69b87; --line:#3a352b;
+  --ultra:#93abe8; --tin:#e2c25a; --light:rgba(150,170,210,.10); color-scheme:dark}}
+body{background:linear-gradient(112deg,var(--light) 0%,transparent 50%) fixed,var(--wall)}
+
+.tools{display:flex;justify-content:flex-end;gap:16px;max-width:860px;margin:28px auto 10px;padding-inline:clamp(16px,5vw,48px);font-size:.9rem}
+.tools button{font:600 .9rem var(--f-body);color:var(--ultra);background:none;border:1px solid var(--line);border-radius:4px;padding:6px 14px;cursor:pointer}
+.tools button:hover{border-color:var(--ultra)}
+
+.sheet{max-width:860px;margin:0 auto 64px;background:var(--paper);padding:clamp(28px,6vw,64px) clamp(20px,6vw,72px);
+  box-shadow:0 1px 0 var(--line),18px 24px 60px -30px rgba(60,48,30,.35);font-size:15.5px;line-height:1.6}
+@media (max-width:900px){.sheet{margin-inline:clamp(0px,3vw,24px)}}
+
+.head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 32px;align-items:end;padding-bottom:22px;border-bottom:2px solid var(--ultra)}
+.head h1{font-size:clamp(2rem,5vw,2.7rem);font-weight:400}
+.head .role{margin:4px 0 0;color:var(--dim);font-family:var(--f-disp);font-style:italic;font-size:1.1rem}
+.head address{font-style:normal;text-align:right;color:var(--dim);font-size:.92rem;line-height:1.55}
+.head address a{text-decoration:none}
+@media (max-width:600px){.head{grid-template-columns:minmax(0,1fr)}.head address{text-align:left}}
+
+.cv section{display:grid;grid-template-columns:9.5em minmax(0,1fr);gap:4px 28px;padding-top:26px}
+.cv h2{font:600 .74rem/1.9 var(--f-body);letter-spacing:.16em;text-transform:uppercase;color:var(--ultra)}
+.cv h2::before{content:"";display:inline-block;width:7px;height:7px;background:var(--tin);margin-right:8px;transform:translateY(-1px) rotate(45deg)}
+@media (max-width:600px){.cv section{grid-template-columns:minmax(0,1fr)}}
+.entry{margin-bottom:16px}
+.entry:last-child{margin-bottom:0}
+.entry .t{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:baseline}
+.entry h3{font:500 1.08rem/1.35 var(--f-disp)}
+.entry .when{color:var(--dim);font-size:.88rem;white-space:nowrap;font-variant-numeric:tabular-nums}
+.entry .at{margin:0;color:var(--dim)}
+.entry p,.entry ul{margin:4px 0 0}
+.entry ul{padding-left:1.1em}
+.pubs{margin:0;padding-left:1.4em}
+.pubs li{margin-bottom:8px}
+.pubs i{font-family:var(--f-disp)}
+.skills{display:grid;grid-template-columns:8em minmax(0,1fr);gap:6px 16px;margin:0}
+.skills dt{color:var(--dim)}
+.skills dd{margin:0}
+
+@media print{
+  @page{size:A4;margin:14mm}
+  body{background:#fff}
+  .bar,.tools,footer.foot{display:none}
+  .sheet{box-shadow:none;margin:0;padding:0;max-width:none;background:#fff;color:#000;font-size:10.5pt}
+  :root{--ink:#000;--dim:#444;--ultra:#24418a;--tin:#c9a22e;--line:#ccc}
+  .todo{outline:none;background:none}
+  a{text-decoration:none}
+}
+</style>
+</head>
+<body>
+<header class="bar"><div class="bar-in">
+  <nav class="sites" aria-label="Sites"><a class="here" href="../" aria-current="true">Jason Summers</a><a class="away" href="https://bucatini-mickey.github.io/" title="Bucatini Mickey: films, games, photos and other hobbies">BM</a></nav>
+  <nav class="pages" aria-label="Pages"><a href="../">Home</a><a href="../research/">Research</a><a href="./" aria-current="page">CV</a><a href="../links/">Links</a></nav>
+</div></header>
+
+<div class="tools"><button type="button" onclick="print()">Print / save as PDF</button></div>
+
+<article class="sheet cv">
+  <header class="head">
+    <div>
+      <h1>Jason M. Summers</h1>
+      <p class="role">PhD researcher, underwater computer vision</p>
+    </div>
+    <address>
+      Swansea University, UK<br>
+      <span class="todo">email</span><br>
+      <a href="https://github.com/jsonSummers">github.com/jsonSummers</a><br>
+      <span class="todo">Scholar · LinkedIn · ORCID</span>
+    </address>
+  </header>
+
+  <section>
+    <h2>Education</h2>
+    <div>
+      <div class="entry">
+        <div class="t"><h3>PhD, Computer Science</h3><span class="when todo">20XX–present</span></div>
+        <p class="at">Swansea University · supervised by Mark W. Jones</p>
+        <p>Underwater image enhancement and its effect on feature matching and visual SLAM.</p>
+      </div>
+      <div class="entry">
+        <div class="t"><h3 class="todo">Previous degree</h3><span class="when todo">years</span></div>
+        <p class="at todo">Institution · result</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Research</h2>
+    <div>
+      <div class="entry">
+        <div class="t"><h3>Doctoral research</h3><span class="when todo">20XX–present</span></div>
+        <ul>
+          <li>Introduced local matching stability and furthest matchable frame, measures of how enhancement changes frame matching underwater.</li>
+          <li>Benchmarked enhancement methods through ORB-SLAM3 on real underwater footage.</li>
+          <li>Collected underwater video with a GoPro HERO13 Black; COLMAP reconstruction of submerged objects.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Publications</h2>
+    <ol class="pubs">
+      <li><b>J. M. Summers</b>, M. W. Jones, C. Seale. Impact of Underwater Image Enhancement on Feature Matching. <i>Sensors</i> 25 (22), 6966, 2025. <a href="https://doi.org/10.3390/s25226966">doi:10.3390/s25226966</a></li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Software</h2>
+    <div>
+      <div class="entry"><div class="t"><h3>SeaSnow-GAN</h3></div><p>GAN for removing marine snow from underwater images.</p></div>
+      <div class="entry"><div class="t"><h3>UW-HVAE</h3></div><p>Underwater hierarchical variational autoencoder.</p></div>
+      <div class="entry"><div class="t"><h3>orbdock, ORB_SLAM_3_plot_map</h3></div><p>Docker environment for ORB-SLAM3, and live export of its 3D map.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Skills</h2>
+    <dl class="skills">
+      <dt>Languages</dt><dd>Python, Rust, TypeScript <span class="todo">check</span></dd>
+      <dt>Vision</dt><dd>OpenCV, ORB-SLAM3, COLMAP, feature matching, image enhancement</dd>
+      <dt>Learning</dt><dd><span class="todo">PyTorch / TensorFlow</span>, GANs, VAEs</dd>
+      <dt>Tools</dt><dd>Docker, Git, ffmpeg, LaTeX, CUDA</dd>
+    </dl>
+  </section>
+
+  <section>
+    <h2>Teaching</h2>
+    <div class="entry"><p class="todo">Demonstrating, tutoring or supervision, if any.</p></div>
+  </section>
+</article>
+
+<footer class="foot"><div class="wrap"><span>© Jason M. Summers</span><span><a href="../">Home</a></span></div></footer>
+</body>
+</html>
