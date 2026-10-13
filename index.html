@@ -10,6 +10,8 @@
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;1,300&amp;family=Cormorant+Garamond:wght@500&amp;family=Mulish:wght@400;500;600&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;1,300&amp;family=Cormorant+Garamond:wght@500&amp;family=Mulish:wght@400;500;600&amp;display=swap"></noscript>
 <link rel="stylesheet" href="assets/site.css">
 <link rel="stylesheet" href="assets/bar.css">
+<script>/* trial variants, chosen in the address: ?print=v2 (a print after a photographed one), ?v=ocean (blue ink, white print on dark paper) */
+(function(){const q=new URLSearchParams(location.search),r=document.documentElement;if(q.get('print'))r.dataset.print=q.get('print');if(q.get('v'))r.dataset.v=q.get('v')})()</script>
 <style>
 /* A page of paper laid on dark moving ink (assets/foam.js). On the paper, one thing: a spore print, made of
    spores (assets/spore.js), still, and large enough to run off the page's edge. The paper stays paper in both
@@ -50,6 +52,11 @@ body{background:#0c0c0c}
 .elsewhere a:hover{color:var(--acc)}
 footer.foot{margin-top:56px;border-top:1px solid var(--line);padding-block:20px 24px}
 footer.foot .wrap{max-width:none}
+/* the ocean variant: an Amanita muscaria print is white, so it is taken on dark paper, here a deep sea-slate */
+:root[data-v="ocean"]{--paper:#101b22;--ink:#e6eef0;--dim:#93a7ae;--line:#22323a;--acc:#8fd3dc;color-scheme:dark}
+:root[data-v="ocean"] body{background:#03101f}
+:root[data-v="ocean"] .page{background:radial-gradient(120% 80% at 20% 0%,rgba(140,200,220,.08),transparent 60%),var(--paper)}
+:root[data-v="ocean"] .print{mix-blend-mode:screen}
 .bar{background:transparent}
 </style>
 </head>

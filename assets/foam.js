@@ -13,7 +13,7 @@
 in vec2 a; void main(){ gl_Position=vec4(a,0.,1.); }`;
   const FS=`#version 300 es
 precision highp float;
-uniform vec2 res; uniform float t; uniform float scroll;
+uniform vec2 res; uniform float t; uniform float scroll; uniform float ocean;
 out vec4 o;
 float hash(vec2 p){ p=fract(p*vec2(123.34,456.21)); p+=dot(p,p+45.32); return fract(p.x*p.y); }
 float noise(vec2 p){ vec2 i=floor(p), f=fract(p); vec2 u=f*f*f*(f*(f*6.-15.)+10.);       // quintic: no creases
@@ -42,6 +42,13 @@ void main(){
   float thin=smoothstep(.15,.5,ink)*(1.-smoothstep(.5,.85,ink));
   float where=smoothstep(.5,.75,fbm(uv*.9-T*.1+7.));
   vec3 col=mix(vec3(v),under*(v*.9+.06),thin*where*.32);
+  // the ocean variant: the same ink, read as sea seen from above; deep water where the ink is, white water and
+  // pale shallows between, a cold green-blue in the middle tones, and the colour beneath kept to a faint glint
+  if(ocean>.5){
+    vec3 deep=vec3(.008,.04,.09), mid=vec3(.05,.27,.38), foam=vec3(.86,.94,.95);
+    vec3 sea=v<.35?mix(deep,mid,v/.35):mix(mid,foam,(v-.35)/.65);
+    col=mix(sea,under*(v*.6+.1),thin*where*.12);
+  }
 
   vec2 c=gl_FragCoord.xy/res-.5; col*=1.-dot(c,c)*.75;           // a heavy vignette, as from an old lens
   col*=.985+.015*sin(t*7.3)*sin(t*3.1);                          // the faintest flicker
@@ -64,7 +71,8 @@ void main(){
     gl.useProgram(pr);
     gl.bindBuffer(gl.ARRAY_BUFFER,gl.createBuffer()); gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),gl.STATIC_DRAW);
     const loc=gl.getAttribLocation(pr,'a'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
-    const U={res:gl.getUniformLocation(pr,'res'),t:gl.getUniformLocation(pr,'t'),scroll:gl.getUniformLocation(pr,'scroll')};
+    const U={res:gl.getUniformLocation(pr,'res'),t:gl.getUniformLocation(pr,'t'),scroll:gl.getUniformLocation(pr,'scroll'),ocean:gl.getUniformLocation(pr,'ocean')};
+    gl.uniform1f(U.ocean,document.documentElement.dataset.v==='ocean'?1:0);
     // with no graphics card the shader runs on the processor: draw one small still frame and leave it at that
     const info=gl.getExtension('WEBGL_debug_renderer_info'), gpu=info?gl.getParameter(info.UNMASKED_RENDERER_WEBGL):'';
     const soft=/swiftshader|llvmpipe|software|basic render/i.test(gpu);

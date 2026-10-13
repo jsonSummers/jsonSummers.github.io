@@ -12,59 +12,48 @@
 <link rel="stylesheet" href="../assets/site.css">
 <link rel="stylesheet" href="../assets/bar.css">
 <style>
-/* Girl with a Pearl Earring: a dark green-black ground, one light from the upper left,
-   ultramarine and lead-tin yellow from the turban, ochre from the jacket, madder from the lips, and the pearl. Always dark. */
+/* Bees in late summer: an easy ochre and umber, not bright. The page is a sheet of warm paper on a meadow of
+   abstract flowers and a faint honeycomb (assets/bees.js); the links are set like a beekeeper's ledger. */
 :root{
-  --ground:#0f110d; --bg:var(--ground);
-  --ink:#ece0c6; --dim:#a39a86; --line:#2a2b24;
-  --ultra:#7f9fdc; --tin:#dcb64e; --ochre:#b48a4a; --madder:#c86a58; --collar:#e7e2d4;
-  --light:rgba(236,214,170,.10);
-  --acc:var(--tin);
+  --bg:#f3ead6; --ink:#2b1f12; --dim:#7a6a52; --line:#e0d3b6; --acc:#a8761f; --rust:#9a4a26; --sage:#6f7a4c;
   --f-disp:'Spectral',Georgia,serif; --f-body:'Mulish',system-ui,sans-serif;
-  
-  color-scheme:dark;
+  color-scheme:light;
 }
-body{background:#0b2a33}
-.page{background:radial-gradient(90% 60% at 14% 0%,var(--light),transparent 70%),var(--ground)}
-
-.intro{display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(20px,5vw,48px);align-items:center;padding-block:clamp(48px,12vh,120px) 40px}
+@media (prefers-color-scheme:dark){:root{--bg:#1f170e;--ink:#eadcbc;--dim:#a8977a;--line:#3a2e1d;--acc:#d4a24a;--rust:#c7754c;--sage:#9aa772;color-scheme:dark}}
+body{background:#2a1e10}
+.wrap{max-width:none;padding-inline:clamp(20px,5vw,56px)}
+.intro{display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(18px,4vw,40px);align-items:center;padding-block:clamp(48px,10vh,96px) 28px}
 .intro h1{font-size:clamp(2.4rem,6vw,3.6rem);font-weight:300}
-.intro p{margin:12px 0 0;color:var(--dim);font:300 1.15rem/1.6 var(--f-disp)}
-
-/* the pearl: a grey drop with one sharp white highlight at the upper left, the white collar reflected along
-   its lower edge, and the outer edge left to dissolve into the dark, as Vermeer painted it with almost no outline */
-.pearl{width:clamp(72px,12vw,120px);aspect-ratio:1/1.1;border-radius:50%/47% 47% 53% 53%;flex:none;
-  background:
-    radial-gradient(9% 8% at 34% 27%,#fff 0 45%,rgba(255,255,255,.6) 70%,transparent 100%),
-    radial-gradient(62% 26% at 48% 100%,color-mix(in srgb,var(--collar) 85%,transparent) 0 30%,transparent 100%),
-    radial-gradient(90% 90% at 30% 30%,#73766f 0%,#4a4c46 40%,#2b2d28 72%,var(--ground) 100%);
-  -webkit-mask:radial-gradient(closest-side at 44% 50%,#000 72%,rgba(0,0,0,.4) 90%,transparent 100%);
-          mask:radial-gradient(closest-side at 44% 50%,#000 72%,rgba(0,0,0,.4) 90%,transparent 100%)}
-
-.group{padding-top:40px}
-.group h2{font:600 .74rem/1 var(--f-body);letter-spacing:.18em;text-transform:uppercase;color:var(--c);margin-bottom:14px}
-.group.pro{--c:var(--ultra)} .group.own{--c:var(--madder)}
+.intro p{margin:10px 0 0;color:var(--dim);font:300 1.12rem/1.6 var(--f-disp)}
+/* a single cell of comb, with honey in it */
+.cell{width:clamp(56px,9vw,84px);aspect-ratio:1/1.1547;flex:none;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);
+  background:radial-gradient(70% 60% at 38% 32%,#f2c96a,#c98f2a 55%,#8a5a18)}
+.group{padding-top:36px}
+.group h2{font:600 .72rem/1 var(--f-body);letter-spacing:.2em;text-transform:uppercase;color:var(--c);margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.group h2::before{content:"";width:9px;height:10.4px;background:var(--c);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+.group.pro{--c:var(--acc)} .group.own{--c:var(--rust)}
 .links{list-style:none;margin:0;padding:0}
-.links a{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:baseline;padding:16px 2px;border-top:1px solid var(--line);text-decoration:none}
+.links a{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:baseline;padding:15px 2px;border-top:1px solid var(--line);text-decoration:none}
 .links li:last-child a{border-bottom:1px solid var(--line)}
-.links b{font:400 1.35rem/1.2 var(--f-disp)}
+.links b{font:400 1.32rem/1.2 var(--f-disp)}
 .links span{color:var(--dim);font-size:.92rem;text-align:right;overflow-wrap:anywhere}
 .links a:hover b{color:var(--c)}
-.links a:hover span{color:var(--ink)}
 @media (max-width:520px){.links a{grid-template-columns:minmax(0,1fr)}.links span{text-align:left}}
+footer.foot{border-top:1px solid var(--line);margin-top:56px;padding-block:20px 24px}
+footer.foot .wrap{max-width:none}
 </style>
 </head>
-<body data-depth="18,24">
-<canvas class="backdrop" id="water" aria-hidden="true"></canvas>
+<body>
+<canvas class="backdrop" id="meadow" aria-hidden="true"></canvas>
 <div class="page">
 <header class="bar"><div class="bar-in">
   <nav class="sites" aria-label="Sites"><a class="here" href="../" aria-current="true">Jason Summers</a><a class="away" href="https://bucatini-mickey.github.io/" title="Bucatini Mickey: films, games, photos and other hobbies">BM</a></nav>
   <nav class="pages" aria-label="Pages"><a href="../">Home</a><a href="../research/">Research</a><a href="../cv/">CV</a><a href="./" aria-current="page">Links</a></nav>
 </div></header>
 
-<main class="wrap" style="max-width:none;padding-inline:clamp(20px,5vw,56px)">
+<main class="wrap">
   <div class="intro">
-    <div class="pearl" role="img" aria-label="A pearl, after Vermeer's Girl with a Pearl Earring"></div>
+    <div class="cell" role="img" aria-label="A cell of honeycomb"></div>
     <div><h1>Links</h1><p>Where else to find me, work first.</p></div>
   </div>
 
@@ -87,8 +76,8 @@ body{background:#0b2a33}
   </section>
 </main>
 
-<footer class="foot" style="border-top:1px solid var(--line);margin-top:56px"><div class="wrap" style="max-width:none;padding-inline:clamp(20px,5vw,56px)"><span>© Jason M. Summers</span><span><a href="../">Home</a></span></div></footer>
+<footer class="foot"><div class="wrap"><span>© Jason M. Summers</span><span><a href="../">Home</a></span></div></footer>
 </div>
-<script src="../assets/water.js"></script>
+<script src="../assets/bees.js"></script>
 </body>
 </html>

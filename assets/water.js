@@ -2,7 +2,7 @@
    takes you from the first to the second. The water's colour is sunlight at the surface with each channel
    absorbed at its own rate (Beer-Lambert, coastal water: red goes first, green carries furthest). Marine snow
    drifts past in three layers, the nearest larger and softer, sinking and sliding up as you descend.
-   A faint sensor noise, a dome port's dark edge and its slight barrel distortion make it look filmed.
+   Faint sensor noise, a wide-angle lens's barrel distortion and its darkened corners make it look filmed.
    Exposes window.Water and fires a 'depth' event on window with {depth, T, rgb}. */
 (function(){
   const cv=document.getElementById('water'); if(!cv) return;
@@ -35,15 +35,18 @@
   let blob=null;
   function sprite(){blob=document.createElement('canvas'); blob.width=blob.height=64; const c=blob.getContext('2d'), g=c.createRadialGradient(32,32,0,32,32,32); g.addColorStop(0,'rgba(255,255,255,.5)'); g.addColorStop(1,'rgba(255,255,255,0)'); c.fillStyle=g; c.fillRect(0,0,64,64)}
   /* barrel distortion, as through a dome port: points are pushed outward the further they are from the centre */
-  const BARREL=.09;
-  function lens(x,y){const nx=(x-W/2)/(W/2), ny=(y-H/2)/(H/2), q=1+BARREL*(nx*nx+ny*ny); return [W/2+nx*q*W/2, H/2+ny*q*H/2, q]}
+  /* barrel distortion, as through a wide-angle lens behind a dome port: the further a point is from the centre, the
+     more it is pulled in towards it (r' = r(1 - k r^2), r measured to the corner), so the middle of the view is
+     magnified and the edges are squeezed; things near the edges look smaller and slower */
+  const BARREL=.2;
+  function lens(x,y){const D=Math.hypot(W,H)/2, nx=(x-W/2)/D, ny=(y-H/2)/D, q=1-BARREL*(nx*nx+ny*ny); return [W/2+nx*q*D, H/2+ny*q*D, q]}
   function draw(){
     const c=cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0);
     depth=depthAt(scrollY);
     const t=T(depth), mid=at(SUN,t), top=at(SUN,T(depth-4)), bot=at(SUN,T(depth+8));
-    // the water's gradient, its bands bowed by the lens: a radial gradient centred far below the frame
-    const g=c.createRadialGradient(W/2,H*3.2,H*2.2,W/2,H*3.2,H*3.3);
-    g.addColorStop(0,css(bot)); g.addColorStop(.45,css(mid)); g.addColorStop(1,css(top));
+    // the water's gradient: level bands, brighter above as the light comes from the surface
+    const g=c.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,css(top)); g.addColorStop(.5,css(mid)); g.addColorStop(1,css(bot));
     c.fillStyle=g; c.fillRect(0,0,W,H);
     // marine snow: brighter against dark water, faint against bright shallows
     const L=lum(mid), dy=(scrollY-lastY); lastY=scrollY;
@@ -59,9 +62,9 @@
     }
     // sensor noise, very faint
     c.globalAlpha=L>.35?.035:.05; c.fillStyle=c.createPattern(noise[frame++%noise.length],'repeat'); c.fillRect(0,0,W,H); c.globalAlpha=1;
-    // the dome port's dark edge
-    const v=c.createRadialGradient(W/2,H/2,Math.min(W,H)*.42,W/2,H/2,Math.hypot(W,H)*.58);
-    v.addColorStop(0,'rgba(0,4,8,0)'); v.addColorStop(1,'rgba(0,4,8,.45)'); c.fillStyle=v; c.fillRect(0,0,W,H);
+    // a wide-angle lens darkens towards the corners (natural vignetting, roughly cos^4 of the angle off-axis)
+    const v=c.createRadialGradient(W/2,H/2,0,W/2,H/2,Math.hypot(W,H)*.5);
+    v.addColorStop(0,'rgba(0,4,8,0)'); v.addColorStop(.55,'rgba(0,4,8,.06)'); v.addColorStop(.8,'rgba(0,4,8,.28)'); v.addColorStop(1,'rgba(0,4,8,.6)'); c.fillStyle=v; c.fillRect(0,0,W,H);
     root.style.setProperty('--water',css(mid));
     root.style.setProperty('--water-lum',L.toFixed(3));
     dispatchEvent(new CustomEvent('depth',{detail:{depth,T:t,rgb:mid}}));
