@@ -11,56 +11,51 @@
 <link rel="stylesheet" href="assets/site.css">
 <link rel="stylesheet" href="assets/bar.css">
 <style>
-/* Autumn: oat paper in low afternoon light; beech russet, chanterelle, fly agaric, moss and bark.
-   The hero is a spore print: the radial gill pattern a cap leaves overnight. Brown print on cream by day,
-   white print on black by night, the two halves of the paper mycologists use. */
+/* Autumn, kept quiet: oat paper in low afternoon light, and one object on it. The object is a fly agaric's
+   spore print: Amanita muscaria drops white spores from free, crowded gills, so the print is taken on black paper.
+   Russet, chanterelle, agaric red and moss appear only where you touch something. */
 :root{
-  --bg:#f0e8d8; --ink:#2b221a; --dim:#76695a; --line:#dccfb8;
-  --russet:#a9481f; --chanterelle:#d9902a; --agaric:#b8322a; --moss:#5f7531; --bark:#4a3627;
-  --sun:rgba(232,150,60,.16); --spore:#3a2016;
+  --bg:#f1eadb; --ink:#2b221a; --dim:#7d705f; --line:#e0d5c0;
+  --russet:#a9481f; --chanterelle:#c9821f; --agaric:#b8322a; --moss:#5f7531;
+  --sun:rgba(232,150,60,.12); --card:#141210; --spore:#f3efe6;
   --acc:var(--russet);
   --f-disp:'Spectral',Georgia,serif; --f-body:'Source Sans 3',system-ui,sans-serif;
+  --measure:1040px;
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){:root{
-  --bg:#15120e; --ink:#eee3cf; --dim:#a6987f; --line:#2f281f;
-  --russet:#d97a48; --chanterelle:#e9ad4e; --agaric:#e0604f; --moss:#9bb164; --bark:#c9a77f;
-  --sun:rgba(217,122,72,.10); --spore:#f1e9da;
+  --bg:#15120e; --ink:#eae0cd; --dim:#9b8f7a; --line:#2a241c;
+  --russet:#d97a48; --chanterelle:#e0a24a; --agaric:#e0604f; --moss:#9bb164;
+  --sun:rgba(217,122,72,.07); --card:#0b0a08;
   color-scheme:dark}}
 body{background:radial-gradient(90vmax 70vmax at 100% 0%,var(--sun),transparent 65%) fixed,var(--bg)}
 
-.hero{position:relative;overflow:hidden}
-.hero .wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.9fr);align-items:center;gap:clamp(24px,5vw,72px);min-height:min(78vh,720px);padding-block:48px}
-.hero .eyebrow{margin-bottom:22px;color:var(--russet)}
-.hero h1{font-size:clamp(2.6rem,7.5vw,5rem);letter-spacing:-.01em;font-weight:300}
-.hero .lede{font:300 clamp(1.15rem,2.1vw,1.38rem)/1.6 var(--f-disp);max-width:40ch;margin:24px 0 0}
-.hero .lede em{color:var(--russet);font-style:italic}
-.print{width:100%;max-width:560px;aspect-ratio:1;justify-self:center;display:block}
-@media (max-width:760px){.hero .wrap{grid-template-columns:minmax(0,1fr);min-height:0;padding-block:24px 40px}.print{grid-row:1;max-width:320px}}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.85fr);align-items:center;gap:clamp(32px,7vw,112px);min-height:min(82vh,760px);padding-block:64px}
+.hero h1{font-size:clamp(2.4rem,6vw,4.2rem);letter-spacing:-.005em;font-weight:300}
+.hero .lede{font:300 clamp(1.1rem,1.8vw,1.25rem)/1.7 var(--f-disp);max-width:36ch;margin:28px 0 0;color:color-mix(in srgb,var(--ink) 80%,var(--bg))}
+.hero .where{margin:28px 0 0;font-size:.85rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim)}
+/* the print, on its square of black paper */
+.paper-card{justify-self:center;width:100%;max-width:440px;aspect-ratio:1;background:var(--card);padding:6%;box-shadow:0 1px 0 rgba(0,0,0,.08),0 24px 50px -30px rgba(40,25,10,.5)}
+.paper-card canvas{width:100%;height:100%;display:block}
+@media (max-width:760px){.hero .wrap{grid-template-columns:minmax(0,1fr);min-height:0;padding-block:40px 48px}.paper-card{grid-row:1;max-width:300px;justify-self:start}}
 
-main.rooms{padding-block:16px 32px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:clamp(20px,4vw,48px)}
-.card{display:flex;flex-direction:column;gap:10px;text-decoration:none;padding-top:20px;border-top:2px solid var(--line)}
-.card h2{font-size:1.7rem;font-weight:400}
-.card p{margin:0;color:var(--dim)}
-.card .go{margin-top:auto;padding-top:8px;font-weight:600;font-size:.92rem;color:var(--c)}
-.card{border-top-color:var(--c)}
-.card.res{--c:var(--moss)} .card.cv{--c:var(--chanterelle)} .card.links{--c:var(--agaric)}
-a.card:hover h2{color:var(--c)}
-a.card:hover .go{text-decoration:underline}
+/* everything else is a short, quiet list */
+.rooms{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.rooms a{display:grid;grid-template-columns:9em minmax(0,1fr) auto;gap:8px 32px;align-items:baseline;padding:22px 0;border-bottom:1px solid var(--line);text-decoration:none}
+.rooms b{font:400 1.35rem var(--f-disp)}
+.rooms span{color:var(--dim)}
+.rooms i{font-style:normal;color:var(--line);transition:color .3s,transform .3s}
+.rooms a:hover b{color:var(--c)} .rooms a:hover i{color:var(--c);transform:translateX(4px)}
+.rooms .res{--c:var(--moss)} .rooms .cv{--c:var(--chanterelle)} .rooms .links{--c:var(--agaric)}
+@media (max-width:600px){.rooms a{grid-template-columns:minmax(0,1fr) auto}.rooms span{grid-column:1}.rooms i{grid-row:1;grid-column:2}}
 
-.paper{margin-top:88px;display:grid;gap:10px;max-width:760px;padding-left:22px;border-left:2px solid var(--bark)}
-.paper h3{font:400 clamp(1.35rem,3vw,1.7rem)/1.3 var(--f-disp)}
-.paper .who{margin:0;color:var(--dim)}
-.paper .who b{color:var(--ink);font-weight:600}
-.paper .where{margin:0;font-style:italic;font-family:var(--f-disp);color:var(--dim)}
-.paper .acts{display:flex;gap:18px;flex-wrap:wrap;font-weight:600;font-size:.92rem}
-.paper .acts a{color:var(--russet);text-decoration:none}
-.paper .acts a:hover{text-decoration:underline}
-
-.elsewhere{margin-top:80px;display:flex;flex-wrap:wrap;gap:10px 28px;align-items:baseline;padding-top:20px;border-top:1px solid var(--line)}
-.elsewhere a{text-decoration:none;font-weight:600;color:var(--dim)}
-.elsewhere a:hover{color:var(--ink)}
+.latest{margin:72px 0 0;color:var(--dim);font-size:.95rem}
+.latest a{color:var(--ink);text-decoration:none;font-family:var(--f-disp);font-size:1.08rem}
+.latest a:hover{color:var(--russet)}
+.elsewhere{margin:20px 0 0;display:flex;flex-wrap:wrap;gap:8px 24px;font-size:.9rem}
+.elsewhere a{text-decoration:none;color:var(--dim)}
+.elsewhere a:hover{color:var(--russet)}
+footer.foot{margin-top:72px}
 </style>
 </head>
 <body>
@@ -72,37 +67,32 @@ a.card:hover .go{text-decoration:underline}
 <section class="hero">
   <div class="wrap">
     <div>
-      <p class="eyebrow">PhD researcher · Swansea University</p>
       <h1>Jason M. Summers</h1>
-      <p class="lede">I work on underwater computer vision: what happens to <em>feature matching</em> and <em>SLAM</em> when the water has taken the red out of the picture, and whether image enhancement actually helps a machine see.</p>
+      <p class="lede">I work on underwater computer vision: what happens to feature matching and SLAM when the water has taken the red out of the picture, and whether image enhancement actually helps a machine see.</p>
+      <p class="where">PhD researcher · Swansea University</p>
     </div>
-    <canvas class="print" data-seed="23" role="img" aria-label="A mushroom spore print: fine radial lines left by the gills"></canvas>
+    <div class="paper-card"><canvas class="print" data-seed="23" role="img" aria-label="A fly agaric spore print: fine white radial lines on black paper"></canvas></div>
   </div>
 </section>
 
-<main class="wrap rooms">
-  <div class="grid">
-    <a class="card res" href="research/"><p class="eyebrow">PhD work</p><h2>Research</h2><p>Underwater image enhancement, feature matching and visual SLAM: published work, code and what I am working on now.</p><span class="go">Read →</span></a>
-    <a class="card cv" href="cv/"><p class="eyebrow">Curriculum vitae</p><h2>CV</h2><p>Education, research experience, publications and skills, on one printable page.</p><span class="go">View →</span></a>
-    <a class="card links" href="links/"><p class="eyebrow">Elsewhere</p><h2>Links</h2><p>Scholar, ORCID, GitHub and the less serious places: photos, films and the hobby site.</p><span class="go">Open →</span></a>
-  </div>
+<main class="wrap">
+  <ul class="rooms">
+    <li><a class="res" href="research/"><b>Research</b><span>Underwater image enhancement, feature matching and visual SLAM.</span><i>→</i></a></li>
+    <li><a class="cv" href="cv/"><b>CV</b><span>Education, research, publications and skills.</span><i>→</i></a></li>
+    <li><a class="links" href="links/"><b>Links</b><span>Scholar, ORCID, GitHub, and the hobby side.</span><i>→</i></a></li>
+  </ul>
 
-  <article class="paper">
-    <p class="eyebrow">Latest publication</p>
-    <h3>Impact of Underwater Image Enhancement on Feature Matching</h3>
-    <p class="who"><b>Jason M. Summers</b>, Mark W. Jones, Catherine Seale</p>
-    <p class="where">Sensors 25 (22), 6966 · 2025</p>
-    <p class="acts"><a href="https://doi.org/10.3390/s25226966">Paper ↗</a><a href="https://arxiv.org/abs/2507.21715">arXiv ↗</a><a href="research/#publications">All publications →</a></p>
-  </article>
-
+  <p class="latest">Latest: <a href="https://doi.org/10.3390/s25226966">Impact of Underwater Image Enhancement on Feature Matching</a> · Sensors, 2025</p>
   <p class="elsewhere"><a href="https://scholar.google.com/citations?user=W-gpECkAAAAJ&amp;hl=en">Google Scholar</a><a href="https://orcid.org/0009-0006-4161-2865">ORCID</a><a href="https://github.com/jsonSummers">GitHub</a><a href="https://www.instagram.com/json_summers/">Instagram</a></p>
 </main>
 
 <footer class="foot"><div class="wrap"><span>© Jason M. Summers</span><span><a href="https://bucatini-mickey.github.io/">Hobbies: Bucatini Mickey ↗</a></span></div></footer>
 
 <script>
-/* Spore print. Full gills run from the stem to the rim; shorter lamellulae fill the gaps near the rim, as on a real cap.
-   Spores land between the gills, so each gap is a thin wedge of deposit, densest mid-cap and thinning to nothing at the edge. */
+/* A fly agaric's spore print. The gills are free (they stop short of the stem, leaving a bare ring round it) and
+   crowded, with short truncate gills between the long ones that end squarely at different lengths. Spores fall
+   between the gills, so each gap is a thin white wedge, heaviest mid-cap and thinning out at the rim.
+   The cap is never quite round, so neither is the print. */
 (function(){
   const cv=document.querySelector('canvas.print'); if(!cv) return;
   function rng(seed){let s=seed>>>0||1;return()=>((s=Math.imul(s^s>>>15,1|s)+0x6D2B79F5|0,((s^s>>>14)>>>0)/4294967296))}
@@ -112,34 +102,30 @@ a.card:hover .go{text-decoration:underline}
     cv.width=cv.height=Math.round(S*dpr);
     const c=cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0); c.clearRect(0,0,S,S);
     const col=getComputedStyle(document.documentElement).getPropertyValue('--spore').trim();
-    const cx=S/2, cy=S/2, R=S*.47, stem=R*.09, full=96;
-    const gaps=[]; // [angle, inner radius]
+    const cx=S*.48, cy=S*.52, R=S*.47, free=R*.13, full=120, oval=.95, tilt=r()*Math.PI;
+    const gaps=[];
     for(let i=0;i<full;i++){
-      const a=i/full*Math.PI*2;
-      gaps.push([a,stem*1.15]);                        // beside each full gill
-      gaps.push([a+Math.PI/full,R*.42]);               // half-length lamellula
-      gaps.push([a+Math.PI/full*.5,R*.7]);             // quarter-length either side
-      gaps.push([a+Math.PI/full*1.5,R*.7]);
+      const a=i/full*Math.PI*2, step=Math.PI*2/full, n=1+Math.floor(r()*3);
+      gaps.push([a,free*(1+r()*.08)]);
+      for(let k=1;k<=n;k++) gaps.push([a+step*k/(n+1),R*(.3+r()*.5)]);   // truncate gills, ending squarely
     }
-    const w=Math.PI*2/gaps.length*.62;
+    const w=Math.PI*2/gaps.length*.58;
+    c.save(); c.translate(cx,cy); c.rotate(tilt); c.scale(1,oval);
     c.fillStyle=col;
     for(const [a0,rin] of gaps){
-      const a=a0+(r()-.5)*w*.35, rout=R*(.97+r()*.04), ww=w*(.8+r()*.4);
+      const a=a0+(r()-.5)*w*.3, rout=R*(.96+r()*.05), ww=w*(.8+r()*.4);
       c.globalAlpha=.7+r()*.3;
-      c.beginPath();
-      c.moveTo(cx+Math.cos(a)*rin,cy+Math.sin(a)*rin);
-      c.arc(cx,cy,rout,a-ww/2,a+ww/2);
-      c.closePath(); c.fill();
+      c.beginPath(); c.moveTo(Math.cos(a)*rin,Math.sin(a)*rin); c.arc(0,0,rout,a-ww/2,a+ww/2); c.closePath(); c.fill();
     }
-    // deposit is heaviest mid-cap and fades to nothing at the rim
+    c.restore();
+    // heaviest mid-cap, thin at the rim; the ring by the stem fades in softly rather than as a hard edge
     c.globalAlpha=1; c.globalCompositeOperation='destination-in';
-    const g=c.createRadialGradient(cx,cy,stem,cx,cy,R*1.01);
-    g.addColorStop(0,'rgba(0,0,0,.35)'); g.addColorStop(.25,'rgba(0,0,0,1)'); g.addColorStop(.7,'rgba(0,0,0,.85)'); g.addColorStop(1,'rgba(0,0,0,0)');
+    const g=c.createRadialGradient(cx,cy,free*.9,cx,cy,R*1.01);
+    g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(.18,'rgba(0,0,0,.25)'); g.addColorStop(.45,'rgba(0,0,0,.95)'); g.addColorStop(.75,'rgba(0,0,0,.8)'); g.addColorStop(1,'rgba(0,0,0,0)');
     c.fillStyle=g; c.fillRect(0,0,S,S);
     c.globalCompositeOperation='source-over';
   }
   let t; addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(draw,150)});
-  matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',draw);
   draw();
 })();
 </script>
