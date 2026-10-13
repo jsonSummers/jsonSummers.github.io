@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="assets/site.css">
 <link rel="stylesheet" href="assets/bar.css">
 <style>
-/* The page floats on suminagashi, floating-ink marbling in blues with thin rainbow rings (assets/ink.js). On it, one object: a fly agaric's spore print,
+/* The page floats on foam and dark water seen from above, with colour bleeding at the edges (assets/foam.js). On it, one object: a fly agaric's spore print,
    from free, crowded gills with short truncate gills between, large, slowly turning, faintly haloed, with slow ripples spreading from it. Quiet otherwise. */
 :root{
   --bg:#f5f4ef; --ink:#1f2326; --dim:#6b7275; --line:#dfe0da; --acc:#1f6f78; --spore:#2a2622; --glow:rgba(42,38,34,.10); --corona:rgba(42,38,34,.07); --ripple:rgba(42,38,34,.16);
@@ -32,9 +32,8 @@ body{background:#0b2a33}
 .orbit{--d:clamp(420px,58vw,700px);position:absolute;z-index:0;top:calc(50% - var(--d) / 2);right:calc(-1 * clamp(80px,13vw,190px));width:var(--d);height:var(--d);pointer-events:none}
 .orbit::before{content:"";position:absolute;inset:-6%;border-radius:50%;background:radial-gradient(closest-side,transparent 82%,var(--corona) 92%,transparent 100%)}
 .print{width:100%;height:100%;display:block;filter:drop-shadow(0 0 36px var(--glow))}
-/* ripples: drawn by assets/ink.js over the hero in soft-light, so the page itself seems to ripple */
-.hero{isolation:isolate}
-canvas.ripples{position:absolute;z-index:2;inset:0;width:100%;height:100%;pointer-events:none;mix-blend-mode:soft-light}
+/* ripples: drawn by assets/ink.js over the hero as faint light crests and dark troughs, so the page itself seems to ripple */
+canvas.ripples{position:absolute;z-index:2;top:0;bottom:-45vh;left:calc(-1 * clamp(20px,5vw,56px));right:calc(-1 * clamp(20px,5vw,56px));pointer-events:none}
 @media (prefers-reduced-motion:no-preference){.print{animation:turn 600s linear infinite}@keyframes turn{to{transform:rotate(360deg)}}}
 @media (max-width:760px){.hero{min-height:0;padding-block:170px 40px;align-items:flex-end}.hero .text{max-width:none}.orbit{--d:100vw;top:-38vw;right:-34vw;opacity:.5}}
 
@@ -56,7 +55,7 @@ footer.foot .wrap{max-width:none}
 </style>
 </head>
 <body data-depth="1,9">
-<canvas class="backdrop tall" id="ink" data-parallax=".3" aria-hidden="true"></canvas>
+<canvas class="backdrop" id="ink" aria-hidden="true"></canvas>
 <div class="page">
 <header class="bar"><div class="bar-in">
   <nav class="sites" aria-label="Sites"><a class="here" href="./" aria-current="true"><span class="seal" aria-hidden="true">JS</span>Jason Summers</a><a class="away" href="https://bucatini-mickey.github.io/" title="Bucatini Mickey: films, games, photos and other hobbies">BM</a></nav>
@@ -87,6 +86,7 @@ footer.foot .wrap{max-width:none}
 <footer class="foot"><div class="wrap"><span>© Jason M. Summers</span><span><a href="https://bucatini-mickey.github.io/">Hobbies: Bucatini Mickey ↗</a></span></div></footer>
 </div>
 
+<script src="assets/foam.js"></script>
 <script src="assets/ink.js"></script>
 <script src="assets/parallax.js"></script>
 <script>

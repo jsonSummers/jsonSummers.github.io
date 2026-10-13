@@ -1,45 +1,11 @@
-/* Backdrops for the home page, drawn once onto <canvas id="ink">.
-   Default: suminagashi, floating-ink marbling. Ink is dropped onto still water in rings; every new drop pushes all
-   the ink already there outward (a point p at distance d from a drop of radius r moves to distance sqrt(d^2+r^2),
-   which keeps the area of every ring), and then the surface is drawn through with a comb in gentle waves.
-   Mostly indigo and Prussian blue, with thin rings of rainbow among them.
-   ?bg=diatoms: diatoms under dark-field light, glassy and symmetrical, glinting with structural colour. */
+/* The diatom backdrop for the home page (?bg=diatoms; assets/foam.js draws the default), and the ripples.
+   Diatoms under dark-field light: glassy and symmetrical, glinting with structural colour. */
 (function(){
   const cv=document.getElementById('ink'); if(!cv) return;
-  const mode=new URLSearchParams(location.search).get('bg')==='diatoms'?'diatoms':'ink';
+  if(new URLSearchParams(location.search).get('bg')!=='diatoms') return;
   const dark=matchMedia('(prefers-color-scheme: dark)');
   function rng(seed){let s=seed>>>0||1;return()=>((s=Math.imul(s^s>>>15,1|s)+0x6D2B79F5|0,((s^s>>>14)>>>0)/4294967296))}
   const hsl=(h,s,l,a=1)=>`hsla(${h},${s}%,${l}%,${a})`;
-
-  /* ---------- suminagashi ---------- */
-  function marble(c,W,H,night){
-    const r=rng(1868), N=360, rings=[];
-    const drop=(cx,cy,rad,col)=>{
-      for(const g of rings) for(const p of g.pts){const dx=p[0]-cx, dy=p[1]-cy, d2=dx*dx+dy*dy, k=Math.sqrt(1+rad*rad/(d2||1e-6)); p[0]=cx+dx*k; p[1]=cy+dy*k}
-      rings.push({col,pts:Array.from({length:N},(_,i)=>{const a=i/N*Math.PI*2;return [cx+Math.cos(a)*rad,cy+Math.sin(a)*rad]})});
-    };
-    // a tine drawn across the water along direction (mx,my) through point (ox,oy): ink moves with it, less the further away it is
-    const tine=(ox,oy,mx,my,z,u)=>{const nx=-my,ny=mx; for(const g of rings) for(const p of g.pts){const d=Math.abs((p[0]-ox)*nx+(p[1]-oy)*ny), f=z*Math.pow(u,d); p[0]+=mx*f; p[1]+=my*f}};
-    const water=night?'#0a1422':'#eef1f2';
-    const inks=night?['#2c5a9e','#1d3f78','#3f78b8','#16305e']:['#1d3a6e','#2a5594','#122a52','#3c6aa8'];
-    const sites=Array.from({length:Math.max(7,Math.round(W*H/170000))},()=>[r()*W,r()*H]);
-    let hue=r()*360;
-    for(let round=0;round<16;round++) for(const [x,y] of sites){
-      const rad=(W<700?18:30)+r()*26, j=(r()-.5)*10;
-      if(r()<.16){ drop(x+j,y+j,rad*.45,hsl(hue,70,night?62:52)); hue=(hue+47)%360 }    // a thin rainbow ring
-      drop(x+j,y+j,rad,inks[Math.floor(r()*inks.length)]);
-      drop(x+j,y+j,rad*.8,water);                                                       // a clear ring of surfactant between inks
-    }
-    // comb gently across, then back at an angle: the ink flows into long curving lines
-    for(let k=0;k<7;k++) tine(W*(k+.5)/7,0,0,1,(k%2?-1:1)*H*.06,.994);
-    for(let k=0;k<5;k++) tine(0,H*(k+.5)/5,1,.25,(k%2?1:-1)*W*.05,.995);
-    c.fillStyle=water; c.fillRect(0,0,W,H);
-    for(const g of rings){c.fillStyle=g.col; c.beginPath(); g.pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1])); c.closePath(); c.fill()}
-    // paper fibre: faint, so the ink sits on something
-    c.globalAlpha=night?.05:.07;
-    for(let i=0;i<W*H/120;i++){c.fillStyle=r()<.5?'#000':'#fff'; c.fillRect(r()*W,r()*H,1+r()*2,1)}
-    c.globalAlpha=1;
-  }
 
   /* ---------- diatoms ---------- */
   function diatoms(c,W,H,night){
@@ -89,7 +55,7 @@
     const dpr=Math.min(2,devicePixelRatio||1), W=cv.clientWidth, H=cv.clientHeight;
     cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
     const c=cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0);
-    (mode==='diatoms'?diatoms:marble)(c,W,H,dark.matches);
+    diatoms(c,W,H,dark.matches);
   }
   let t; addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(draw,250)});
   dark.addEventListener?.('change',draw);
@@ -102,9 +68,10 @@
 (function(){
   const cv=document.getElementById('ripples'), orbit=document.querySelector('.orbit'); if(!cv||!orbit) return;
   const still=matchMedia('(prefers-reduced-motion: reduce)').matches, PERIOD=16, COUNT=3, LIFE=PERIOD*COUNT;
+  const darkQ=matchMedia('(prefers-color-scheme: dark)'); let dark=darkQ.matches; darkQ.addEventListener?.('change',e=>dark=e.matches);
   let W=0,H=0,dpr=1,cx=0,cy=0,R0=0;
   function size(){
-    dpr=Math.min(2,devicePixelRatio||1); W=cv.clientWidth; H=cv.clientHeight; cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+    dpr=Math.min(2,devicePixelRatio||1); W=cv.clientWidth; H=cv.clientHeight;   // the canvas spans the page's full width and runs below the hero cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
     const a=cv.getBoundingClientRect(), b=orbit.getBoundingClientRect(); cx=b.left+b.width/2-a.left; cy=b.top+b.height/2-a.top; R0=b.width*.47;
   }
   function wobble(th,t,k){return Math.sin(th*5+t*.6+k)*2.2+Math.sin(th*11-t*.4+k*2)*1.2+Math.sin(th*23+k*3)*.6}
@@ -118,7 +85,7 @@
         const rr=front-w*13, amp=fade*Math.exp(-w*.45);
         if(rr<R0*.98) continue;
         for(const [off,col] of [[0,'255,255,255'],[6.5,'0,0,0']]){
-          c.strokeStyle=`rgba(${col},${(.2*amp).toFixed(3)})`; c.lineWidth=6; c.beginPath();
+          c.strokeStyle=`rgba(${col},${((col[0]==='2'?dark?.07:.12:dark?.18:.06)*amp).toFixed(3)})`; c.lineWidth=6; c.beginPath();
           for(let i=0;i<=180;i++){const th=i/180*6.283, rad=rr-off+wobble(th,t,k+w); const x=cx+Math.cos(th)*rad, y=cy+Math.sin(th)*rad; i?c.lineTo(x,y):c.moveTo(x,y)}
           c.stroke();
         }
