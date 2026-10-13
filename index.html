@@ -11,23 +11,39 @@
 <link rel="stylesheet" href="assets/site.css">
 <link rel="stylesheet" href="assets/bar.css">
 <style>
-/* The page floats in shallow water (see assets/water.js). On it, one object: a fly agaric's spore print,
-   from free, crowded gills with short truncate gills between. Quiet otherwise. */
+/* The page floats on a Starry Night: short brushstrokes following a swirling flow, in Van Gogh's blues and chrome yellow. On it, one object: a fly agaric's spore print,
+   from free, crowded gills with short truncate gills between, large, slowly turning, faintly haloed, with slow ripples spreading from it. Quiet otherwise. */
 :root{
-  --bg:#f5f4ef; --ink:#1f2326; --dim:#6b7275; --line:#dfe0da; --acc:#1f6f78; --spore:#2a2622;
+  --bg:#f5f4ef; --ink:#1f2326; --dim:#6b7275; --line:#dfe0da; --acc:#1f6f78; --spore:#2a2622; --glow:rgba(42,38,34,.10); --corona:rgba(42,38,34,.07); --ripple:rgba(42,38,34,.16);
   --f-disp:'Spectral',Georgia,serif; --f-body:'Source Sans 3',system-ui,sans-serif;
   color-scheme:light;
 }
-@media (prefers-color-scheme:dark){:root{--bg:#0d1417;--ink:#e4ebec;--dim:#8a9b9f;--line:#1e292d;--acc:#6cc3c9;--spore:#eef2f1;color-scheme:dark}}
+@media (prefers-color-scheme:dark){:root{--bg:#0d1417;--ink:#e4ebec;--dim:#8a9b9f;--line:#1e292d;--acc:#6cc3c9;--spore:#eef2f1;--glow:rgba(205,236,236,.22);--corona:rgba(205,236,236,.06);--ripple:rgba(205,236,236,.18);color-scheme:dark}}
 body{background:#0b2a33}
 .wrap{max-width:none;padding-inline:clamp(20px,5vw,56px)}
 
-.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.8fr);align-items:center;gap:clamp(24px,6vw,80px);padding-block:clamp(56px,10vh,104px) 56px}
+.page{overflow:hidden}
+.hero{position:relative;min-height:clamp(480px,70vh,680px);display:flex;align-items:center;padding-block:clamp(56px,10vh,104px) 56px}
+.hero .text{position:relative;z-index:1;max-width:min(52%,480px)}
 .hero h1{font-size:clamp(2.3rem,5.4vw,3.8rem);letter-spacing:-.005em;font-weight:300}
 .hero .lede{font:300 clamp(1.08rem,1.7vw,1.22rem)/1.7 var(--f-disp);max-width:36ch;margin:26px 0 0;color:color-mix(in srgb,var(--ink) 80%,var(--bg))}
 .hero .where{margin:26px 0 0;font-size:.8rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
-.print{width:100%;max-width:380px;aspect-ratio:1;justify-self:center;display:block}
-@media (max-width:760px){.hero{grid-template-columns:minmax(0,1fr);padding-block:32px 40px}.print{grid-row:1;max-width:240px;justify-self:start}}
+/* the print, large and bleeding off the page's right edge; it turns once every ten minutes inside a faint corona */
+.orbit{--d:clamp(420px,58vw,700px);position:absolute;z-index:0;top:calc(50% - var(--d) / 2);right:calc(-1 * clamp(80px,13vw,190px));width:var(--d);height:var(--d);pointer-events:none}
+.orbit::before{content:"";position:absolute;inset:-6%;border-radius:50%;background:radial-gradient(closest-side,transparent 82%,var(--corona) 92%,transparent 100%)}
+.print{width:100%;height:100%;display:block;filter:drop-shadow(0 0 36px var(--glow))}
+/* ripples: thin rings that spread slowly and widely from the print, passing faintly over the text */
+.ripples{position:absolute;z-index:2;top:50%;right:calc(-1 * clamp(80px,13vw,190px));width:clamp(420px,58vw,700px);height:clamp(420px,58vw,700px);transform:translateY(-50%);pointer-events:none}
+.ripples i{position:absolute;inset:0;border-radius:50%;border:1px solid var(--ripple);opacity:0}
+@media (prefers-reduced-motion:no-preference){
+  .ripples i{animation:ripple 18s cubic-bezier(.25,.5,.4,1) infinite}
+  .ripples i:nth-of-type(2){animation-delay:6s} .ripples i:nth-of-type(3){animation-delay:12s}
+  @keyframes ripple{0%{transform:scale(.95);opacity:0}10%{opacity:.8}70%{opacity:.35}100%{transform:scale(2.6);opacity:0}}
+}
+@media (prefers-reduced-motion:reduce){.ripples i{opacity:.35;transform:scale(1.25)}.ripples i:nth-of-type(2){transform:scale(1.7);opacity:.2}.ripples i:nth-of-type(3){transform:scale(2.2);opacity:.1}}
+@media (max-width:760px){.ripples{top:-38vw;right:-34vw;width:100vw;height:100vw;transform:none}}
+@media (prefers-reduced-motion:no-preference){.print{animation:turn 600s linear infinite}@keyframes turn{to{transform:rotate(360deg)}}}
+@media (max-width:760px){.hero{min-height:0;padding-block:170px 40px;align-items:flex-end}.hero .text{max-width:none}.orbit{--d:100vw;top:-38vw;right:-34vw;opacity:.5}}
 
 .rooms{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
 .rooms a{display:grid;grid-template-columns:8em minmax(0,1fr) auto;gap:6px 28px;align-items:baseline;padding:20px 0;border-bottom:1px solid var(--line);text-decoration:none}
@@ -47,7 +63,7 @@ footer.foot .wrap{max-width:none}
 </style>
 </head>
 <body data-depth="1,9">
-<canvas class="backdrop" id="water" aria-hidden="true"></canvas>
+<canvas class="backdrop tall" id="swirl" data-parallax=".3" aria-hidden="true"></canvas>
 <div class="page">
 <header class="bar"><div class="bar-in">
   <nav class="sites" aria-label="Sites"><a class="here" href="./" aria-current="true"><span class="seal" aria-hidden="true">JS</span>Jason Summers</a><a class="away" href="https://bucatini-mickey.github.io/" title="Bucatini Mickey: films, games, photos and other hobbies">BM</a></nav>
@@ -56,12 +72,13 @@ footer.foot .wrap{max-width:none}
 
 <main class="wrap">
   <section class="hero">
-    <div>
+    <div class="text">
       <h1>Jason M. Summers</h1>
       <p class="lede">I work on underwater computer vision: what happens to feature matching and SLAM when the water has taken the red out of the picture, and whether image enhancement actually helps a machine see.</p>
       <p class="where">PhD researcher · Swansea University</p>
     </div>
-    <canvas class="print" data-seed="23" role="img" aria-label="A fly agaric spore print: fine radial lines left by the gills"></canvas>
+    <div class="ripples" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="orbit"><canvas class="print" data-seed="23" role="img" aria-label="A fly agaric spore print: fine radial lines left by the gills"></canvas></div>
   </section>
 
   <ul class="rooms">
@@ -77,7 +94,42 @@ footer.foot .wrap{max-width:none}
 <footer class="foot"><div class="wrap"><span>© Jason M. Summers</span><span><a href="https://bucatini-mickey.github.io/">Hobbies: Bucatini Mickey ↗</a></span></div></footer>
 </div>
 
-<script src="assets/water.js"></script>
+<script>
+/* The Starry Night field (kept from the old hobby hub): short brushstrokes following a flow with a few vortices,
+   coloured left to right from deep Prussian blue through cobalt to chrome yellow, drawn once. */
+(function(){
+  const cv=document.getElementById('swirl');
+  const PAL=['#14294a','#1f3f7a','#2f5ea8','#4f86c6','#8fb6d8','#e0c45a','#f2dc7c'];
+  function rng(seed){let s=seed>>>0||1;return()=>((s=Math.imul(s^s>>>15,1|s)+0x6D2B79F5|0,((s^s>>>14)>>>0)/4294967296))}
+  function draw(){
+    const r=rng(57), dpr=Math.min(2,devicePixelRatio||1), W=cv.clientWidth, H=cv.clientHeight;
+    cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
+    const c=cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0);
+    c.fillStyle='#0f1f38'; c.fillRect(0,0,W,H);
+    const vort=Array.from({length:9},()=>({x:r()*W,y:r()*H*.85,s:(r()<.5?-1:1)*(.6+r()*.8),rad:70+r()*150}));
+    const field=(x,y)=>{let a=Math.sin(x*.006+Math.sin(y*.009)*1.6)+Math.cos(y*.005-x*.002)*1.1;
+      let vx=Math.cos(a),vy=Math.sin(a)*.6;
+      for(const v of vort){const dx=x-v.x,dy=y-v.y,d=Math.hypot(dx,dy)+1,w=Math.exp(-d/v.rad)*2.2*v.s;vx+=-dy/d*w;vy+=dx/d*w}
+      const m=Math.hypot(vx,vy)||1;return [vx/m,vy/m]};
+    const n=Math.floor(W*H/230); c.lineCap='round';
+    for(let i=0;i<n;i++){
+      let x=r()*W,y=r()*H;
+      // yellow gathers round the vortices, as the stars do; blue everywhere else
+      let near=0; for(const v of vort){near=Math.max(near,Math.exp(-Math.hypot(x-v.x,y-v.y)/(v.rad*.7)))}
+      const t=Math.min(.999,Math.max(0,.15+y/H*.15+near*.75+(r()-.5)*.25));
+      c.strokeStyle=PAL[Math.floor(t*PAL.length)]; c.globalAlpha=.3+r()*.5; c.lineWidth=1.4+r()*3.6;
+      c.beginPath(); c.moveTo(x,y);
+      const len=5+Math.floor(r()*9);
+      for(let k=0;k<len;k++){const [dx,dy]=field(x,y);x+=dx*3.2;y+=dy*3.2;c.lineTo(x,y)}
+      c.stroke();
+    }
+    c.globalAlpha=1;
+  }
+  let t; addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(draw,200)});
+  draw();
+})();
+</script>
+<script src="assets/parallax.js"></script>
 <script>
 /* A fly agaric's spore print. The gills are free (they stop short of the stem, leaving a bare ring round it) and
    crowded, with short truncate gills between the long ones that end squarely at different lengths. Spores fall
@@ -86,12 +138,12 @@ footer.foot .wrap{max-width:none}
   const cv=document.querySelector('canvas.print'); if(!cv) return;
   function rng(seed){let s=seed>>>0||1;return()=>((s=Math.imul(s^s>>>15,1|s)+0x6D2B79F5|0,((s^s>>>14)>>>0)/4294967296))}
   function draw(){
-    const r=rng(+cv.dataset.seed||1), dpr=Math.min(3,(devicePixelRatio||1)*1.5), S=cv.clientWidth;
+    const r=rng(+cv.dataset.seed||1), dpr=Math.min(2.5,(devicePixelRatio||1)*1.25), S=cv.clientWidth;
     if(!S) return;
     cv.width=cv.height=Math.round(S*dpr);
     const c=cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0); c.clearRect(0,0,S,S);
     const col=getComputedStyle(document.documentElement).getPropertyValue('--spore').trim();
-    const cx=S*.5, cy=S*.5, R=S*.48, free=R*.12, full=150;
+    const cx=S*.5, cy=S*.5, R=S*.48, free=R*.1, full=230;
     const gaps=[];
     for(let i=0;i<full;i++){
       const a=i/full*Math.PI*2, step=Math.PI*2/full, n=1+Math.floor(r()*2);
@@ -109,7 +161,7 @@ footer.foot .wrap{max-width:none}
     c.restore(); c.filter='none';
     c.globalAlpha=1; c.globalCompositeOperation='destination-in';
     const g=c.createRadialGradient(cx,cy,free*.9,cx,cy,R*1.01);
-    g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(.16,'rgba(0,0,0,.3)'); g.addColorStop(.45,'rgba(0,0,0,.95)'); g.addColorStop(.8,'rgba(0,0,0,.8)'); g.addColorStop(1,'rgba(0,0,0,0)');
+    g.addColorStop(0,'rgba(0,0,0,.08)'); g.addColorStop(.14,'rgba(0,0,0,.45)'); g.addColorStop(.38,'rgba(0,0,0,.95)'); g.addColorStop(.8,'rgba(0,0,0,.8)'); g.addColorStop(1,'rgba(0,0,0,0)');
     c.fillStyle=g; c.fillRect(0,0,S,S);
     c.globalCompositeOperation='source-over';
   }
