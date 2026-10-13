@@ -1,10 +1,10 @@
-/* The diatom backdrop for the home page (?bg=diatoms; assets/foam.js draws the default), and the ripples.
+/* The diatom backdrop for the home page, loaded by assets/foam.js when the address has ?bg=diatoms.
    Diatoms under dark-field light: glassy and symmetrical, glinting with structural colour. */
 (function(){
   const cv=document.getElementById('ink'); if(!cv) return;
   if(new URLSearchParams(location.search).get('bg')!=='diatoms') return;
   const dark=matchMedia('(prefers-color-scheme: dark)');
-  function rng(seed){let s=seed>>>0||1;return()=>((s=Math.imul(s^s>>>15,1|s)+0x6D2B79F5|0,((s^s>>>14)>>>0)/4294967296))}
+  function rng(seed){let s=seed>>>0;return()=>{s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
   const hsl=(h,s,l,a=1)=>`hsla(${h},${s}%,${l}%,${a})`;
 
   /* ---------- diatoms ---------- */
@@ -60,40 +60,4 @@
   let t; addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(draw,250)});
   dark.addEventListener?.('change',draw);
   draw();
-})();
-
-/* Ripples spreading from the spore print across the page: each one a short train of crests and troughs, the
-   crests catching the light and the troughs darkening, with a slightly uneven front. Drawn on <canvas id="ripples">
-   laid over the hero in soft-light, so the page itself seems to ripple. */
-(function(){
-  const cv=document.getElementById('ripples'), orbit=document.querySelector('.orbit'); if(!cv||!orbit) return;
-  const still=matchMedia('(prefers-reduced-motion: reduce)').matches, PERIOD=16, COUNT=3, LIFE=PERIOD*COUNT;
-  const darkQ=matchMedia('(prefers-color-scheme: dark)'); let dark=darkQ.matches; darkQ.addEventListener?.('change',e=>dark=e.matches);
-  let W=0,H=0,dpr=1,cx=0,cy=0,R0=0;
-  function size(){
-    dpr=Math.min(2,devicePixelRatio||1); W=cv.clientWidth; H=cv.clientHeight;   // the canvas spans the page's full width and runs below the hero cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
-    const a=cv.getBoundingClientRect(), b=orbit.getBoundingClientRect(); cx=b.left+b.width/2-a.left; cy=b.top+b.height/2-a.top; R0=b.width*.47;
-  }
-  function wobble(th,t,k){return Math.sin(th*5+t*.6+k)*2.2+Math.sin(th*11-t*.4+k*2)*1.2+Math.sin(th*23+k*3)*.6}
-  function draw(t){
-    const c=cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0); c.clearRect(0,0,W,H); c.filter='blur(2.5px)';
-    const reach=Math.hypot(Math.max(cx,W-cx),Math.max(cy,H-cy));
-    for(let k=0;k<COUNT;k++){
-      const age=((t+k*PERIOD)%LIFE)/LIFE, front=R0+(reach-R0)*Math.pow(age,.8), fade=Math.sin(Math.PI*Math.min(1,age*1.15))*(1-age*.5);
-      if(fade<=0) continue;
-      for(let w=0;w<5;w++){                     // the train: crest, trough, crest... shrinking behind the front
-        const rr=front-w*13, amp=fade*Math.exp(-w*.45);
-        if(rr<R0*.98) continue;
-        for(const [off,col] of [[0,'255,255,255'],[6.5,'0,0,0']]){
-          c.strokeStyle=`rgba(${col},${((col[0]==='2'?dark?.07:.12:dark?.18:.06)*amp).toFixed(3)})`; c.lineWidth=6; c.beginPath();
-          for(let i=0;i<=180;i++){const th=i/180*6.283, rad=rr-off+wobble(th,t,k+w); const x=cx+Math.cos(th)*rad, y=cy+Math.sin(th)*rad; i?c.lineTo(x,y):c.moveTo(x,y)}
-          c.stroke();
-        }
-      }
-    }
-  }
-  let last=0,t0=performance.now();
-  function loop(ts){ if(!document.hidden&&ts-last>40){last=ts;draw((ts-t0)/1000)} requestAnimationFrame(loop) }
-  addEventListener('resize',()=>{size();draw((performance.now()-t0)/1000)});
-  size(); draw(still?PERIOD*.6:0); if(!still) requestAnimationFrame(loop);
 })();

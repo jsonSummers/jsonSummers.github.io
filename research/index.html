@@ -7,7 +7,7 @@
 <meta name="description" content="PhD research by Jason M. Summers: underwater image enhancement, feature matching and visual SLAM.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;1,300&family=Source+Sans+3:wght@400;600&family=IBM+Plex+Mono:wght@400;500&family=Cormorant+Garamond:wght@500&family=Mulish:wght@500;600&display=swap">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;1,300&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=Cormorant+Garamond:wght@500&amp;family=Mulish:wght@400;500;600&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;1,300&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=Cormorant+Garamond:wght@500&amp;family=Mulish:wght@400;500;600&amp;display=swap"></noscript>
 <link rel="stylesheet" href="../assets/site.css">
 <link rel="stylesheet" href="../assets/bar.css">
 <style>
@@ -17,11 +17,22 @@
    as a camera would see it down here. */
 :root{
   --bg:#f2f0e8; --ink:#1d2224; --dim:#5d6669; --line:rgba(29,34,36,.16); --acc:#1f6f78;
-  --f-disp:'Spectral',Georgia,serif; --f-body:'Source Sans 3',system-ui,sans-serif; --f-mono:'IBM Plex Mono',ui-monospace,monospace;
+  --f-disp:'Spectral',Georgia,serif; --f-body:'Mulish',system-ui,sans-serif; --f-mono:'IBM Plex Mono',ui-monospace,monospace;
   color-scheme:light;
 }
 body{background:#0b2a33}
-.page{background:color-mix(in srgb,var(--water,#f2f0e8) 92%,var(--ink) 8%);transition:none}
+/* the text colours fade between their shallow and deep values rather than switching */
+@property --ink{syntax:'<color>';inherits:true;initial-value:#1d2224}
+@property --dim{syntax:'<color>';inherits:true;initial-value:#5d6669}
+@property --acc{syntax:'<color>';inherits:true;initial-value:#1f6f78}
+@property --line{syntax:'<color>';inherits:true;initial-value:rgba(29,34,36,.16)}
+@property --pane{syntax:'<color>';inherits:true;initial-value:rgba(255,255,255,.16)}
+:root{--pane:rgba(255,255,255,.16);transition:--ink 1s ease,--dim 1s ease,--acc 1s ease,--line 1s ease,--pane 1s ease}
+:root.deep{--ink:#e6eef0;--dim:#9fb5bd;--acc:#8fd3dc;--line:rgba(230,238,240,.16);--pane:rgba(0,8,14,.22)}
+/* the page is a pane of the same water, a little see-through so the snow drifts behind the text, leaning
+   lighter in the shallows and darker in the deep so the text always reads */
+.page{background:linear-gradient(var(--pane),var(--pane)),color-mix(in srgb,var(--water,#f2f0e8) 78%,transparent)}
+@media (max-width:760px){.page{background:linear-gradient(var(--pane),var(--pane)),color-mix(in srgb,var(--water,#f2f0e8) 50%,transparent)}}
 .wrap{max-width:none;padding-inline:clamp(20px,5vw,56px)}
 .inner{max-width:680px}
 
@@ -76,7 +87,7 @@ footer.foot{margin-top:64px;border-top:1px solid var(--line);padding-block:20px 
 <canvas class="backdrop" id="water" aria-hidden="true"></canvas>
 <div class="page">
 <header class="bar"><div class="bar-in">
-  <nav class="sites" aria-label="Sites"><a class="here" href="../" aria-current="true"><span class="seal" aria-hidden="true">JS</span>Jason Summers</a><a class="away" href="https://bucatini-mickey.github.io/" title="Bucatini Mickey: films, games, photos and other hobbies">BM</a></nav>
+  <nav class="sites" aria-label="Sites"><a class="here" href="../" aria-current="true">Jason Summers</a><a class="away" href="https://bucatini-mickey.github.io/" title="Bucatini Mickey: films, games, photos and other hobbies">BM</a></nav>
   <nav class="pages" aria-label="Pages"><a href="../">Home</a><a href="./" aria-current="page">Research</a><a href="../cv/">CV</a><a href="../links/">Links</a></nav>
 </div></header>
 
@@ -157,13 +168,14 @@ footer.foot{margin-top:64px;border-top:1px solid var(--line);padding-block:20px 
     .map(h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)));
   const chart=document.getElementById('chart'), sw=PATCH.map(()=>chart.appendChild(document.createElement('span')));
   const marks=[...document.querySelectorAll('[data-at]')], $=id=>document.getElementById(id);
+  let deep=false;
   function label(){marks.forEach(m=>{const y=m.getBoundingClientRect().top+scrollY-innerHeight*.5;m.textContent=Math.round(W.depthAt(Math.max(0,y)))+' m'})}
   addEventListener('depth',e=>{
-    const {depth,T,rgb}=e.detail, dark=W.lum(rgb)<.22;
-    root.style.setProperty('--ink',dark?'#e6eef0':'#1d2224');
-    root.style.setProperty('--dim',dark?'#9fb5bd':'#5d6669');
-    root.style.setProperty('--line',dark?'rgba(230,238,240,.16)':'rgba(29,34,36,.16)');
-    root.style.setProperty('--acc',dark?'#8fd3dc':'#1f6f78');
+    const {depth,T,rgb}=e.detail, L=W.lum(rgb);
+    // the text turns pale once the light has gone, and dark again on the way up (with a little slack, so it
+    // never flickers at the threshold); the change itself fades over a second (see @property above)
+    if(!deep&&L<.3) deep=true; else if(deep&&L>.36) deep=false;
+    root.classList.toggle('deep',deep);
     $('dm').textContent=depth<10?depth.toFixed(1):Math.round(depth);
     ['r','g','b'].forEach((k,i)=>{$('b'+k).style.transform=`scaleX(${T[i]})`;$('o'+k).textContent=Math.round(T[i]*100)+'%'});
     const ex=Math.min(6,.95/Math.max(...T));   // the camera's auto-exposure lifts the brightness; it cannot bring back the red
