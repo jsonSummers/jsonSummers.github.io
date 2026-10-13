@@ -26,6 +26,7 @@
 body{background:linear-gradient(112deg,var(--light) 0%,transparent 50%) fixed,var(--wall)}
 
 .tools{display:flex;justify-content:flex-end;gap:16px;max-width:860px;margin:28px auto 10px;padding-inline:clamp(16px,5vw,48px);font-size:.9rem}
+.tools{align-items:center}.tools .note{margin-right:auto;color:var(--dim);font-style:italic;font-family:var(--f-disp)}
 .tools button{font:600 .9rem var(--f-body);color:var(--ultra);background:none;border:1px solid var(--line);border-radius:4px;padding:6px 14px;cursor:pointer}
 .tools button:hover{border-color:var(--ultra)}
 
@@ -76,7 +77,7 @@ body{background:linear-gradient(112deg,var(--light) 0%,transparent 50%) fixed,va
   <nav class="pages" aria-label="Pages"><a href="../">Home</a><a href="../research/">Research</a><a href="./" aria-current="page">CV</a><a href="../links/">Links</a></nav>
 </div></header>
 
-<div class="tools"><button type="button" onclick="print()">Print / save as PDF</button></div>
+<div class="tools"><span class="note">A full CV is on its way.</span><button type="button" onclick="print()">Print / save as PDF</button></div>
 
 <article class="sheet cv">
   <header class="head">
@@ -86,9 +87,8 @@ body{background:linear-gradient(112deg,var(--light) 0%,transparent 50%) fixed,va
     </div>
     <address>
       Swansea University, UK<br>
-      <span class="todo">email</span><br>
       <a href="https://github.com/jsonSummers">github.com/jsonSummers</a><br>
-      <span class="todo">Scholar · LinkedIn · ORCID</span>
+      <a href="https://scholar.google.com/citations?user=W-gpECkAAAAJ&amp;hl=en">Google Scholar</a> · <a href="https://orcid.org/0009-0006-4161-2865">ORCID</a>
     </address>
   </header>
 
@@ -96,13 +96,9 @@ body{background:linear-gradient(112deg,var(--light) 0%,transparent 50%) fixed,va
     <h2>Education</h2>
     <div>
       <div class="entry">
-        <div class="t"><h3>PhD, Computer Science</h3><span class="when todo">20XX–present</span></div>
+        <div class="t"><h3>PhD, Computer Science</h3><span class="when">in progress</span></div>
         <p class="at">Swansea University · supervised by Mark W. Jones</p>
         <p>Underwater image enhancement and its effect on feature matching and visual SLAM.</p>
-      </div>
-      <div class="entry">
-        <div class="t"><h3 class="todo">Previous degree</h3><span class="when todo">years</span></div>
-        <p class="at todo">Institution · result</p>
       </div>
     </div>
   </section>
@@ -111,11 +107,10 @@ body{background:linear-gradient(112deg,var(--light) 0%,transparent 50%) fixed,va
     <h2>Research</h2>
     <div>
       <div class="entry">
-        <div class="t"><h3>Doctoral research</h3><span class="when todo">20XX–present</span></div>
+        <div class="t"><h3>Doctoral research</h3></div>
         <ul>
           <li>Introduced local matching stability and furthest matchable frame, measures of how enhancement changes frame matching underwater.</li>
           <li>Benchmarked enhancement methods through ORB-SLAM3 on real underwater footage.</li>
-          <li>Collected underwater video with a GoPro HERO13 Black; COLMAP reconstruction of submerged objects.</li>
         </ul>
       </div>
     </div>
@@ -140,17 +135,13 @@ body{background:linear-gradient(112deg,var(--light) 0%,transparent 50%) fixed,va
   <section>
     <h2>Skills</h2>
     <dl class="skills">
-      <dt>Languages</dt><dd>Python, Rust, TypeScript <span class="todo">check</span></dd>
+      <dt>Languages</dt><dd>Python, Rust, TypeScript</dd>
       <dt>Vision</dt><dd>OpenCV, ORB-SLAM3, COLMAP, feature matching, image enhancement</dd>
-      <dt>Learning</dt><dd><span class="todo">PyTorch / TensorFlow</span>, GANs, VAEs</dd>
+      <dt>Learning</dt><dd>GANs, variational autoencoders</dd>
       <dt>Tools</dt><dd>Docker, Git, ffmpeg, LaTeX, CUDA</dd>
     </dl>
   </section>
 
-  <section>
-    <h2>Teaching</h2>
-    <div class="entry"><p class="todo">Demonstrating, tutoring or supervision, if any.</p></div>
-  </section>
 </article>
 
 <footer class="foot"><div class="wrap"><span>© Jason M. Summers</span><span><a href="../">Home</a></span></div></footer>
