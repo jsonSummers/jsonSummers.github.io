@@ -28,7 +28,7 @@ body{background:#0c0c0c}
 .page{overflow:hidden;background:
   radial-gradient(120% 80% at 20% 0%,rgba(255,255,255,.55),transparent 60%),
   url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.55' numOctaves='3' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 .45  0 0 0 0 .4  0 0 0 0 .32  0 0 0 .06 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23f)'/%3E%3C/svg%3E"),
-  var(--paper);box-shadow:0 30px 90px -30px rgba(0,0,0,.8),0 0 0 1px rgba(0,0,0,.4)}
+  color-mix(in srgb,var(--paper) var(--glass),transparent);box-shadow:0 30px 90px -30px rgba(0,0,0,.8),0 0 0 1px rgba(0,0,0,.4)}
 .hero{--d:clamp(400px,52vw,640px);position:relative;min-height:max(clamp(480px,70vh,680px),calc(var(--d) + 40px));display:flex;align-items:center;padding-block:clamp(56px,10vh,104px) 56px}
 .hero .text{position:relative;z-index:1;max-width:min(52%,480px)}
 .hero h1{font-size:clamp(2.3rem,5.4vw,3.8rem);letter-spacing:-.005em;font-weight:300}
@@ -36,7 +36,9 @@ body{background:#0c0c0c}
 .hero .where{margin:26px 0 0;font-size:.8rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
 /* the print, large and running off the page's right edge, kept clear of the words */
 .print{position:absolute;z-index:0;top:calc(50% - var(--d) / 2);right:calc(-1 * clamp(110px,15vw,210px));width:var(--d);height:var(--d);display:block;pointer-events:none;mix-blend-mode:multiply}
-@media (max-width:760px){.hero{--d:66vw;min-height:0;padding-block:calc(66vw + 12px) 40px;align-items:flex-end}.hero .text{max-width:none}.print{top:6px;right:-14vw;opacity:.8}}
+/* on a phone the print lies under the words, large and faint, running off the right edge */
+@media (max-width:760px){.hero{--d:118vw;min-height:0;padding-block:clamp(64px,16vh,120px) 64px}.hero .text{max-width:none}
+  .print{right:-46vw;opacity:.3}.hero .text>*{text-shadow:0 1px 14px var(--paper),0 0 4px var(--paper)}}
 
 .rooms{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
 .rooms a{display:grid;grid-template-columns:8em minmax(0,1fr) auto;gap:6px 28px;align-items:baseline;padding:20px 0;border-bottom:1px solid var(--line);text-decoration:none}
@@ -56,9 +58,9 @@ footer.foot .wrap{max-width:none}
 /* the ocean page (the default): an Amanita muscaria print is white, so it is taken on dark paper, here a deep sea-slate */
 :root[data-v="ocean"]{--paper:#101b22;--ink:#e6eef0;--dim:#93a7ae;--line:#22323a;--acc:#8fd3dc;color-scheme:dark}
 :root[data-v="ocean"] body{background:#03101f}
-:root[data-v="ocean"] .page{background:radial-gradient(120% 80% at 20% 0%,rgba(140,200,220,.08),transparent 60%),var(--paper)}
+:root[data-v="ocean"] .page{background:radial-gradient(120% 80% at 20% 0%,rgba(140,200,220,.08),transparent 60%),color-mix(in srgb,var(--paper) var(--glass),transparent)}
 :root[data-v="ocean"] .print{mix-blend-mode:screen}
-.bar{background:transparent}
+.bar{background:var(--paper)}
 </style>
 </head>
 <body>

@@ -21,7 +21,8 @@
   color-scheme:light;
 }
 body{background:#14120e}
-.page{background:var(--paper)}
+.page{--glass:95%;background:color-mix(in srgb,var(--paper) var(--glass),transparent)}
+@media (max-width:620px){.page{--glass:92%}}
 
 .tools{display:flex;justify-content:flex-end;gap:16px;padding:22px clamp(20px,6vw,72px) 0;font-size:.9rem}
 .tools{align-items:center}.tools .note{margin-right:auto;color:var(--dim);font-style:italic;font-family:var(--f-disp)}
