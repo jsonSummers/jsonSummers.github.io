@@ -1,11 +1,10 @@
 /* A spore print, after a photographed one. The cap's gills are free (they stop short of the stem, leaving a large
    bare circle) and crowded, with shorter gills between the long ones starting at different distances out. Each
    gill is a thin, crisp line where no spores fell; in places the gills wave, and neighbouring gills wave together,
-   as real ones do. Between them the deposit is dense and fine, a little heavier in the middle of each gap, with
-   paler patches drawn out along the gills where the cap sat unevenly. The rim is a fringe: each gap's deposit
+   as real ones do. Between them the deposit is even. The rim is a fringe: each gap's deposit
    ends at its own distance, so the edge is toothed rather than drawn.
-   Each pixel is worked out directly (which gill is nearest, how far the deposit reaches there, how dense it is),
-   with smooth gradient noise for the patches and a fine grain like settled powder. It is worked out off the page,
+   The deposit is made of spores: tens of thousands of fine dots laid evenly (one to each cell of a jittered grid),
+   each kept unless it falls on a gill, so the gills are drawn by the dots alone. It is worked out off the page,
    a little at a time between frames, and shown only when whole, fading in; it is redrawn only when its width
    changes (not when a phone's address bar slides away), and the old one stays up until the new one is ready.
    Where there is a graphics card, the finished print is shown through a tiny shader that lets it breathe and
@@ -33,7 +32,7 @@
   /* ---- working the print out, into an off-page canvas ---- */
   function render(N,done,cancelled){
     const buf=document.createElement('canvas'); buf.width=buf.height=N;
-    const c=buf.getContext('2d'), r=rng(+cv.dataset.seed||1), TAU=Math.PI*2, nz=perlinP(+cv.dataset.seed||1);
+    const c=buf.getContext('2d'), r=rng(+cv.dataset.seed||1), TAU=Math.PI*2, nz=perlinP(+cv.dataset.seed||1);   // nz: only for where the gills wave
     const ink=root.dataset.v==='ocean'?[236,241,242]:[58,40,28];
     const R=N*.47, cx=N/2, cy=N/2, px=N/800;                           // px: one pixel of the 800-wide design
     const F=160, gills=[];
@@ -44,38 +43,40 @@
     }
     gills.sort((x,y)=>x.a-y.a);
     const G=gills.length, angs=Float64Array.from(gills,g=>g.a);
-    for(const g of gills) g.hw=px*(g.w>.982?2:.36+.42*g.w*g.w*g.w);   // half-width; a few pressed wide
+    for(const g of gills) g.hw=px*(g.w>.982?2.2:.5+.45*g.w*g.w*g.w);   // half-width; a few pressed wide
     const harm=Array.from({length:7},(_,k)=>[(r()-.5)*(k<3?.04:.014),r()*TAU]);
     const rim=a=>R*(1+harm.reduce((s,[m,p],k)=>s+m*Math.sin(a*(k+2)+p),0));
     const hole=a=>R*.29*(1+.05*Math.sin(2*a+1.3)+.03*Math.sin(5*a+.4));
     const wav=a=>.0012+.011*sm(.5,.8,nz(a/TAU*9,3.7,9));               // how much the gills wave, round the print
-    const img=c.createImageData(N,N), d=img.data, top=Math.max(0,Math.floor(cy-R*1.12)), bot=Math.min(N,Math.ceil(cy+R*1.12));
-    let y=top;
+    // the spores: one to each cell of a fine jittered grid, so they lie evenly, without clumps or bands; a spore is
+    // kept unless it would sit on a gill, inside the bare centre, or past its gap's end at the rim
+    const sp=1.42*px, cols=Math.ceil(N/sp), dots=[[],[],[]];
+    let row=0;
     (function strip(){
       if(cancelled()) return;
       const t0=performance.now();
-      for(;y<bot&&performance.now()-t0<10;y++) for(let x=0;x<N;x++){
-        const dx=x+.5-cx, dy=y+.5-cy, rad=Math.hypot(dx,dy); if(rad>R*1.12) continue;
+      for(;row<cols&&performance.now()-t0<10;row++) for(let i=0;i<cols;i++){
+        const x=(i+.5+(r()-.5)*.9)*sp, y=(row+.5+(r()-.5)*.9)*sp, dx=x-cx, dy=y-cy, rad=Math.hypot(dx,dy);
+        if(rad>R*1.1) continue;
         let a=Math.atan2(dy,dx); if(a<0) a+=TAU;
-        const h0=hole(a); if(rad<h0) continue;
+        if(rad<hole(a)+R*.02*r()) continue;                                  // the bare centre, its edge a little ragged
         const u=rad/R, aw=a-wav(a)*Math.sin(u*15+a*2)*u;                    // undo the wave, then find the nearest gill
         let lo=0,hi=G; while(lo<hi){const m=(lo+hi)>>1; if(angs[m]<aw) lo=m+1; else hi=m}
         let best=1e9;
         for(let k=-4;k<=4;k++){ const g=gills[(lo+k+G)%G]; if(rad<g.start) continue;
           let e=Math.abs(aw-g.a-.0007*Math.sin(u*31+g.w*40)); if(e>Math.PI) e=TAU-e; e*=rad;
           if(e-g.hw<best) best=e-g.hw }
-        const edge=rim(a)*(1+.045*(hash(lo)-.5)), fringe=sm(edge,edge-R*(.02+.04*hash(lo+7)),rad);   // each gap ends at its own radius
-        if(fringe<=0) continue;
-        let dep=sm(h0,h0+R*.07,rad)*fringe*sm(-.55*px,.55*px,best);                                  // bare centre, rim, the gill itself
-        dep*=.86+.14*sm(0,2.2*px,best);                                                             // a little heavier mid-gap
-        const m=nz(a/TAU*90,u*3.2,90)*.6+nz(a/TAU*180,u*6.4,180)*.4;                                // paler patches, drawn out along the gills
-        dep*=(1-.42*sm(.38,.86,m))*(.9+.1*nz(a/TAU*12,u*2,12));
-        dep*=.86+.28*Math.random();                                                                 // the grain of settled spores
-        if(dep<=0) continue;
-        const o=(y*N+x)*4; d[o]=ink[0]; d[o+1]=ink[1]; d[o+2]=ink[2]; d[o+3]=Math.min(255,dep*246);
+        const dr=px*(.46+.24*r());
+        if(best<dr*1.05) continue;                                           // none on the gill
+        const edge=rim(a)*(1+.045*(hash(lo)-.5));                             // each gap ends at its own radius
+        if(rad>edge-R*(.02+.04*hash(lo+7))*r()) continue;
+        dots[Math.floor(r()*3)].push(x,y,dr);
       }
-      if(y<bot) return setTimeout(strip,0);
-      c.putImageData(img,0,0); done(buf);
+      if(row<cols) return setTimeout(strip,0);
+      c.fillStyle=`rgb(${ink})`;
+      dots.forEach((d,k)=>{ c.globalAlpha=[.72,.86,1][k]; c.beginPath();
+        for(let j=0;j<d.length;j+=3){ c.moveTo(d[j]+d[j+2],d[j+1]); c.arc(d[j],d[j+1],d[j+2],0,TAU) } c.fill() });
+      c.globalAlpha=1; done(buf);
     })();
   }
   /* ---- showing it: through a small shader if there is a graphics card, else as a plain picture ---- */
