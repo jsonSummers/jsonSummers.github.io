@@ -21,7 +21,7 @@
     const v2=root.dataset.print==='v2'||root.dataset.v==='ocean';
     const ink=root.dataset.v==='ocean'?[236,240,240]:[43,35,30];
     const R=N*.47, free=R*.11, cx=N/2, cy=N/2;
-    const F=v2?205:150, gills=[];
+    const F=v2?172:150, gills=[];
     for(let i=0;i<F;i++){
       const a=i/F*TAU+(r()-.5)*.004;
       gills.push({a,start:free*1.02,w:r()});
@@ -32,22 +32,22 @@
     const G=gills.length, angs=Float64Array.from(gills,g=>g.a);
     const rimH=Array.from({length:v2?11:7},(_,k)=>[r()*(v2?(k<4?.03:.012):.018),r()*TAU]), rim=a=>R*(1+rimH.reduce((s,[m,p],k)=>s+m*Math.sin(a*(k+2)+p),0));
     const hub=a=>free*(v2?1+.12*Math.sin(a*3+1)+.07*Math.sin(a*7+2):1);
-    const wf=g=>v2?(g.w>.985?2.4:.5+1.15*g.w*g.w*g.w):1;   // how wide each gill presses
+    const wf=g=>v2?(g.w>.985?3:.75+.9*g.w*g.w*g.w):1;   // how wide each gill presses
     const wave=(g,rad)=>.0025*Math.sin(rad/R*9+g.w*20);
     function gapAt(a,rad){
       let lo=0,hi=G; while(lo<hi){const m=(lo+hi)>>1; if(angs[m]<a) lo=m+1; else hi=m}
       let best=1;
-      for(let d=-4;d<=4;d++){const g=gills[(lo+d+G)%G]; if(rad<g.start) continue; let x=Math.abs(a-(g.a+wave(g,rad)))/wf(g); if(x>Math.PI) x=TAU-x; if(x<best) best=x}
+      for(let d=-4;d<=4;d++){const g=gills[(lo+d+G)%G]; if(rad<g.start) continue; let x=Math.abs(a-(g.a+wave(g,rad))); if(x>Math.PI) x=TAU-x; x/=wf(g); if(x<best) best=x}
       return best*rad;
     }
     // the radial profile, as a table to draw radii from: rising off the bare ring, fullest a third of the way out
     const B=512, cdf=new Float64Array(B+1);
     for(let i=0;i<B;i++){const u=(i+.5)/B, rad=free+(R*1.03-free)*u; const env=Math.min(1,u*5)*Math.exp(-Math.pow(Math.max(0,u-.33)*1.3,2)); cdf[i+1]=cdf[i]+env*rad}
     const radius=()=>{const x=r()*cdf[B]; let lo=0,hi=B; while(lo<hi){const m=(lo+hi)>>1; if(cdf[m+1]<x) lo=m+1; else hi=m} return free+(R*1.03-free)*(lo+r())/B};
-    const acc=new Float32Array(N*N), wall=R*.0042, total=Math.round(N*N*(v2?2.6:1.1)), batch=24000;
+    const acc=new Float32Array(N*N), wall=R*(v2?.0034:.0042), total=Math.round(N*N*(v2?2.6:1.1)), batch=24000;
     const img=c.createImageData(N,N), d=img.data;
     if(v2){                                                                 // spore dust drifting off one edge, in clumps
-      const s0=Math.PI*.82+r()*.3;                                         // lower left, clear of the menu
+      const s0=Math.PI*.42+r()*.16;                                        // off the bottom edge, away from the words
       for(let k=0;k<70;k++){ const a=s0+(r()-.5)*1.3, rad=rim(a)*(1+Math.pow(r(),2)*.09), cl=1+r()*R*.012;
         for(let j=0;j<40;j++){ const x=(cx+Math.cos(a)*rad+(r()-.5)*cl*2)|0, y=(cy+Math.sin(a)*rad+(r()-.5)*cl*2)|0; if(x>0&&y>0&&x<N&&y<N) acc[y*N+x]+=.5+r() } }
     }
@@ -59,8 +59,8 @@
         const a=r()*TAU, rad=radius(), edge=rim(a); if(rad<hub(a)) continue;
         if(rad>edge && r()>.03)continue;                                  // past the rim, only strays
         if(rad>edge*.94 && r()>(edge-rad)/(edge*.06)+.15)continue;          // the rim feathers out
-        const gap=gapAt(a,rad); if(gap<wall*(.5+r()*.8))continue;           // none on the gill faces
-        const x=cx+Math.cos(a)*rad+(r()-.5)*.7, y=cy+Math.sin(a)*rad*.985+(r()-.5)*.7;
+        const gap=gapAt(a,rad); if(gap<wall*(v2?.95+r()*.1:.5+r()*.8))continue;   // none on the gill faces (v2: crisp, firm edges)
+        const jit=v2?.35:.7, x=cx+Math.cos(a)*rad+(r()-.5)*jit, y=cy+Math.sin(a)*rad*.985+(r()-.5)*jit;
         const xi=x|0, yi=y|0; if(xi<0||yi<0||xi>=N-1||yi>=N-1) continue;
         const fx=x-xi, fy=y-yi, o=yi*N+xi;
         acc[o]+=(1-fx)*(1-fy); acc[o+1]+=fx*(1-fy); acc[o+N]+=(1-fx)*fy; acc[o+N+1]+=fx*fy;

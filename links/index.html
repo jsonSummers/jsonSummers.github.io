@@ -5,29 +5,28 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Links · Jason M. Summers</title>
 <meta name="description" content="Where to find Jason M. Summers: Scholar, ORCID, GitHub, and the hobby side.">
-<meta name="theme-color" content="#0f110d">
+<meta name="theme-color" content="#0c0906">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;1,300&amp;family=Cormorant+Garamond:wght@500&amp;family=Mulish:wght@400;500;600&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;1,300&amp;family=Cormorant+Garamond:wght@500&amp;family=Mulish:wght@400;500;600&amp;display=swap"></noscript>
 <link rel="stylesheet" href="../assets/site.css">
 <link rel="stylesheet" href="../assets/bar.css">
 <style>
-/* Bees in late summer: an easy ochre and umber, not bright. The page is a sheet of warm paper on a meadow of
-   abstract flowers and a faint honeycomb (assets/bees.js); the links are set like a beekeeper's ledger. */
+/* Inside the hive: dark and quiet. The page is a dark wax-brown sheet over the face of a brood comb
+   (assets/hive.js), lit faintly from the entrance; the links are set like a beekeeper's ledger. Dark in both schemes. */
 :root{
-  --bg:#f3ead6; --ink:#2b1f12; --dim:#7a6a52; --line:#e0d3b6; --acc:#a8761f; --rust:#9a4a26; --sage:#6f7a4c;
+  --bg:#130f0a; --ink:#e9dcbf; --dim:#9c8c70; --line:#2c2318; --acc:#c9963e; --rust:#b8693f; --sage:#9aa772;
   --f-disp:'Spectral',Georgia,serif; --f-body:'Mulish',system-ui,sans-serif;
-  color-scheme:light;
+  color-scheme:dark;
 }
-@media (prefers-color-scheme:dark){:root{--bg:#1f170e;--ink:#eadcbc;--dim:#a8977a;--line:#3a2e1d;--acc:#d4a24a;--rust:#c7754c;--sage:#9aa772;color-scheme:dark}}
-body{background:#2a1e10}
+body{background:#0c0906}
 .wrap{max-width:none;padding-inline:clamp(20px,5vw,56px)}
 .intro{display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(18px,4vw,40px);align-items:center;padding-block:clamp(48px,10vh,96px) 28px}
 .intro h1{font-size:clamp(2.4rem,6vw,3.6rem);font-weight:300}
 .intro p{margin:10px 0 0;color:var(--dim);font:300 1.12rem/1.6 var(--f-disp)}
 /* a single cell of comb, with honey in it */
 .cell{width:clamp(56px,9vw,84px);aspect-ratio:1/1.1547;flex:none;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);
-  background:radial-gradient(70% 60% at 38% 32%,#f2c96a,#c98f2a 55%,#8a5a18)}
+  background:radial-gradient(70% 60% at 38% 32%,#d9a64e,#9a6a20 55%,#4a2c0c)}
 .group{padding-top:36px}
 .group h2{font:600 .72rem/1 var(--f-body);letter-spacing:.2em;text-transform:uppercase;color:var(--c);margin-bottom:12px;display:flex;align-items:center;gap:10px}
 .group h2::before{content:"";width:9px;height:10.4px;background:var(--c);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
@@ -44,10 +43,10 @@ footer.foot .wrap{max-width:none}
 </style>
 </head>
 <body>
-<canvas class="backdrop" id="meadow" aria-hidden="true"></canvas>
+<canvas class="backdrop" id="hive" aria-hidden="true"></canvas>
 <div class="page">
 <header class="bar"><div class="bar-in">
-  <nav class="sites" aria-label="Sites"><a class="here" href="../" aria-current="true">Jason Summers</a><a class="away" href="https://bucatini-mickey.github.io/" title="Bucatini Mickey: films, games, photos and other hobbies">BM</a></nav>
+  <nav class="sites" aria-label="Sites"><a class="me here" href="../" aria-current="true" title="Jason Summers: research, CV and links"><span>J</span><span class="x"><span>ason </span></span><span>S</span><span class="x"><span>ummers</span></span></a><a class="bm away" href="https://bucatini-mickey.github.io/" title="Bucatini Mickey: films, games, photos and other hobbies"><span>B</span><span class="x"><span>ucatini </span></span><span>M</span><span class="x"><span>ickey</span></span></a></nav>
   <nav class="pages" aria-label="Pages"><a href="../">Home</a><a href="../research/">Research</a><a href="../cv/">CV</a><a href="./" aria-current="page">Links</a></nav>
 </div></header>
 
@@ -78,6 +77,7 @@ footer.foot .wrap{max-width:none}
 
 <footer class="foot"><div class="wrap"><span>© Jason M. Summers</span><span><a href="../">Home</a></span></div></footer>
 </div>
-<script src="../assets/bees.js"></script>
+<script src="../assets/hive.js"></script>
+<script src="../assets/bar.js" defer></script>
 </body>
 </html>
