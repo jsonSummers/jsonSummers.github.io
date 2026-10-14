@@ -2,11 +2,15 @@
    black-and-white film. Drawn on the GPU into <canvas id="ink">. The ink's shapes come from domain warping (noise
    fed through itself twice), carried by a slow swell so the whole surface rolls in long smooth waves. Colour sits
    underneath and only shows faintly where the ink thins. A little grain and the faintest flicker, as on film.
+   In the ocean version (the default) the ink is Prussian blue and thins towards the bottom of the window, its
+   edge running up and drawing back like the sea on a beach, which is only implied. ?diag shows what the
+   browser reports about the graphics card (assets/diag.js), to chase rendering faults on particular devices.
    With ?bg=diatoms, assets/ink.js draws diatoms instead. */
 (function(){
   const cv=document.getElementById('ink'); if(!cv) return;
   if(new URLSearchParams(location.search).get('bg')==='diatoms'){ const s=document.createElement('script'); s.src=document.currentScript.src.replace('foam.js','ink.js'); document.body.appendChild(s); return }
-  const still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const gfx=new URLSearchParams(location.search).get('gfx')||'';                 // set by the ?diag panel's buttons
+  const still=matchMedia('(prefers-reduced-motion: reduce)').matches||gfx==='still';
   const fallback=()=>{cv.style.background='radial-gradient(120% 90% at 30% 20%,#9a9a96,#262626 55%,#080808)'};
 
   const VS=`#version 300 es
@@ -15,7 +19,9 @@ in vec2 a; void main(){ gl_Position=vec4(a,0.,1.); }`;
 precision highp float;
 uniform vec2 res; uniform float t; uniform float scroll; uniform float ocean;
 out vec4 o;
-float hash(vec2 p){ p=fract(p*vec2(123.34,456.21)); p+=dot(p,p+45.32); return fract(p.x*p.y); }
+// an integer hash on the float's own bits: the same on every GPU, however it handles float precision
+float hash(vec2 p){ uvec2 v=floatBitsToUint(p)*1664525u+1013904223u; v.x+=v.y*1664525u; v.y+=v.x*1664525u; v^=v>>16u;
+  v.x+=v.y*1664525u; v.y+=v.x*1664525u; v^=v>>16u; return float((v.x^v.y)>>8)/16777216.; }
 float noise(vec2 p){ vec2 i=floor(p), f=fract(p); vec2 u=f*f*f*(f*(f*6.-15.)+10.);       // quintic: no creases
   return mix(mix(hash(i),hash(i+vec2(1,0)),u.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),u.x),u.y); }
 const mat2 R=mat2(.8,.6,-.6,.8);
@@ -53,30 +59,20 @@ void main(){
     float w2=smoothstep(.32,.7,fbm(uv*.8-T*.08+3.));
     col=mix(sea,bleed*(v*.75+.18),clamp(thin*.9+.15*(1.-ink),0.,1.)*w2*.6);
     vig=.5;
-    // the shore, seen from above: a white beach along the bottom of the window. The ink rolls in towards it as
-    // waves, their crests (bent by the ink's own warp) breaking into lines of white foam that thicken as they
-    // near the sand; at the waterline the swash runs up the beach and draws back, out of step along the shore,
-    // leaving a darker band of wet sand and a lace of foam at its edge
+    // the shore, only implied: going down the window the ink thins and breaks into sparser islands over paler
+    // water, and the line where it thins runs up and draws back, out of step along its length, the way the
+    // edge of the sea advances and retreats on a beach. No sand and no waves are drawn; it is all the ink.
     float yb=gl_FragCoord.y/res.y, xs=gl_FragCoord.x/res.y;
-    float cyc=t*.3+xs*.7+2.5*fbm(vec2(xs*1.3,7.))+.6*sin(xs*2.3);
-    float run=.5+.5*sin(cyc);                                                   // how far up the swash has run
-    float shape=.09*fbm(vec2(xs*.9,3.1))+.025*abs(sin(xs*3.1+fbm(vec2(xs,9.))*2.));   // bays, and the cusps a beach makes
-    float wl=.1+shape+.06*run;                                                  // the waterline
-    float d=yb-wl;
-    float ph=yb*(9.+14.*smoothstep(.6,.0,d))*3.1416-t*.9+3.*(r.x-.5)+2.*(fbm(vec2(xs*2.4,yb*2.-t*.04))-.5);  // wave crests coming in, bunching up near the sand
-    float near=smoothstep(.65,.02,d);
-    float crest=pow(max(0.,sin(ph)),6.)*near*smoothstep(.3,.6,fbm(p*2.3+vec2(t*.06,0.)))*1.3;
-    vec3 foamc=vec3(.9,.96,.98);
-    col=mix(col,mix(col,vec3(.16,.55,.66),.5),smoothstep(.18,.0,d)*.6);         // shallows over sand go green-blue
-    col=mix(col,foamc,crest);
-    float lace=smoothstep(.022,.0,abs(d-.006))*(.55+.45*fbm(vec2(xs*18.,t*.3)));  // the foam at the swash's edge
-    vec3 sand=vec3(.95,.95,.93)*(.96+.04*fbm(uv*40.));
-    float back=.5+.5*sin(cyc-.9);                                               // where the water has just been
-    float wetTo=.1+shape+.06*max(run,back)-.004;
-    vec3 wet=mix(sand,vec3(.5,.6,.68),.5);
-    vec3 beach=mix(sand,wet,smoothstep(wetTo-.05,wetTo,yb));
-    col=mix(col,beach,smoothstep(.004,-.004,d));
-    col=mix(col,foamc,lace*.9);
+    float tide=.5+.5*sin(t*.28+xs*.9+2.2*fbm(vec2(xs*.8,t*.02)));             // how far up the water has run, here
+    float edge=.18+.12*fbm(vec2(xs*.7,5.3))+.1*tide;                             // where the ink starts to thin
+    float thin2=smoothstep(edge+.14,edge-.1,yb)*(.75+.25*smoothstep(edge,0.,yb)); // 0 above, rising through the moving edge
+    float ink2=smoothstep(.36+.2*thin2,.7+.12*thin2,f);                         // the same ink, thresholded harder lower down
+    ink2*=mix(1.,smoothstep(.42,.62,fbm(p*2.6+r*1.5)),thin2*.85);               // and broken into sparse islands
+    float rim=smoothstep(.06,.0,abs(yb-edge-.02*sin(xs*9.+t*.5)))*tide;         // a faint thinning line at the water's reach
+    float v2=mix(.8,.05,ink2)+.06*thin2+.05*(1.-ink2)*(fbm(p*3.+r)-.5);
+    vec3 sea2=v2<.35?mix(deep,mid,pow(v2/.35,.8)):mix(mid,foam,clamp((v2-.35)/.65,0.,1.));
+    col=mix(col,sea2,thin2);
+    col=mix(col,foam,rim*.18*(1.-ink2));
   }
 
   vec2 c=gl_FragCoord.xy/res-.5; col*=1.-dot(c,c)*vig;            // a vignette, as from an old lens
@@ -90,7 +86,7 @@ void main(){
     // where the browser can, the shader compiles in the background; we only check on it between frames
     const par=gl.getExtension('KHR_parallel_shader_compile');
     const vs=gl.createShader(gl.VERTEX_SHADER), fs=gl.createShader(gl.FRAGMENT_SHADER);
-    gl.shaderSource(vs,VS); gl.shaderSource(fs,FS); gl.compileShader(vs); gl.compileShader(fs);
+    gl.shaderSource(vs,VS); gl.shaderSource(fs,gfx==='lowp'?FS.replace('precision highp float','precision mediump float'):FS); gl.compileShader(vs); gl.compileShader(fs);
     gl.attachShader(pr,vs); gl.attachShader(pr,fs); gl.linkProgram(pr);
     const ready=()=>!par||gl.getProgramParameter(pr,par.COMPLETION_STATUS_KHR);
     (function wait(){ if(!ready()) return requestAnimationFrame(wait);
@@ -106,6 +102,7 @@ void main(){
     const info=gl.getExtension('WEBGL_debug_renderer_info'), gpu=info?gl.getParameter(info.UNMASKED_RENDERER_WEBGL):'';
     const soft=/swiftshader|llvmpipe|software|basic render/i.test(gpu);
     let quality=soft?.18:1;
+    window.__gfx=Object.assign(window.__gfx||{},{ink:{gpu,soft,quality:()=>quality,canvas:()=>cv.width+'x'+cv.height}});
     function size(){
       // drawn below screen resolution and scaled up: the image is soft by nature, and it keeps the GPU cool
       const k=Math.min(1,(innerWidth<700?.5:.6)*Math.min(2,devicePixelRatio||1))*quality;
