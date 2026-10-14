@@ -1,14 +1,15 @@
-/* A spore print, after a photographed one. The cap's gills are free (they stop short of the stem, leaving a large
-   bare circle) and crowded, with shorter gills between the long ones starting at different distances out. Each
-   gill is a thin, crisp line where no spores fell; in places the gills wave, and neighbouring gills wave together,
-   as real ones do. Between them the deposit is even. The rim is a fringe: each gap's deposit
-   ends at its own distance, so the edge is toothed rather than drawn.
-   The deposit is made of spores: tens of thousands of fine dots laid evenly (one to each cell of a jittered grid),
-   each kept unless it falls on a gill, so the gills are drawn by the dots alone. It is worked out off the page,
-   a little at a time between frames, and shown only when whole, fading in; it is redrawn only when its width
-   changes (not when a phone's address bar slides away), and the old one stays up until the new one is ready.
-   Where there is a graphics card, the finished print is shown through a tiny shader that lets it breathe and
-   sends the faintest ripple out across it; with reduced motion, or without a graphics card, it stays still. */
+/* A spore print, after a photographed one, white on the dark page: a soft stain rather than a drawing.
+   The cap's gills are free (they stop short of the stem, leaving a large bare centre with a soft, slightly ragged
+   edge) and crowded: about 190 long gills with shorter ones between, so the gaps stay narrow all the way out.
+   Spores settle densely between the gills, so the deposit is nearly solid and each gill is left as a fine pale
+   line, the spores heaped a little against it. In one or two sectors the gills wave hard (neighbours together);
+   elsewhere they run straight. At the rim each gap's deposit runs out as a finger to its own length and narrows
+   to a point. A few soft, thinner places are drawn out along the gills, and the stain has its own fine texture.
+   Each pixel is worked out directly, off the page, a little at a time between frames; the print is shown only
+   when whole, fading in, and redrawn only when its width changes (not when a phone's address bar slides away).
+   Where there is a graphics card, it is shown through a tiny shader that lets it breathe and sends the faintest
+   ripple out across it; with reduced motion, or without a graphics card, it stays still.
+   data-gills, data-gw and data-wave (fewer, wider, calmer gills) make the small version used for the favicon. */
 (function(){
   const cv=document.querySelector('canvas.print'); if(!cv) return;
   const root=document.documentElement, still=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -32,51 +33,55 @@
   /* ---- working the print out, into an off-page canvas ---- */
   function render(N,done,cancelled){
     const buf=document.createElement('canvas'); buf.width=buf.height=N;
-    const c=buf.getContext('2d'), r=rng(+cv.dataset.seed||1), TAU=Math.PI*2, nz=perlinP(+cv.dataset.seed||1);   // nz: only for where the gills wave
-    const ink=root.dataset.v==='ocean'?[236,241,242]:[58,40,28];
-    const R=N*.47, cx=N/2, cy=N/2, px=N/800;                           // px: one pixel of the 800-wide design
-    const F=160, gills=[];
+    const c=buf.getContext('2d'), seed=+cv.dataset.seed||1, r=rng(seed), TAU=Math.PI*2, nz=perlinP(seed);
+    const ink=root.dataset.v==='ocean'?[238,243,245]:[70,44,26];
+    const R=N*.47, cx=N/2, cy=N/2, px=N/800, gw=+cv.dataset.gw||1;  // px: one pixel of the 800-wide design; gw widens the gills (the favicon)
+    // gills: long ones from the bare centre, and one or three short ones in each gap
+    const F=+cv.dataset.gills||190, gills=[];
     for(let i=0;i<F;i++){
-      const a=i/F*TAU+(r()-.5)*.006; gills.push({a,start:0,w:r()});
-      const n=r()<.28?3:1;
-      for(let k=1;k<=n;k++){ const lvl=(n===3&&k!==2)?.66+r()*.12:.42+r()*.12; gills.push({a:a+TAU/F*k/(n+1)+(r()-.5)*.004,start:R*lvl,w:r()}) }
+      const a=i/F*TAU+(r()-.5)*.25/F*TAU; gills.push({a,start:0,w:r()});
+      const n=r()<.15?3:1;
+      for(let k=1;k<=n;k++){ const lvl=(n===3&&k!==2)?.7+r()*.12:.45+r()*.15; gills.push({a:a+TAU/F*k/(n+1)+(r()-.5)*.15/F*TAU,start:R*lvl,w:r()}) }
     }
     gills.sort((x,y)=>x.a-y.a);
     const G=gills.length, angs=Float64Array.from(gills,g=>g.a);
-    for(const g of gills) g.hw=px*(g.w>.982?2.2:.5+.45*g.w*g.w*g.w);   // half-width; a few pressed wide
-    const harm=Array.from({length:7},(_,k)=>[(r()-.5)*(k<3?.04:.014),r()*TAU]);
+    for(const g of gills) g.hw=px*gw*(.42+.38*g.w*g.w);              // half-width of the bare line each gill leaves
+    const harm=Array.from({length:6},(_,k)=>[(r()-.5)*(k<2?.045:.016),r()*TAU]);
     const rim=a=>R*(1+harm.reduce((s,[m,p],k)=>s+m*Math.sin(a*(k+2)+p),0));
-    const hole=a=>R*.29*(1+.05*Math.sin(2*a+1.3)+.03*Math.sin(5*a+.4));
-    const wav=a=>.0012+.011*sm(.5,.8,nz(a/TAU*9,3.7,9));               // how much the gills wave, round the print
-    // the spores: one to each cell of a fine jittered grid, so they lie evenly, without clumps or bands; a spore is
-    // kept unless it would sit on a gill, inside the bare centre, or past its gap's end at the rim
-    const sp=1.42*px, cols=Math.ceil(N/sp), dots=[[],[],[]];
-    let row=0;
+    const hole=a=>R*.3*(1+.04*Math.sin(2*a+1.3)+.03*Math.sin(3*a+.4)+.05*(nz(a/TAU*10,1.5,10)-.5));
+    // waviness: strong in one or two sectors, nearly none elsewhere; the phase drifts slowly round the print,
+    // so neighbouring gills wave together, as gills pressed out of line by the cap do
+    const wv=cv.dataset.wave?+cv.dataset.wave:1, amp=a=>(.002+.03*sm(.52,.78,nz(a/TAU*5,7.3,5)))*wv, phase=a=>nz(a/TAU*14,2.2,14)*9;
+    const img=c.createImageData(N,N), d=img.data, top=Math.max(0,Math.floor(cy-R*1.12)), bot=Math.min(N,Math.ceil(cy+R*1.12));
+    let y=top;
     (function strip(){
       if(cancelled()) return;
       const t0=performance.now();
-      for(;row<cols&&performance.now()-t0<10;row++) for(let i=0;i<cols;i++){
-        const x=(i+.5+(r()-.5)*.9)*sp, y=(row+.5+(r()-.5)*.9)*sp, dx=x-cx, dy=y-cy, rad=Math.hypot(dx,dy);
-        if(rad>R*1.1) continue;
+      for(;y<bot&&performance.now()-t0<10;y++) for(let x=0;x<N;x++){
+        const dx=x+.5-cx, dy=y+.5-cy, rad=Math.hypot(dx,dy); if(rad>R*1.12) continue;
         let a=Math.atan2(dy,dx); if(a<0) a+=TAU;
-        if(rad<hole(a)+R*.02*r()) continue;                                  // the bare centre, its edge a little ragged
-        const u=rad/R, aw=a-wav(a)*Math.sin(u*15+a*2)*u;                    // undo the wave, then find the nearest gill
+        const h0=hole(a); if(rad<h0-R*.006) continue;
+        const u=rad/R, ph=phase(a), aw=a-amp(a)*u*(.7*Math.sin(u*26+ph)+.3*Math.sin(u*47+ph*1.7));   // undo the wave
         let lo=0,hi=G; while(lo<hi){const m=(lo+hi)>>1; if(angs[m]<aw) lo=m+1; else hi=m}
+        // the rim: each gap's deposit runs out as a finger to its own length, narrowing to a point
+        const edge=rim(a)*(1+.05*(hash(lo)-.5)), feather=R*(.015+.035*hash(lo+7)), tip=sm(edge-feather,edge,rad);
+        if(tip>=1) continue;
         let best=1e9;
         for(let k=-4;k<=4;k++){ const g=gills[(lo+k+G)%G]; if(rad<g.start) continue;
-          let e=Math.abs(aw-g.a-.0007*Math.sin(u*31+g.w*40)); if(e>Math.PI) e=TAU-e; e*=rad;
-          if(e-g.hw<best) best=e-g.hw }
-        const dr=px*(.46+.24*r());
-        if(best<dr*1.05) continue;                                           // none on the gill
-        const edge=rim(a)*(1+.045*(hash(lo)-.5));                             // each gap ends at its own radius
-        if(rad>edge-R*(.02+.04*hash(lo+7))*r()) continue;
-        dots[Math.floor(r()*3)].push(x,y,dr);
+          let e=Math.abs(aw-g.a); if(e>Math.PI) e=TAU-e; e*=rad;
+          const hw=g.hw+tip*tip*.45*Math.PI*rad/G;                                    // gills widen into the gaps at the very edge
+          if(e-hw<best) best=e-hw }
+        let dep=sm(-.6*px*gw,.6*px*gw,best)*(1-tip);                           // the gill itself: a fine pale line
+        dep*=sm(h0-R*.006,h0+R*.012,rad)*(.88+.12*sm(h0,h0+R*.14,rad));          // the bare centre, its edge soft
+        dep*=1+.1*Math.exp(-Math.pow(best/(1.4*px*gw),2));                    // spores heap a little against each gill
+        const m=nz(a/TAU*40,u*2.4,40)*.6+nz(a/TAU*80,u*4.8,80)*.4;           // a few soft thinner places, drawn out along the gills
+        dep*=1-.3*sm(.58,.82,m);
+        dep*=.9+.12*nz(x*.35/px,y*.35/px,1e6)+.04*(Math.random()-.5);         // the stain's own fine texture
+        if(dep<=0) continue;
+        const o=(y*N+x)*4; d[o]=ink[0]; d[o+1]=ink[1]; d[o+2]=ink[2]; d[o+3]=Math.min(255,dep*238);
       }
-      if(row<cols) return setTimeout(strip,0);
-      c.fillStyle=`rgb(${ink})`;
-      dots.forEach((d,k)=>{ c.globalAlpha=[.72,.86,1][k]; c.beginPath();
-        for(let j=0;j<d.length;j+=3){ c.moveTo(d[j]+d[j+2],d[j+1]); c.arc(d[j],d[j+1],d[j+2],0,TAU) } c.fill() });
-      c.globalAlpha=1; done(buf);
+      if(y<bot) return setTimeout(strip,0);
+      c.putImageData(img,0,0); done(buf);
     })();
   }
   /* ---- showing it: through a small shader if there is a graphics card, else as a plain picture ---- */
