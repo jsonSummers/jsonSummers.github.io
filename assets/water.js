@@ -3,9 +3,11 @@
    absorbed at its own rate (Beer-Lambert, coastal water: red goes first, green carries furthest). Marine snow
    drifts past in three layers, the nearest larger and softer, sinking and sliding up as you descend.
    Faint sensor noise, a wide-angle lens's barrel distortion and its darkened corners make it look filmed.
-   Far off, barely there, a moon jelly (Aurelia aurita) drifts across: a clear bell with the four horseshoe rings
-   of its gonads, a fringe of fine tentacles and four frilled oral arms, pulsing slowly (the bell contracts quickly
-   and relaxes slowly, each beat lifting it a little) and seen through the same lens as everything else.
+   Far off, barely there, a few tiny moon jellies (Aurelia aurita), each living at its own depth: scrolling down
+   passes them as it passes the snow, more slowly since they are further off, while they drift sideways and bob
+   with each beat of the bell (it contracts quickly and relaxes slowly).
+   The lens: the view takes in a wider field than the window, and the lens squeezes it in, more so towards the
+   edges (r' = r / sqrt(1 + k r^2), which never folds back), so the snow reaches the corners and crowds the sides.
    Exposes window.Water and fires a 'depth' event on window with {depth, T, rgb}. */
 (function(){
   const cv=document.getElementById('water'); if(!cv) return;
@@ -23,26 +25,29 @@
 
   function rng(seed){let s=seed>>>0;return()=>{s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
   const r=rng(2507);
-  let W=0,H=0,dpr=1,flakes=[],noise=[];
+  let W=0,H=0,dpr=1,flakes=[],noise=[],jels=[],FX0=0,FX1=0,FY0=0,FY1=0;
   function size(){
     dpr=Math.min(2,devicePixelRatio||1); W=innerWidth; H=innerHeight;
     cv.width=Math.round(W*dpr); cv.height=Math.round(H*dpr);
-    const n=Math.round(W*H/2400);
-    flakes=Array.from({length:n},()=>{const z=r();return {x:r()*W,y:r()*H,z,s:.5+z*z*3.2,a:r()*Math.PI,e:.4+r()*.6,sink:.18+z*.55,sway:r()*6.28}});
+    // the snow fills the whole field the lens takes in, which is wider than the window
+    FX0=W/2-W*FIELD/2; FX1=W/2+W*FIELD/2; FY0=H/2-H*FIELD/2; FY1=H/2+H*FIELD/2;
+    const n=Math.round(W*H*FIELD*FIELD/2400);
+    flakes=Array.from({length:n},()=>{const z=r();return {x:FX0+r()*(FX1-FX0),y:FY0+r()*(FY1-FY0),z,s:.5+z*z*3.2,a:r()*Math.PI,e:.4+r()*.6,sink:.18+z*.55,sway:r()*6.28}});
+    // a few tiny jellies, each at its own depth within the page's range, and somewhere across the field
+    jels=Array.from({length:5},(_,i)=>({d:D0+(D1-D0)*(.1+.8*(i+r()*.6)/5.3),x:.1+r()*.8,vx:(r()<.5?-1:1)*(.002+r()*.003),ph:r()*3,s:.6+r()*.7}));
     // a few tiles of sensor noise, cycled so the grain moves without being drawn fresh each frame
     noise=Array.from({length:4},()=>{const t=document.createElement('canvas');t.width=t.height=128;const c=t.getContext('2d'),im=c.createImageData(128,128);
       for(let i=0;i<im.data.length;i+=4){const v=Math.random()*255;im.data[i]=im.data[i+1]=im.data[i+2]=v;im.data[i+3]=255}c.putImageData(im,0,0);return t});
   }
   let lastY=scrollY, frame=0, depth=D0;
   /* the moon jelly: drawn at a size s (the bell's width) with its bell's beat b (0 relaxed, 1 contracted) */
-  const jel={x:.78,y:.62,vx:-.006,ph:0};
   function jelly(c,x,y,s,b,t,al){
     const w=s*(1-.14*b), h=s*(.42+.1*b);                                       // the bell narrows and deepens as it beats
     c.save(); c.translate(x,y); c.rotate(-.12+.05*Math.sin(t*.21));
     // oral arms and tentacles first, trailing behind (below) the bell
     c.lineCap='round';
-    for(let k=0;k<4;k++){ const ox=(k-1.5)*w*.07, len=s*(.9+.15*k%2);
-      c.strokeStyle=`rgba(225,240,250,${al*.55})`; c.lineWidth=s*.035; c.beginPath(); c.moveTo(ox,h*.05);
+    for(let k=0;k<4;k++){ const ox=(k-1.5)*w*.1, len=s*(.55+.12*(k%2));
+      c.strokeStyle=`rgba(225,240,250,${al*.28})`; c.lineWidth=s*.03; c.beginPath(); c.moveTo(ox,h*.05);
       for(let i=1;i<=12;i++){ const v=i/12; c.lineTo(ox+Math.sin(v*5+t*.7+k)*s*.06*v, h*.05+v*len) } c.stroke() }
     c.strokeStyle=`rgba(225,240,250,${al*.35})`; c.lineWidth=Math.max(.5,s*.006);
     for(let i=0;i<=40;i++){ const u=i/40, ex=-w/2+u*w, ey=h*.02*Math.sin(u*Math.PI), len=s*(.18+.1*Math.sin(i*1.7)), sw=Math.sin(t*.8+i*.4)*s*.03;
@@ -65,8 +70,8 @@
   /* barrel distortion, as through a wide-angle lens behind a dome port: the further a point is from the centre, the
      more it is pulled in towards it (r' = r(1 - k r^2), r measured to the corner), so the middle of the view is
      magnified and the edges are squeezed; things near the edges look smaller and slower */
-  const BARREL=.34;
-  function lens(x,y){const D=Math.hypot(W,H)/2, nx=(x-W/2)/D, ny=(y-H/2)/D, q=1-BARREL*(nx*nx+ny*ny); return [W/2+nx*q*D, H/2+ny*q*D, q]}
+  const BARREL=.62, FIELD=1.42;                                                 // the field of view is FIELD times the window
+  function lens(x,y){const D=Math.hypot(W,H)/2, nx=(x-W/2)/D, ny=(y-H/2)/D, q=1/Math.sqrt(1+BARREL*(nx*nx+ny*ny)); return [W/2+nx*q*D, H/2+ny*q*D, q]}
   function draw(){
     const c=cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0);
     depth=depthAt(scrollY);
@@ -82,16 +87,21 @@
     for(const f of flakes){
       if(!still){f.y+=f.sink; f.x+=Math.sin(f.sway+=.012)*.25*f.z}
       f.y-=dy*(.25+f.z*.75);
-      if(f.y>H+8){f.y=-8;f.x=r()*W} if(f.y<-8){f.y=H+8;f.x=r()*W}
+      if(f.y>FY1){f.y=FY0;f.x=FX0+r()*(FX1-FX0)} if(f.y<FY0){f.y=FY1;f.x=FX0+r()*(FX1-FX0)}
       const [x,y,q]=lens(f.x,f.y), al=base*(.35+.65*(1-f.z*.6)), sz=f.s*q;
       if(f.z>.8){c.globalAlpha=Math.min(1,al*1.6); c.drawImage(blob,x-sz*1.8,y-sz*1.8,sz*3.6,sz*3.6); c.globalAlpha=1}
       else{c.fillStyle=`rgba(${ink},${al})`;c.beginPath();c.ellipse(x,y,sz,sz*f.e,f.a,0,6.283);c.fill()}
     }
-    // the moon jelly, far off behind the snow
-    { const tt=performance.now()/1000, cyc=(tt*.33)%1, b=cyc<.25?Math.sin(cyc/.25*Math.PI/2):Math.cos((cyc-.25)/.75*Math.PI/2);
-      if(!still){ jel.x+=jel.vx/30; jel.y-=(.0004+.0016*b)-dy/H*.3; if(jel.x<-.2){jel.x=1.2;jel.y=.4+r()*.4} if(jel.y<-.25) jel.y=1.25; if(jel.y>1.3) jel.y=-.2 }
-      const [x,y,q]=lens(jel.x*W,jel.y*H), s=Math.min(W,H)*.22*q;
-      jelly(c,x,y,s,still?0:b,tt,L>.35?.05:.09) }
+    // the moon jellies: each at a set depth, so scrolling passes them (at half the page's speed, being far off)
+    { const tt=performance.now()/1000, perM=scrollable()/Math.max(1,D1-D0)*.5;
+      for(const j of jels){
+        const cyc=((tt*.33+j.ph)%1), b=cyc<.25?Math.sin(cyc/.25*Math.PI/2):Math.cos((cyc-.25)/.75*Math.PI/2);
+        if(!still) j.x+=j.vx/30; if(j.x<-.1) j.x=1.1; if(j.x>1.1) j.x=-.1;
+        const wy=H/2+(j.d-depth)*perM-6*b-4*Math.sin(tt*.1+j.ph*2), wx=FX0+j.x*(FX1-FX0);
+        if(wy<FY0||wy>FY1) continue;
+        const [x,y,q]=lens(wx,wy), sz=Math.max(7,Math.min(W,H)*.022)*j.s*q;
+        jelly(c,x,y,sz,still?0:b,tt+j.ph,L>.35?.16:.24);
+      } }
     // sensor noise, very faint
     c.globalAlpha=L>.35?.035:.05; c.fillStyle=c.createPattern(noise[frame++%noise.length],'repeat'); c.fillRect(0,0,W,H); c.globalAlpha=1;
     // a wide-angle lens darkens towards the corners (natural vignetting, roughly cos^4 of the angle off-axis)
