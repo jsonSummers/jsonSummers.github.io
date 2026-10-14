@@ -38,7 +38,7 @@
   /* barrel distortion, as through a wide-angle lens behind a dome port: the further a point is from the centre, the
      more it is pulled in towards it (r' = r(1 - k r^2), r measured to the corner), so the middle of the view is
      magnified and the edges are squeezed; things near the edges look smaller and slower */
-  const BARREL=.2;
+  const BARREL=.34;
   function lens(x,y){const D=Math.hypot(W,H)/2, nx=(x-W/2)/D, ny=(y-H/2)/D, q=1-BARREL*(nx*nx+ny*ny); return [W/2+nx*q*D, H/2+ny*q*D, q]}
   function draw(){
     const c=cv.getContext('2d'); c.setTransform(dpr,0,0,dpr,0,0);

@@ -53,6 +53,30 @@ void main(){
     float w2=smoothstep(.32,.7,fbm(uv*.8-T*.08+3.));
     col=mix(sea,bleed*(v*.75+.18),clamp(thin*.9+.15*(1.-ink),0.,1.)*w2*.6);
     vig=.5;
+    // the shore, seen from above: a white beach along the bottom of the window. The ink rolls in towards it as
+    // waves, their crests (bent by the ink's own warp) breaking into lines of white foam that thicken as they
+    // near the sand; at the waterline the swash runs up the beach and draws back, out of step along the shore,
+    // leaving a darker band of wet sand and a lace of foam at its edge
+    float yb=gl_FragCoord.y/res.y, xs=gl_FragCoord.x/res.y;
+    float cyc=t*.3+xs*.7+2.5*fbm(vec2(xs*1.3,7.))+.6*sin(xs*2.3);
+    float run=.5+.5*sin(cyc);                                                   // how far up the swash has run
+    float shape=.09*fbm(vec2(xs*.9,3.1))+.025*abs(sin(xs*3.1+fbm(vec2(xs,9.))*2.));   // bays, and the cusps a beach makes
+    float wl=.1+shape+.06*run;                                                  // the waterline
+    float d=yb-wl;
+    float ph=yb*(9.+14.*smoothstep(.6,.0,d))*3.1416-t*.9+3.*(r.x-.5)+2.*(fbm(vec2(xs*2.4,yb*2.-t*.04))-.5);  // wave crests coming in, bunching up near the sand
+    float near=smoothstep(.65,.02,d);
+    float crest=pow(max(0.,sin(ph)),6.)*near*smoothstep(.3,.6,fbm(p*2.3+vec2(t*.06,0.)))*1.3;
+    vec3 foamc=vec3(.9,.96,.98);
+    col=mix(col,mix(col,vec3(.16,.55,.66),.5),smoothstep(.18,.0,d)*.6);         // shallows over sand go green-blue
+    col=mix(col,foamc,crest);
+    float lace=smoothstep(.022,.0,abs(d-.006))*(.55+.45*fbm(vec2(xs*18.,t*.3)));  // the foam at the swash's edge
+    vec3 sand=vec3(.95,.95,.93)*(.96+.04*fbm(uv*40.));
+    float back=.5+.5*sin(cyc-.9);                                               // where the water has just been
+    float wetTo=.1+shape+.06*max(run,back)-.004;
+    vec3 wet=mix(sand,vec3(.5,.6,.68),.5);
+    vec3 beach=mix(sand,wet,smoothstep(wetTo-.05,wetTo,yb));
+    col=mix(col,beach,smoothstep(.004,-.004,d));
+    col=mix(col,foamc,lace*.9);
   }
 
   vec2 c=gl_FragCoord.xy/res-.5; col*=1.-dot(c,c)*vig;            // a vignette, as from an old lens

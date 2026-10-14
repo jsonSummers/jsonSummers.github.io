@@ -35,6 +35,7 @@
     const buf=document.createElement('canvas'); buf.width=buf.height=N;
     const c=buf.getContext('2d'), seed=+cv.dataset.seed||1, r=rng(seed), TAU=Math.PI*2, nz=perlinP(seed);
     const ink=root.dataset.v==='ocean'?[238,243,245]:[70,44,26];
+    const ringW=+cv.dataset.gw?0:1;                                     // the outer tide-line of a coffee stain (not on the favicon)
     const R=N*.47, cx=N/2, cy=N/2, px=N/800, gw=+cv.dataset.gw||1;  // px: one pixel of the 800-wide design; gw widens the gills (the favicon)
     // gills: long ones from the bare centre, and one or three short ones in each gap
     const F=+cv.dataset.gills||190, gills=[];
@@ -45,7 +46,7 @@
     }
     gills.sort((x,y)=>x.a-y.a);
     const G=gills.length, angs=Float64Array.from(gills,g=>g.a);
-    for(const g of gills) g.hw=px*gw*(.42+.38*g.w*g.w);              // half-width of the bare line each gill leaves
+    for(const g of gills) g.hw=px*gw*(.95+.7*g.w*g.w);               // half-width of the bare line each gill leaves
     const harm=Array.from({length:6},(_,k)=>[(r()-.5)*(k<2?.045:.016),r()*TAU]);
     const rim=a=>R*(1+harm.reduce((s,[m,p],k)=>s+m*Math.sin(a*(k+2)+p),0));
     const hole=a=>R*.3*(1+.04*Math.sin(2*a+1.3)+.03*Math.sin(3*a+.4)+.05*(nz(a/TAU*10,1.5,10)-.5));
@@ -71,12 +72,13 @@
           let e=Math.abs(aw-g.a); if(e>Math.PI) e=TAU-e; e*=rad;
           const hw=g.hw+tip*tip*.45*Math.PI*rad/G;                                    // gills widen into the gaps at the very edge
           if(e-hw<best) best=e-hw }
-        let dep=sm(-.6*px*gw,.6*px*gw,best)*(1-tip);                           // the gill itself: a fine pale line
+        let dep=sm(-1.3*px*gw,1.5*px*gw,best)*(1-tip);                         // the gill itself: a soft, blurred line
         dep*=sm(h0-R*.006,h0+R*.012,rad)*(.88+.12*sm(h0,h0+R*.14,rad));          // the bare centre, its edge soft
-        dep*=1+.1*Math.exp(-Math.pow(best/(1.4*px*gw),2));                    // spores heap a little against each gill
+        dep*=.72+.4*Math.exp(-Math.pow(Math.max(0,best-1.2*px*gw)/(2.2*px*gw),2));   // like a coffee stain, the deposit dries heavier at its edges, against each gill
         const m=nz(a/TAU*40,u*2.4,40)*.6+nz(a/TAU*80,u*4.8,80)*.4;           // a few soft thinner places, drawn out along the gills
         dep*=1-.3*sm(.58,.82,m);
         dep*=.9+.12*nz(x*.35/px,y*.35/px,1e6)+.04*(Math.random()-.5);         // the stain's own fine texture
+        dep*=1+.22*ringW*sm(edge-feather-R*.06,edge-feather,rad)*(1-tip);   // a faint tide-line where the stain dried at its edge
         if(dep<=0) continue;
         const o=(y*N+x)*4; d[o]=ink[0]; d[o+1]=ink[1]; d[o+2]=ink[2]; d[o+3]=Math.min(255,dep*238);
       }
