@@ -42,15 +42,20 @@ void main(){
   float thin=smoothstep(.15,.5,ink)*(1.-smoothstep(.5,.85,ink));
   float where=smoothstep(.5,.75,fbm(uv*.9-T*.1+7.));
   vec3 col=mix(vec3(v),under*(v*.9+.06),thin*where*.32);
-  // the ocean variant: the same ink, read as sea seen from above; deep water where the ink is, white water and
-  // pale shallows between, a cold green-blue in the middle tones, and the colour beneath kept to a faint glint
+  // the ocean variant: the same ink, read as Prussian blue; the pigment's deep dark where the ink is heavy, its
+  // bright diluted cyan-blue in the middle tones, pale washed paper where it thins, and the colour beneath
+  // leaking through more freely, a little stronger along the ink's edges
+  float vig=.75;
   if(ocean>.5){
-    vec3 deep=vec3(.008,.04,.09), mid=vec3(.05,.27,.38), foam=vec3(.86,.94,.95);
-    vec3 sea=v<.35?mix(deep,mid,v/.35):mix(mid,foam,(v-.35)/.65);
-    col=mix(sea,under*(v*.6+.1),thin*where*.12);
+    vec3 deep=vec3(.0,.075,.19), mid=vec3(.03,.33,.6), foam=vec3(.8,.92,.97);
+    vec3 sea=v<.35?mix(deep,mid,pow(v/.35,.8)):mix(mid,foam,(v-.35)/.65);
+    vec3 bleed=.5+.5*cos(6.2831*(vec3(.0,.3,.62)+length(q)*1.4+T*.15));
+    float w2=smoothstep(.32,.7,fbm(uv*.8-T*.08+3.));
+    col=mix(sea,bleed*(v*.75+.18),clamp(thin*.9+.15*(1.-ink),0.,1.)*w2*.6);
+    vig=.5;
   }
 
-  vec2 c=gl_FragCoord.xy/res-.5; col*=1.-dot(c,c)*.75;           // a heavy vignette, as from an old lens
+  vec2 c=gl_FragCoord.xy/res-.5; col*=1.-dot(c,c)*vig;            // a vignette, as from an old lens
   col*=.985+.015*sin(t*7.3)*sin(t*3.1);                          // the faintest flicker
   col+=(hash(gl_FragCoord.xy+fract(t*.37)*91.)-.5)*.035;         // grain
   o=vec4(col,1.);

@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Jason M. Summers</title>
 <meta name="description" content="Jason M. Summers, PhD researcher in underwater computer vision at Swansea University.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;1,300&amp;family=Cormorant+Garamond:wght@500&amp;family=Mulish:wght@400;500;600&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'"><noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;1,300&amp;family=Cormorant+Garamond:wght@500&amp;family=Mulish:wght@400;500;600&amp;display=swap"></noscript>
+<link rel="stylesheet" href="assets/fonts/fonts.css">
 <link rel="stylesheet" href="assets/site.css">
 <link rel="stylesheet" href="assets/bar.css">
 <script>/* the page is the ocean one (blue ink, a white print on dark paper); ?v=paper brings back the paper page with
@@ -35,7 +35,8 @@ body{background:#0c0c0c}
 .hero .lede{font:300 clamp(1.08rem,1.7vw,1.22rem)/1.7 var(--f-disp);max-width:36ch;margin:26px 0 0;color:color-mix(in srgb,var(--ink) 82%,var(--paper))}
 .hero .where{margin:26px 0 0;font-size:.8rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
 /* the print, large and running off the page's right edge, kept clear of the words */
-.print{position:absolute;z-index:0;top:calc(50% - var(--d) / 2);right:calc(-1 * clamp(110px,15vw,210px));width:var(--d);height:var(--d);display:block;pointer-events:none;mix-blend-mode:multiply}
+.print:not(.ready){opacity:0}
+.print{transition:opacity 1.4s ease;position:absolute;z-index:0;top:calc(50% - var(--d) / 2);right:calc(-1 * clamp(110px,15vw,210px));width:var(--d);height:var(--d);display:block;pointer-events:none;mix-blend-mode:multiply}
 /* on a phone the print lies under the words, large and faint, running off the right edge */
 @media (max-width:760px){.hero{--d:118vw;min-height:0;padding-block:clamp(64px,16vh,120px) 64px}.hero .text{max-width:none}
   .print{right:-46vw;opacity:.3}.hero .text>*{text-shadow:0 1px 14px var(--paper),0 0 4px var(--paper)}}
@@ -56,9 +57,9 @@ body{background:#0c0c0c}
 footer.foot{margin-top:56px;border-top:1px solid var(--line);padding-block:20px 24px}
 footer.foot .wrap{max-width:none}
 /* the ocean page (the default): an Amanita muscaria print is white, so it is taken on dark paper, here a deep sea-slate */
-:root[data-v="ocean"]{--paper:#101b22;--ink:#e6eef0;--dim:#93a7ae;--line:#22323a;--acc:#8fd3dc;color-scheme:dark}
-:root[data-v="ocean"] body{background:#03101f}
-:root[data-v="ocean"] .page{background:radial-gradient(120% 80% at 20% 0%,rgba(140,200,220,.08),transparent 60%),color-mix(in srgb,var(--paper) var(--glass),transparent)}
+:root[data-v="ocean"]{--paper:#0a1c30;--ink:#eaf2f6;--dim:#97b0c2;--line:#1d3550;--acc:#8fd0ef;color-scheme:dark}
+:root[data-v="ocean"] body{background:#021226}
+:root[data-v="ocean"] .page{background:radial-gradient(120% 80% at 20% 0%,rgba(120,190,240,.1),transparent 60%),color-mix(in srgb,var(--paper) var(--glass),transparent)}
 :root[data-v="ocean"] .print{mix-blend-mode:screen}
 .bar{background:var(--paper)}
 </style>
