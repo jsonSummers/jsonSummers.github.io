@@ -9,6 +9,8 @@
 <title>Jason M. Summers</title>
 <meta name="description" content="Jason M. Summers, PhD researcher in underwater computer vision at Swansea University.">
 <link rel="stylesheet" href="assets/fonts/fonts.css">
+<link rel="preload" href="assets/fonts/cormorant-garamond-500-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/mulish-500-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/site.css">
 <link rel="stylesheet" href="assets/bar.css">
 <script>/* the page is the ocean one (blue ink, a white print on dark paper); ?v=paper brings back the paper page with
@@ -40,7 +42,8 @@ body{background:#0c0c0c}
 .print{transition:opacity 1.4s ease;position:absolute;z-index:0;top:calc(50% - var(--d) / 2);right:calc(-1 * clamp(110px,15vw,210px));width:var(--d);height:var(--d);display:block;pointer-events:none;mix-blend-mode:multiply}
 /* on a phone the print lies under the words, large and faint, running off the right edge */
 @media (max-width:760px){.hero{--d:118vw;min-height:0;padding-block:clamp(64px,16vh,120px) 64px}.hero .text{max-width:none}
-  .print{right:-46vw;opacity:.3}.hero .text>*{text-shadow:0 1px 14px var(--paper),0 0 4px var(--paper)}}
+  .print{right:-46vw;opacity:.42}.hero .text>*{text-shadow:0 1px 14px var(--paper),0 0 4px var(--paper)}
+}
 
 .rooms{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
 .rooms a{display:grid;grid-template-columns:8em minmax(0,1fr) auto;gap:6px 28px;align-items:baseline;padding:20px 0;border-bottom:1px solid var(--line);text-decoration:none}
@@ -57,11 +60,26 @@ body{background:#0c0c0c}
 .elsewhere a:hover{color:var(--acc)}
 footer.foot{margin-top:56px;border-top:1px solid var(--line);padding-block:20px 24px}
 footer.foot .wrap{max-width:none}
-/* the ocean page (the default): an Amanita muscaria print is white, so it is taken on dark paper, here a deep sea-slate */
-:root[data-v="ocean"]{--paper:#0a1c30;--ink:#eaf2f6;--dim:#97b0c2;--line:#1d3550;--acc:#8fd0ef;color-scheme:dark}
 :root[data-v="ocean"] body{background:#021226}
-:root[data-v="ocean"] .page{background:radial-gradient(120% 80% at 20% 0%,rgba(120,190,240,.1),transparent 60%),color-mix(in srgb,var(--paper) var(--glass),transparent)}
-:root[data-v="ocean"] .print{mix-blend-mode:screen}
+/* the ocean page (the default): a sheet of warm paper on the blue ink. An Amanita muscaria print is white, so it
+   is taken on a cyanotype: a patch of Prussian-blue emulsion brushed onto the paper (the same pigment as the ink
+   outside), its edges ragged where the brush ran out, streaked along the strokes. The print shines white on it. */
+:root[data-v="ocean"]{--paper:#efe9dd;--ink:#15202b;--dim:#5f6873;--line:#dad2c3;--acc:#1f507c;color-scheme:light}
+:root[data-v="ocean"] .print{mix-blend-mode:screen;z-index:1}
+.cyan{display:none}
+:root[data-v="ocean"] .cyan{display:block;position:absolute;z-index:0;pointer-events:none;
+  top:calc(50% - var(--d) * .54);right:calc(-1 * clamp(110px,15vw,210px) - var(--d) * .08);width:calc(var(--d) * 1.18);height:calc(var(--d) * 1.08);
+  background:linear-gradient(97deg,rgba(255,255,255,.05),transparent 28%,rgba(0,0,0,.1) 58%,transparent 80%,rgba(255,255,255,.04)),
+    radial-gradient(90% 80% at 40% 45%,#1d4472,#123058 55%,#0c2343);
+  border-radius:3% 6% 4% 8% / 5% 3% 7% 4%;filter:url(#brushed)}
+:root[data-v="ocean"] .hero .text{z-index:2}
+/* on a phone the whole head of the page is the cyanotype, with the words in light ink and the print faint behind */
+@media (max-width:760px){
+  :root[data-v="ocean"] .cyan{inset:-20px -40px 0 -40px;width:auto;height:auto;border-radius:0}
+  :root[data-v="ocean"] .print{opacity:.45}
+  :root[data-v="ocean"] .hero{--ink:#eef4f7;--dim:#a9bfd0;color:var(--ink)}
+  :root[data-v="ocean"] .hero .text>*{text-shadow:0 1px 12px rgba(5,20,40,.6)}
+}
 .bar{background:var(--paper)}
 </style>
 </head>
@@ -80,6 +98,8 @@ footer.foot .wrap{max-width:none}
       <p class="lede">I work on underwater computer vision: what happens to feature matching and SLAM when the water has taken the red out of the picture, and whether image enhancement actually helps a machine see.</p>
       <p class="where">PhD researcher · Swansea University</p>
     </div>
+    <div class="cyan" aria-hidden="true"></div>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><filter id="brushed" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".012 .05" numOctaves="4" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="34" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
     <canvas class="print" data-seed="23" role="img" aria-label="A mushroom spore print: thousands of spores settled between the gills"></canvas>
   </section>
 
