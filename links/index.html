@@ -8,75 +8,84 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Links · Jason M. Summers</title>
 <meta name="description" content="Where to find Jason M. Summers: Scholar, ORCID, GitHub, and the hobby side.">
-<meta name="theme-color" content="#0f0a06">
+<meta name="theme-color" content="#e6d6b0">
 <link rel="stylesheet" href="../assets/fonts/fonts.css">
 <link rel="preload" href="../assets/fonts/cormorant-garamond-500-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../assets/fonts/mulish-500-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="../assets/site.css">
 <link rel="stylesheet" href="../assets/bar.css">
 <style>
-/* The bee bole: a skep of coiled straw in an arched niche of a dry-stone wall, lit from a doorway, with a few bees
-   making orientation flights (assets/skep.js). The links are a piece of comb: hexagonal cells of pale wax, work
-   along the top row and the rest below, and pointing at a cell fills it with honey from the bottom up. On phones
-   the comb becomes a list with a cell for each bullet. Dark in both schemes. */
+/* A leaf of a bestiary. The window is the vellum (assets/apiary.js: cockle, follicles, ruling, worn edges, a water
+   stain, foxing); the text is written on it in iron-gall ink with a red rubric, under a painted initial; beside it
+   the miniature "De apibus", a skep and its bees in a frame of gold leaf. The links stay a piece of comb: cells
+   walled in gold (work) and vermilion (personal) that fill with honey when pointed at. A list on phones. */
 :root{
-  --bg:#17110a; --ink:#f0e2c4; --dim:#b39a72; --line:#3a2b1c; --acc:#e0aa4a; --rust:#c7754c; --wax:#caa262;
-  --f-disp:'IM Fell English',Georgia,serif; --f-body:'Mulish',system-ui,sans-serif;
-  color-scheme:dark;
+  --bg:#ece0c2; --ink:#24180d; --dim:#6b5233; --line:#cdb68a; --acc:#a8321f; --gold:#b98a2e; --verm:#b0402a; --lapis:#2d4a95; --honey:#d9a23c;
+  --f-disp:'IM Fell English',Georgia,serif; --f-body:'EB Garamond','IM Fell English',Georgia,serif;
+  color-scheme:light;
 }
-body{background:#0f0a06}
-body .page{max-width:1180px;background:transparent!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
-body .page>.bar{background:color-mix(in srgb,var(--bg) 84%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-radius:6px;border:1px solid color-mix(in srgb,var(--wax) 18%,transparent)}
-.card{max-width:660px;margin:14px 0 0;padding:clamp(24px,4vw,44px);border-radius:6px;background:color-mix(in srgb,var(--bg) 80%,transparent);
-  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid color-mix(in srgb,var(--wax) 16%,transparent)}
-.intro{display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(16px,3vw,28px);align-items:center;margin-bottom:34px}
-.intro h1{font:400 clamp(2.6rem,6vw,3.8rem)/1 var(--f-disp);margin:0}
-.intro p{margin:10px 0 0;color:var(--dim);font:italic 400 1.15rem/1.5 var(--f-disp)}
-.mark{width:clamp(54px,8vw,72px);height:auto;display:block}
+body{background:#e6d6b0;color:var(--ink)}
+#vellum{image-rendering:auto}
+body .page{max-width:1240px;background:transparent!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+body .page>.bar{background:transparent;border-bottom:1px solid color-mix(in srgb,var(--verm) 50%,transparent);box-shadow:0 3px 0 -2px color-mix(in srgb,var(--verm) 40%,transparent);border-radius:0}
+.leaf{max-width:none;display:grid;grid-template-columns:minmax(0,620px) minmax(0,1fr);gap:clamp(28px,4vw,48px);align-items:start;padding-block:clamp(28px,5vh,52px) 24px}
+.leaf>*{min-width:0}
+h1{font:400 clamp(3rem,7vw,4.4rem)/1 var(--f-disp);margin:0;color:var(--ink);display:flex;align-items:flex-end;gap:.04em}
+/* the initial: a lapis L on a square of gold, with red penwork trailing down the margin */
+.ini{position:relative;display:inline-grid;place-items:center;width:1.18em;height:1.18em;font-size:1.25em;line-height:1;color:var(--lapis);
+  background:radial-gradient(circle at 30% 25%,#f0d684,#c39535 55%,#9d7224);border:2px solid var(--ink);box-shadow:inset 0 0 0 3px rgba(255,240,190,.35),inset 0 0 0 4px rgba(36,24,13,.5)}
+.ini::after{content:"";position:absolute;left:-34%;top:72%;width:44%;height:1.7em;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 100' fill='none' stroke='%23b0402a' stroke-width='1.4' stroke-linecap='round'%3E%3Cpath d='M12 0c0 20 8 26 4 44s-10 22-4 40'/%3E%3Cpath d='M16 18c6 2 12-2 14 4M16 34c-7 2-9 8-5 10M14 56c6-1 10 3 8 8M12 74c-6 2-6 8-1 9'/%3E%3Ccircle cx='30' cy='22' r='1.6' fill='%23b0402a'/%3E%3Ccircle cx='11' cy='44' r='1.6' fill='%23b0402a'/%3E%3Ccircle cx='22' cy='64' r='1.6' fill='%23b0402a'/%3E%3C/svg%3E") no-repeat top left/contain}
+.rub{margin:14px 0 34px;color:var(--verm);font:italic 400 1.3rem/1.4 var(--f-disp)}
 /* the comb: pointy-topped hexagons; each row tucks a quarter of a cell into the one above */
 .comb{--w:146px;--h:calc(var(--w)*1.1547);list-style:none;margin:0;padding:0}
 .row{display:flex;gap:6px;margin:0;padding:0;list-style:none}
 .row+.row{margin-top:calc(var(--h)*-.25 + 5px)}
 .row.top{padding-left:calc(var(--w)/2 + 3px)}
 .cellk{position:relative;display:grid;place-items:center;width:var(--w);height:var(--h);text-align:center;text-decoration:none;color:var(--ink);
-  clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);background:color-mix(in srgb,var(--c) 55%,transparent);transition:transform .25s}
-.cellk::before{content:"";position:absolute;inset:3px;clip-path:inherit;background:linear-gradient(to top,var(--c) 0 var(--fill,0%),#1a1209 var(--fill,0%));transition:--fill .5s}
+  clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);background:var(--c);transition:transform .25s}
+.cellk::before{content:"";position:absolute;inset:3px;clip-path:inherit;background:linear-gradient(to top,var(--honey) 0 var(--fill,0%),#efe4c6 var(--fill,0%));transition:--fill .5s}
 .cellk span{position:relative;display:block;padding:0 14px}
-.cellk b{display:block;font:400 1.18rem/1.1 var(--f-disp)}
-.cellk small{display:block;margin-top:5px;font:500 .64rem/1.3 var(--f-body);letter-spacing:.04em;color:var(--dim);overflow-wrap:anywhere}
-.cellk:hover,.cellk:focus-visible{--fill:100%;color:#1a1008}
-.cellk:hover small,.cellk:focus-visible small{color:#3a260f}
+.cellk b{display:block;font:400 1.22rem/1.1 var(--f-disp)}
+.cellk small{display:block;margin-top:5px;font:400 .78rem/1.25 var(--f-body);color:var(--dim);overflow-wrap:anywhere}
+.cellk:hover,.cellk:focus-visible{--fill:100%}
+.cellk:hover small,.cellk:focus-visible small{color:#3e2a12}
 .cellk:focus-visible{outline:none;transform:scale(1.04)}
-.pro{--c:var(--acc)} .own{--c:var(--wax)}
+.pro{--c:var(--gold)} .own{--c:var(--verm)}
 @property --fill{syntax:'<percentage>';inherits:true;initial-value:0%}
-.key{display:flex;gap:22px;margin:22px 0 0;padding:0;list-style:none;font:500 .7rem var(--f-body);letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.key{display:flex;gap:22px;margin:24px 0 0;padding:0;list-style:none;font:400 .95rem var(--f-disp);font-variant:small-caps;letter-spacing:.08em;color:var(--dim)}
 .key li{display:flex;align-items:center;gap:8px}
 .key i{width:10px;height:11.5px;background:var(--c);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+/* the miniature */
+.mini{margin:0;justify-self:end;width:100%;max-width:460px}
+.mini canvas{display:block;width:100%;aspect-ratio:46/56;height:auto}
+.mini figcaption{margin-top:10px;text-align:center;color:var(--verm);font:italic 400 1.15rem var(--f-disp)}
+.mini figcaption span{color:var(--dim);font-style:normal;font-size:.95rem}
+@media (max-width:1100px){.leaf{grid-template-columns:1fr}.mini{justify-self:center;max-width:420px}}
 @media (max-width:620px){
   .comb,.row{display:block}.row+.row{margin-top:0}.row.top{padding-left:0}
-  .cellk{display:grid;grid-template-columns:26px minmax(0,1fr);gap:14px;width:auto;height:auto;padding:13px 2px;text-align:left;clip-path:none;background:none;border-top:1px solid var(--line)}
-  .cellk::before{position:static;width:22px;height:25px;inset:auto;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);background:linear-gradient(to top,var(--c) 0 var(--fill,0%),color-mix(in srgb,var(--c) 30%,#1a1209) var(--fill,0%))}
-  .card{background:color-mix(in srgb,var(--bg) 70%,transparent)}.cellk{place-items:center start}
-  .cellk span{padding:0}.cellk:hover,.cellk:focus-visible{color:var(--ink)}.cellk:hover small{color:var(--dim)}
-  .cellk b{font-size:1.25rem}
+  .cellk{display:grid;grid-template-columns:26px minmax(0,1fr);gap:14px;width:auto;height:auto;padding:12px 2px;text-align:left;place-items:center start;clip-path:none;background:none;border-top:1px solid var(--line)}
+  .cellk::before{position:static;width:22px;height:25px;inset:auto;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);background:linear-gradient(to top,var(--honey) 0 var(--fill,0%),var(--c) var(--fill,0%))}
+  .cellk span{padding:0}.cellk b{font-size:1.3rem}
 }
-footer.foot{max-width:660px;margin-top:14px;border:1px solid color-mix(in srgb,var(--wax) 14%,transparent);border-radius:6px;background:color-mix(in srgb,var(--bg) 80%,transparent);padding-block:14px}
+footer.foot{border-top:1px solid color-mix(in srgb,var(--verm) 50%,transparent);margin-top:20px;padding-block:16px 26px;color:var(--dim);font-family:var(--f-disp)}
 footer.foot .wrap{max-width:none}
+.leaf .text{padding-left:4px}
+footer.foot a{color:var(--ink)}
 </style>
 </head>
 <body>
-<canvas class="backdrop" id="skep" aria-hidden="true"></canvas>
+<canvas class="backdrop" id="vellum" aria-hidden="true"></canvas>
 <div class="page">
 <header class="bar"><div class="bar-in">
   <nav class="sites" aria-label="Sites"><a class="me here" href="../" aria-current="true" title="Jason Summers: research, CV and links"><span>J</span><span class="x"><span>ason </span></span><span>S</span><span class="x"><span>ummers</span></span></a><a class="bm away" href="https://bucatini-mickey.github.io/" title="Bucatini Mickey: films, games, photos and other hobbies"><span>B</span><span class="x"><span>ucatini </span></span><span>M</span><span class="x"><span>ickey</span></span></a></nav>
   <nav class="pages" aria-label="Pages"><a href="../">Home</a><a href="../research/">Research</a><a href="../photos/">Photos</a><a href="../art/">Art</a><a href="../links/" aria-current="page">Links</a><a href="../cv/">CV</a></nav>
 </div></header>
 
-<main class="wrap card">
-  <div class="intro">
-    <svg class="mark" viewBox="0 0 72 72" aria-hidden="true"><g fill="none" stroke="#caa262" stroke-width="2.2" stroke-linecap="round"><path d="M12 60h48"/><path d="M15 56h42"/><path d="M16 49h40"/><path d="M19 42h34"/><path d="M23 35h26"/><path d="M28 28h16"/><path d="M33 22h6"/></g><path d="M33 60v-4a3 3 0 0 1 6 0v4z" fill="#0f0a06"/></svg>
-    <div><h1>Links</h1><p>Where else to find me, work first.</p></div>
-  </div>
+<main class="wrap leaf">
+  <div class="text">
+  <h1 aria-label="Links"><span class="ini" aria-hidden="true">L</span><span aria-hidden="true">inks</span></h1>
+  <p class="rub">Where else to find me, work first.</p>
   <ul class="comb" aria-label="Links">
     <li><ul class="row top">
       <li><a class="cellk pro" href="https://scholar.google.com/citations?user=W-gpECkAAAAJ&amp;hl=en"><span><b>Google Scholar</b><small>publications and citations</small></span></a></li>
@@ -91,11 +100,14 @@ footer.foot .wrap{max-width:none}
     </ul></li>
   </ul>
   <ul class="key"><li class="pro"><i></i>Work</li><li class="own"><i></i>Personal</li></ul>
+  </div>
+  <figure class="mini"><canvas id="mini" role="img" aria-label="A miniature in the manner of a medieval bestiary: bees flying between flowering plants and a green straw skep, in a frame of gold leaf"></canvas>
+    <figcaption>De apibus <span>· of bees</span></figcaption></figure>
 </main>
 
 <footer class="foot"><div class="wrap"><span>© Jason M. Summers</span><span><a href="../">Home</a></span></div></footer>
 </div>
-<script src="../assets/skep.js"></script>
+<script src="../assets/apiary.js"></script>
 <script src="../assets/bar.js" defer></script>
 </body>
 </html>
