@@ -8,78 +8,94 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Links · Jason M. Summers</title>
 <meta name="description" content="Where to find Jason M. Summers: Scholar, ORCID, GitHub, and the hobby side.">
-<meta name="theme-color" content="#07080a">
+<meta name="theme-color" content="#0f0a06">
 <link rel="stylesheet" href="../assets/fonts/fonts.css">
 <link rel="preload" href="../assets/fonts/cormorant-garamond-500-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="../assets/fonts/mulish-500-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="../assets/site.css">
 <link rel="stylesheet" href="../assets/bar.css">
 <style>
-/* A quiet network: a graphite sheet over a sparse mesh of points and hairlines through which a signal now and
-   then wanders (assets/net.js); hovering a link sends one from the margin. Dark in both schemes. */
+/* The bee bole: a skep of coiled straw in an arched niche of a dry-stone wall, lit from a doorway, with a few bees
+   making orientation flights (assets/skep.js). The links are a piece of comb: hexagonal cells of pale wax, work
+   along the top row and the rest below, and pointing at a cell fills it with honey from the bottom up. On phones
+   the comb becomes a list with a cell for each bullet. Dark in both schemes. */
 :root{
-  --bg:#0d1014; --ink:#e3e8ee; --dim:#8c97a4; --line:#1f252d; --acc:#96d7ff; --rust:#b9c6d4; --sage:#9aa772;
-  --f-disp:'Spectral',Georgia,serif; --f-body:'Mulish',system-ui,sans-serif;
+  --bg:#17110a; --ink:#f0e2c4; --dim:#b39a72; --line:#3a2b1c; --acc:#e0aa4a; --rust:#c7754c; --wax:#caa262;
+  --f-disp:'IM Fell English',Georgia,serif; --f-body:'Mulish',system-ui,sans-serif;
   color-scheme:dark;
 }
-body{background:#07080a}
-.wrap{max-width:none;padding-inline:clamp(20px,5vw,56px)}
-.intro{display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(18px,4vw,40px);align-items:center;padding-block:clamp(48px,10vh,96px) 28px}
-.intro h1{font-size:clamp(2.4rem,6vw,3.6rem);font-weight:300}
-.intro p{margin:10px 0 0;color:var(--dim);font:300 1.12rem/1.6 var(--f-disp)}
-/* a mark: three points and the lines between them */
-.cell{width:clamp(56px,9vw,80px);height:auto;flex:none;display:block}
-.group{padding-top:36px}
-.group h2{font:600 .72rem/1 var(--f-body);letter-spacing:.2em;text-transform:uppercase;color:var(--c);margin-bottom:12px;display:flex;align-items:center;gap:10px}
-.group h2::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--c);box-shadow:0 0 10px var(--c)}
-.group.pro{--c:var(--acc)} .group.own{--c:var(--rust)}
-.links{list-style:none;margin:0;padding:0}
-.links a{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:baseline;padding:15px 2px;border-top:1px solid var(--line);text-decoration:none}
-.links li:last-child a{border-bottom:1px solid var(--line)}
-.links b{font:400 1.32rem/1.2 var(--f-disp)}
-.links span{color:var(--dim);font-size:.92rem;text-align:right;overflow-wrap:anywhere}
-.links a:hover b{color:var(--c)}
-@media (max-width:520px){.links a{grid-template-columns:minmax(0,1fr)}.links span{text-align:left}}
-footer.foot{border-top:1px solid var(--line);margin-top:56px;padding-block:20px 24px}
+body{background:#0f0a06}
+body .page{max-width:1180px;background:transparent!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+body .page>.bar{background:color-mix(in srgb,var(--bg) 84%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-radius:6px;border:1px solid color-mix(in srgb,var(--wax) 18%,transparent)}
+.card{max-width:660px;margin:14px 0 0;padding:clamp(24px,4vw,44px);border-radius:6px;background:color-mix(in srgb,var(--bg) 80%,transparent);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid color-mix(in srgb,var(--wax) 16%,transparent)}
+.intro{display:grid;grid-template-columns:auto minmax(0,1fr);gap:clamp(16px,3vw,28px);align-items:center;margin-bottom:34px}
+.intro h1{font:400 clamp(2.6rem,6vw,3.8rem)/1 var(--f-disp);margin:0}
+.intro p{margin:10px 0 0;color:var(--dim);font:italic 400 1.15rem/1.5 var(--f-disp)}
+.mark{width:clamp(54px,8vw,72px);height:auto;display:block}
+/* the comb: pointy-topped hexagons; each row tucks a quarter of a cell into the one above */
+.comb{--w:146px;--h:calc(var(--w)*1.1547);list-style:none;margin:0;padding:0}
+.row{display:flex;gap:6px;margin:0;padding:0;list-style:none}
+.row+.row{margin-top:calc(var(--h)*-.25 + 5px)}
+.row.top{padding-left:calc(var(--w)/2 + 3px)}
+.cellk{position:relative;display:grid;place-items:center;width:var(--w);height:var(--h);text-align:center;text-decoration:none;color:var(--ink);
+  clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);background:color-mix(in srgb,var(--c) 55%,transparent);transition:transform .25s}
+.cellk::before{content:"";position:absolute;inset:3px;clip-path:inherit;background:linear-gradient(to top,var(--c) 0 var(--fill,0%),#1a1209 var(--fill,0%));transition:--fill .5s}
+.cellk span{position:relative;display:block;padding:0 14px}
+.cellk b{display:block;font:400 1.18rem/1.1 var(--f-disp)}
+.cellk small{display:block;margin-top:5px;font:500 .64rem/1.3 var(--f-body);letter-spacing:.04em;color:var(--dim);overflow-wrap:anywhere}
+.cellk:hover,.cellk:focus-visible{--fill:100%;color:#1a1008}
+.cellk:hover small,.cellk:focus-visible small{color:#3a260f}
+.cellk:focus-visible{outline:none;transform:scale(1.04)}
+.pro{--c:var(--acc)} .own{--c:var(--wax)}
+@property --fill{syntax:'<percentage>';inherits:true;initial-value:0%}
+.key{display:flex;gap:22px;margin:22px 0 0;padding:0;list-style:none;font:500 .7rem var(--f-body);letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.key li{display:flex;align-items:center;gap:8px}
+.key i{width:10px;height:11.5px;background:var(--c);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+@media (max-width:620px){
+  .comb,.row{display:block}.row+.row{margin-top:0}.row.top{padding-left:0}
+  .cellk{display:grid;grid-template-columns:26px minmax(0,1fr);gap:14px;width:auto;height:auto;padding:13px 2px;text-align:left;clip-path:none;background:none;border-top:1px solid var(--line)}
+  .cellk::before{position:static;width:22px;height:25px;inset:auto;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);background:linear-gradient(to top,var(--c) 0 var(--fill,0%),color-mix(in srgb,var(--c) 30%,#1a1209) var(--fill,0%))}
+  .card{background:color-mix(in srgb,var(--bg) 70%,transparent)}.cellk{place-items:center start}
+  .cellk span{padding:0}.cellk:hover,.cellk:focus-visible{color:var(--ink)}.cellk:hover small{color:var(--dim)}
+  .cellk b{font-size:1.25rem}
+}
+footer.foot{max-width:660px;margin-top:14px;border:1px solid color-mix(in srgb,var(--wax) 14%,transparent);border-radius:6px;background:color-mix(in srgb,var(--bg) 80%,transparent);padding-block:14px}
 footer.foot .wrap{max-width:none}
 </style>
 </head>
 <body>
-<canvas class="backdrop" id="net" aria-hidden="true"></canvas>
+<canvas class="backdrop" id="skep" aria-hidden="true"></canvas>
 <div class="page">
 <header class="bar"><div class="bar-in">
   <nav class="sites" aria-label="Sites"><a class="me here" href="../" aria-current="true" title="Jason Summers: research, CV and links"><span>J</span><span class="x"><span>ason </span></span><span>S</span><span class="x"><span>ummers</span></span></a><a class="bm away" href="https://bucatini-mickey.github.io/" title="Bucatini Mickey: films, games, photos and other hobbies"><span>B</span><span class="x"><span>ucatini </span></span><span>M</span><span class="x"><span>ickey</span></span></a></nav>
   <nav class="pages" aria-label="Pages"><a href="../">Home</a><a href="../research/">Research</a><a href="../photos/">Photos</a><a href="../art/">Art</a><a href="../links/" aria-current="page">Links</a><a href="../cv/">CV</a></nav>
 </div></header>
 
-<main class="wrap">
+<main class="wrap card">
   <div class="intro">
-    <svg class="cell" viewBox="0 0 80 80" aria-hidden="true"><g stroke="#96d7ff" stroke-opacity=".45" stroke-width="1.2" fill="none"><path d="M16 58 L40 18 L66 50 Z"/></g><g fill="#e3e8ee"><circle cx="16" cy="58" r="3.2"/><circle cx="40" cy="18" r="3.2"/><circle cx="66" cy="50" r="5" fill="#96d7ff"/></g></svg>
+    <svg class="mark" viewBox="0 0 72 72" aria-hidden="true"><g fill="none" stroke="#caa262" stroke-width="2.2" stroke-linecap="round"><path d="M12 60h48"/><path d="M15 56h42"/><path d="M16 49h40"/><path d="M19 42h34"/><path d="M23 35h26"/><path d="M28 28h16"/><path d="M33 22h6"/></g><path d="M33 60v-4a3 3 0 0 1 6 0v4z" fill="#0f0a06"/></svg>
     <div><h1>Links</h1><p>Where else to find me, work first.</p></div>
   </div>
-
-  <section class="group pro">
-    <h2>Professional</h2>
-    <ul class="links">
-      <li><a href="https://scholar.google.com/citations?user=W-gpECkAAAAJ&amp;hl=en"><b>Google Scholar</b><span>publications and citations</span></a></li>
-      <li><a href="https://github.com/jsonSummers"><b>GitHub</b><span>github.com/jsonSummers</span></a></li>
-      <li><a href="https://orcid.org/0009-0006-4161-2865"><b>ORCID</b><span>0009-0006-4161-2865</span></a></li>
-    </ul>
-  </section>
-
-  <section class="group own">
-    <h2>Personal</h2>
-    <ul class="links">
-      <li><a href="https://bucatini-mickey.github.io/"><b>Bucatini Mickey</b><span>films, games and writing</span></a></li>
-      <li><a href="https://www.instagram.com/json_summers/"><b>Instagram</b><span>@json_summers</span></a></li>
-      <li><a href="https://letterboxd.com/bucatini_mickey/"><b>Letterboxd</b><span>bucatini_mickey</span></a></li>
-    </ul>
-  </section>
+  <ul class="comb" aria-label="Links">
+    <li><ul class="row top">
+      <li><a class="cellk pro" href="https://scholar.google.com/citations?user=W-gpECkAAAAJ&amp;hl=en"><span><b>Google Scholar</b><small>publications and citations</small></span></a></li>
+      <li><a class="cellk pro" href="https://github.com/jsonSummers"><span><b>GitHub</b><small>jsonSummers</small></span></a></li>
+      <li><a class="cellk pro" href="https://orcid.org/0009-0006-4161-2865"><span><b>ORCID</b><small>0009-0006-4161-2865</small></span></a></li>
+    </ul></li>
+    <li><ul class="row">
+      <li><a class="cellk own" href="https://bucatini-mickey.github.io/"><span><b>Bucatini Mickey</b><small>films, games, music and writing</small></span></a></li>
+      <li><a class="cellk own" href="https://www.instagram.com/json_summers/"><span><b>Instagram</b><small>@json_summers</small></span></a></li>
+      <li><a class="cellk own" href="https://letterboxd.com/bucatini_mickey/"><span><b>Letterboxd</b><small>bucatini_mickey</small></span></a></li>
+      <li><a class="cellk own" href="https://open.spotify.com/user/jmsummers98"><span><b>Spotify</b><small>playlists</small></span></a></li>
+    </ul></li>
+  </ul>
+  <ul class="key"><li class="pro"><i></i>Work</li><li class="own"><i></i>Personal</li></ul>
 </main>
 
 <footer class="foot"><div class="wrap"><span>© Jason M. Summers</span><span><a href="../">Home</a></span></div></footer>
 </div>
-<script src="../assets/net.js"></script>
+<script src="../assets/skep.js"></script>
 <script src="../assets/bar.js" defer></script>
 </body>
 </html>
