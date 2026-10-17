@@ -9,6 +9,7 @@
 <title>Jason M. Summers</title>
 <meta name="description" content="Jason M. Summers, PhD researcher in underwater computer vision at Swansea University.">
 <link rel="stylesheet" href="assets/fonts/fonts.css">
+<link rel="preload" href="assets/print.webp" as="image" type="image/webp">
 <link rel="preload" href="assets/fonts/cormorant-garamond-500-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="assets/fonts/mulish-500-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/site.css">
@@ -33,7 +34,10 @@ body{background:#0c0c0c}
   url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.55' numOctaves='3' seed='4'/%3E%3CfeColorMatrix values='0 0 0 0 .45  0 0 0 0 .4  0 0 0 0 .32  0 0 0 .06 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23f)'/%3E%3C/svg%3E"),
   color-mix(in srgb,var(--paper) var(--glass),transparent);box-shadow:0 30px 90px -30px rgba(0,0,0,.8),0 0 0 1px rgba(0,0,0,.4)}
 .hero{--d:clamp(400px,52vw,640px);position:relative;min-height:max(clamp(480px,70vh,680px),calc(var(--d) + 40px));display:flex;align-items:center;padding-block:clamp(56px,10vh,104px) 56px}
-.hero .text{position:relative;z-index:1;max-width:min(52%,480px)}
+/* the words stop short of the cyanotype patch, whose left edge sits 1.1 x --d in from the hero's right edge, less
+   the amount the patch overhangs it (the print's own offset), with a 40px gap */
+.hero .text{position:relative;z-index:1;max-width:min(480px,calc(100% - 1.1 * var(--d) + clamp(110px,15vw,210px) - 40px))}
+.hero h1{overflow-wrap:break-word}
 .hero h1{font-size:clamp(2.3rem,5.4vw,3.8rem);letter-spacing:-.005em;font-weight:300}
 .hero .lede{font:300 clamp(1.08rem,1.7vw,1.22rem)/1.7 var(--f-disp);max-width:36ch;margin:26px 0 0;color:color-mix(in srgb,var(--ink) 82%,var(--paper))}
 .hero .where{margin:26px 0 0;font-size:.8rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
@@ -75,7 +79,9 @@ footer.foot .wrap{max-width:none}
 :root[data-v="ocean"] .hero .text{z-index:2}
 /* on a phone the whole head of the page is the cyanotype, with the words in light ink and the print faint behind */
 @media (max-width:760px){
-  :root[data-v="ocean"] .cyan{inset:-20px -40px 0 -40px;width:auto;height:auto;border-radius:0}
+  :root[data-v="ocean"] .hero{overflow:hidden;padding-bottom:84px}           /* the print stays on the cyanotype */
+  :root[data-v="ocean"] .cyan{inset:-20px -40px 14px -40px;width:auto;height:auto;border-radius:0}
+  :root[data-v="ocean"] .print{--d:104vw;top:calc(50% - var(--d) / 2 - 10px)}
   :root[data-v="ocean"] .print{opacity:.45}
   :root[data-v="ocean"] .hero{--ink:#eef4f7;--dim:#a9bfd0;color:var(--ink)}
   :root[data-v="ocean"] .hero .text>*{text-shadow:0 1px 12px rgba(5,20,40,.6)}
@@ -100,7 +106,7 @@ footer.foot .wrap{max-width:none}
     </div>
     <div class="cyan" aria-hidden="true"></div>
     <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><filter id="brushed" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".012 .05" numOctaves="4" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="34" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
-    <canvas class="print" data-seed="23" role="img" aria-label="A mushroom spore print: thousands of spores settled between the gills"></canvas>
+    <canvas class="print" data-seed="23" data-src="assets/print.webp" role="img" aria-label="A mushroom spore print: thousands of spores settled between the gills"></canvas>
   </section>
 
   <ul class="rooms">

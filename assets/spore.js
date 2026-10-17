@@ -7,7 +7,8 @@
    whole, fading in, and redrawn only when its width changes (not when a phone's address bar slides away).
    Where there is a graphics card, it is shown through a tiny shader that lets it breathe and sends the faintest
    ripple out across it; with reduced motion, or without a graphics card, it stays still.
-   data-gills, data-gw and data-wave (fewer, wider, calmer gills) make the small version used for the favicon. */
+   data-gills, data-gw and data-wave (fewer, wider, calmer gills) make the small version used for the favicon;
+   data-src points at the same print drawn ahead of time (the Home page uses it). */
 (function(){
   const cv=document.querySelector('canvas.print'); if(!cv) return;
   const root=document.documentElement, still=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -136,12 +137,24 @@ void main(){
     else cv.getContext('2d').drawImage(buf,0,0);
     cv.classList.add('ready');
   }
+  /* the print drawn ahead of time: assets/print.webp holds its density alone (made by rendering this file's render()
+     at 1600 px), so a visit only has to tint it, not work it out */
+  function fromImage(N,done,cancelled){
+    const im=new Image(); im.decoding='async';
+    im.onload=()=>{ if(cancelled()) return;
+      const buf=document.createElement('canvas'); buf.width=buf.height=N; const c=buf.getContext('2d',{willReadFrequently:true});
+      c.drawImage(im,0,0,N,N); const d=c.getImageData(0,0,N,N), a=d.data, ink=root.dataset.v==='ocean'?[238,243,245]:[70,44,26];
+      for(let i=0;i<a.length;i+=4){ const v=a[i]; a[i]=ink[0]; a[i+1]=ink[1]; a[i+2]=ink[2]; a[i+3]=v }
+      c.putImageData(d,0,0); done(buf) };
+    im.onerror=()=>{ delete cv.dataset.src; render(N,done,cancelled) };   // the file missing: work it out instead
+    im.src=new URL(cv.dataset.src,document.baseURI).href;
+  }
   if('IntersectionObserver' in window) new IntersectionObserver(e=>{visible=e[0].isIntersecting}).observe(cv);
   let job=0, width=0;
   function draw(){
     const S=cv.clientWidth; if(!S||Math.abs(S-width)<2) return;            // only a change of width redraws it
-    width=S; const id=++job;
-    render(Math.round(S*Math.min(2,(devicePixelRatio||1)*1.25)),present,()=>id!==job);
+    width=S; const id=++job, N=Math.round(S*Math.min(2,(devicePixelRatio||1)*1.25));
+    if(cv.dataset.src) fromImage(N,present,()=>id!==job); else render(N,present,()=>id!==job);
   }
   let t; addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(draw,250)});
   draw();
