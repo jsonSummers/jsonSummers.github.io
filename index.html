@@ -79,8 +79,10 @@ footer.foot .wrap{max-width:none}
 :root[data-v="ocean"] .hero .text{z-index:2}
 /* on a phone the whole head of the page is the cyanotype, with the words in light ink and the print faint behind */
 @media (max-width:760px){
-  :root[data-v="ocean"] .hero{overflow:hidden;padding-bottom:84px}           /* the print stays on the cyanotype */
-  :root[data-v="ocean"] .cyan{inset:-20px -40px 14px -40px;width:auto;height:auto;border-radius:0}
+  /* the hero runs the full width of the panel (out through the page's side padding) and clips the print to the
+     cyanotype, which fills it edge to edge */
+  :root[data-v="ocean"] .hero{overflow:hidden;padding-bottom:84px;margin-inline:calc(-1 * clamp(20px,5vw,56px));padding-inline:clamp(20px,5vw,56px)}
+  :root[data-v="ocean"] .cyan{inset:-20px -8px 14px -8px;width:auto;height:auto;border-radius:0}
   :root[data-v="ocean"] .print{--d:104vw;top:calc(50% - var(--d) / 2 - 10px)}
   :root[data-v="ocean"] .print{opacity:.45}
   :root[data-v="ocean"] .hero{--ink:#eef4f7;--dim:#a9bfd0;color:var(--ink)}
@@ -94,7 +96,7 @@ footer.foot .wrap{max-width:none}
 <div class="page">
 <header class="bar"><div class="bar-in">
   <nav class="sites" aria-label="Sites"><a class="me here" href="./" aria-current="true" title="Jason Summers: research, CV and links"><span>J</span><span class="x"><span>ason </span></span><span>S</span><span class="x"><span>ummers</span></span></a><a class="bm away" href="https://bucatini-mickey.github.io/" title="Bucatini Mickey: films, games, photos and other hobbies"><span>B</span><span class="x"><span>ucatini </span></span><span>M</span><span class="x"><span>ickey</span></span></a></nav>
-  <nav class="pages" aria-label="Pages"><a href="./" aria-current="page">Home</a><a href="research/">Research</a><a href="cv/">CV</a><a href="photos/">Photos</a><a href="art/">Art</a><a href="links/">Links</a></nav>
+  <nav class="pages" aria-label="Pages"><a href="./" aria-current="page">Home</a><a href="research/">Research</a><a href="photos/">Photos</a><a href="art/">Art</a><a href="links/">Links</a><a href="cv/">CV</a></nav>
 </div></header>
 
 <main class="wrap">
@@ -111,10 +113,10 @@ footer.foot .wrap{max-width:none}
 
   <ul class="rooms">
     <li><a href="research/"><b>Research</b><span>Underwater image enhancement, feature matching and visual SLAM.</span><i>→</i></a></li>
-    <li><a href="cv/"><b>CV</b><span>Education, research, publications and skills.</span><i>→</i></a></li>
     <li><a href="photos/"><b>Photos</b><span>Photographs, shown large.</span><i>→</i></a></li>
     <li><a href="art/"><b>Art</b><span>Paintings.</span><i>→</i></a></li>
     <li><a href="links/"><b>Links</b><span>Scholar, ORCID, GitHub, and the hobby side.</span><i>→</i></a></li>
+    <li><a href="cv/"><b>CV</b><span>Education, research, publications and skills.</span><i>→</i></a></li>
   </ul>
 
   <p class="latest">Latest: <a href="https://doi.org/10.3390/s25226966">Impact of Underwater Image Enhancement on Feature Matching</a> · Sensors, 2025</p>
