@@ -59,6 +59,7 @@ body{background:#14120e}
 .skills{display:grid;grid-template-columns:8em minmax(0,1fr);gap:6px 16px;margin:0}
 .skills dt{color:var(--dim)}
 .skills dd{margin:0}
+.refs{margin:28px 0 0;color:var(--dim);font-style:italic;font-size:.92rem}
 
 @media print{
   @page{size:A4;margin:14mm}
@@ -77,16 +78,16 @@ body{background:#14120e}
 <div class="page">
 <header class="bar"><div class="bar-in">
   <nav class="sites" aria-label="Sites"><a class="me here" href="../" aria-current="true" title="Jason Summers: research, CV and links"><span>J</span><span class="x"><span>ason </span></span><span>S</span><span class="x"><span>ummers</span></span></a><a class="bm away" href="https://bucatini-mickey.github.io/" title="Bucatini Mickey: films, games, photos and other hobbies"><span>B</span><span class="x"><span>ucatini </span></span><span>M</span><span class="x"><span>ickey</span></span></a></nav>
-  <nav class="pages" aria-label="Pages"><a href="../">Home</a><a href="../research/">Research</a><a href="./" aria-current="page">CV</a><a href="../links/">Links</a></nav>
+  <nav class="pages" aria-label="Pages"><a href="../">Home</a><a href="../research/">Research</a><a href="../cv/" aria-current="page">CV</a><a href="../photos/">Photos</a><a href="../art/">Art</a><a href="../links/">Links</a></nav>
 </div></header>
 
-<div class="tools"><span class="note">A full CV is on its way.</span><button type="button" onclick="print()">Print / save as PDF</button></div>
+<div class="tools"><span class="note">Last updated October 2026.</span><button type="button" onclick="print()">Print / save as PDF</button></div>
 
 <article class="sheet cv">
   <header class="head">
     <div>
       <h1>Jason M. Summers</h1>
-      <p class="role">PhD researcher, underwater computer vision</p>
+      <p class="role">PhD candidate, underwater vision data processing</p>
     </div>
     <address>
       Swansea University, UK<br>
@@ -96,25 +97,34 @@ body{background:#14120e}
   </header>
 
   <section>
-    <h2>Education</h2>
+    <h2>Summary</h2>
     <div>
-      <div class="entry">
-        <div class="t"><h3>PhD, Computer Science</h3><span class="when">in progress</span></div>
-        <p class="at">Swansea University · supervised by Mark W. Jones</p>
-        <p>Underwater image enhancement and its effect on feature matching and visual SLAM.</p>
-      </div>
+      <p>PhD candidate specialising in underwater vision data processing, with a focus on image enhancement for structure-from-motion tasks. Experienced in research methods, data management and deep learning, including applications in computer vision and natural language processing.</p>
     </div>
   </section>
 
   <section>
-    <h2>Research</h2>
+    <h2>Education</h2>
     <div>
       <div class="entry">
-        <div class="t"><h3>Doctoral research</h3></div>
+        <div class="t"><h3>PhD, Underwater Vision Data Processing</h3><span class="when">2022 – present</span></div>
+        <p class="at">Swansea University · supervised by Mark W. Jones · in progress</p>
         <ul>
           <li>Introduced local matching stability and furthest matchable frame, measures of how enhancement changes frame matching underwater.</li>
           <li>Benchmarked enhancement methods through ORB-SLAM3 on real underwater footage.</li>
         </ul>
+      </div>
+      <div class="entry">
+        <div class="t"><h3>MSc, Human Interactions with Responsible AI</h3><span class="when">2021 – 2022</span></div>
+        <p class="at">Swansea University · Distinction</p>
+      </div>
+      <div class="entry">
+        <div class="t"><h3>MSc, Computer Science</h3><span class="when">2019 – 2020</span></div>
+        <p class="at">Swansea University · Distinction</p>
+      </div>
+      <div class="entry">
+        <div class="t"><h3>BSc, Theoretical Physics</h3><span class="when">2016 – 2019</span></div>
+        <p class="at">Swansea University · 2:1</p>
       </div>
     </div>
   </section>
@@ -127,6 +137,26 @@ body{background:#14120e}
   </section>
 
   <section>
+    <h2>Projects</h2>
+    <div>
+      <div class="entry">
+        <div class="t"><h3>Impact of Underwater Image Enhancement on Feature Matching</h3><span class="when"><a href="https://doi.org/10.3390/s25226966">Paper</a></span></div>
+        <p>Published in MDPI Sensors: explores quality metrics for underwater image enhancement and proposes a more context-aware metric based on structure-from-motion and SLAM. Developed academic writing, including engaging with reviewers, while reporting to industry stakeholders.</p>
+      </div>
+      <div class="entry">
+        <div class="t"><h3>Expertise Guided Saliency Prediction in an Underwater Context</h3><span class="when"><a href="https://www.swansea.ac.uk/media/Jason-Summers-compressed.pdf">Dissertation</a></span></div>
+        <p class="at">MSc dissertation, 2021</p>
+        <p>A study of how the inspection patterns of expert and non-expert inspectors differ; participant engagement and study design.</p>
+      </div>
+      <div class="entry">
+        <div class="t"><h3>Vague Language for Natural Language Processing</h3></div>
+        <p class="at">MSc dissertation, 2019</p>
+        <p>The role of vague language and similar speech mechanisms in NLP, and how they make chatbot speech more efficient and polite.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
     <h2>Software</h2>
     <div>
       <div class="entry"><div class="t"><h3>SeaSnow-GAN</h3></div><p>GAN for removing marine snow from underwater images.</p></div>
@@ -136,15 +166,31 @@ body{background:#14120e}
   </section>
 
   <section>
+    <h2>Experience</h2>
+    <div>
+      <div class="entry">
+        <div class="t"><h3>Sales Representative, Halfords</h3><span class="when">2020 – 2021</span></div>
+        <p>Customer service and communication, teamwork and adaptability in a fast-paced retail setting.</p>
+      </div>
+      <div class="entry">
+        <div class="t"><h3>Product Engineer, Blue River Controls</h3><span class="when">several terms</span></div>
+        <p>Design and manufacture of fire control and safety electronics for large institutions, including hospitals, universities and offices; time management, teamwork, CAD and soldering.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
     <h2>Skills</h2>
     <dl class="skills">
-      <dt>Languages</dt><dd>Python, Rust, TypeScript</dd>
+      <dt>Python</dt><dd>Primary language for several years, for data handling and machine learning</dd>
+      <dt>Other languages</dt><dd>R, Java, SQL, Rust, TypeScript, LaTeX</dd>
       <dt>Vision</dt><dd>OpenCV, ORB-SLAM3, COLMAP, feature matching, image enhancement</dd>
-      <dt>Learning</dt><dd>GANs, variational autoencoders</dd>
-      <dt>Tools</dt><dd>Docker, Git, ffmpeg, LaTeX, CUDA</dd>
+      <dt>Learning</dt><dd>GANs, variational autoencoders, NLP</dd>
+      <dt>Tools</dt><dd>Docker, Git, ffmpeg, CUDA</dd>
     </dl>
   </section>
 
+  <p class="refs">References available on request.</p>
 </article>
 
 <footer class="foot"><div class="wrap"><span>© Jason M. Summers</span><span><a href="../">Home</a></span></div></footer>
