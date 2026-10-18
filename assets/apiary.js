@@ -83,7 +83,8 @@
     x.save(); x.clip(inside);
     const gy=h-o-t-26*S;                                                        // the ground line
     // the ground: a strip of green with trefoils of white and red
-    const ground=waver(curve(u=>[u,gy+Math.sin(u/w*9)*4*S+(vnoise(u*.02,3)-.5)*8*S],0,w,30).concat([[w,h],[0,h]]),1,true);
+    const ga=u=>gy+Math.sin(u/w*9)*4*S+(vnoise(u*.02,3)-.5)*8*S;               // the ground's top edge at u
+    const ground=waver(curve(u=>[u,ga(u)],0,w,30).concat([[w,h],[0,h]]),1,true);
     trace(x,ground,true); x.fillStyle='#7e9c55'; x.fill(); ink(x,1.3);
     for(let i=0;i<22;i++){ const fx=t+r()*(w-2*t), fy=gy+8*S+r()*14*S, c=r()<.6?'#f4ecd6':'#b4432c';
       for(let k=0;k<3;k++){ x.fillStyle=c; x.beginPath(); x.arc(fx+Math.cos(k*2.1)*2*S,fy+Math.sin(k*2.1)*2*S,1.3*S,0,6.3); x.fill() } }
@@ -109,7 +110,7 @@
     const ent=waver(curve(a=>[sx-sw*.25+Math.cos(a)*7*S,sb-4*S+Math.sin(a)*9*S],Math.PI,2*Math.PI,10).concat([[sx-sw*.25+7*S,sb],[sx-sw*.25-7*S,sb]]),.5,true);
     trace(x,ent,true); x.fillStyle='#2a1c10'; x.fill();
     // the plants: a tree of stacked leaves, and a flowering stem
-    function stem(px,top,bend){ const p=waver(curve(v=>[px+Math.sin(v*2.4)*bend*S,gy-v*(gy-top)],0,1,10),1,false); trace(x,p,false); x.strokeStyle='#5c7d3c'; x.lineWidth=3*S; x.stroke(); trace(x,p,false); ink(x,.9); return p }
+    function stem(px,top,bend){ const g0=ga(px)+3*S, p=waver(curve(v=>[px+Math.sin(v*2.4)*bend*S,g0-v*(g0-top)],0,1,10),1,false); trace(x,p,false); x.strokeStyle='#5c7d3c'; x.lineWidth=3*S; x.stroke(); trace(x,p,false); ink(x,.9); return p }
     const TX=wide?w*.19:w*.21, boxes=[];                                       // where the plants stand (bees keep out of them)
     // a white mound at the tree's foot, as the plants in the bestiary grow from
     const mound=waver(curve(a=>[TX+Math.cos(a)*55*S,gy+4*S+Math.sin(a)*16*S],Math.PI,2*Math.PI,16),1.2,true);
@@ -132,32 +133,52 @@
         x.fillStyle='#e0b24a'; x.beginPath(); x.arc(fx,fy,2.6*S,0,6.3); x.fill(); ink(x,.7) } }
     // lavender: a clump of thin grey-green stems, each topped with a spike of violet buds in pairs
     function lavender(px,topy,n){ boxes.push([px-26*S,px+26*S,topy]);
-      for(let i=0;i<5;i++){ const a=-Math.PI/2+(i-2)*.5; trace(x,almond(px+Math.cos(a)*9*S,gy-4*S+Math.sin(a)*9*S,22*S,3.5*S,a),true); x.fillStyle='#93a487'; x.fill(); ink(x,.7) }
+      const g0=ga(px)+3*S;
+      for(let i=0;i<5;i++){ const a=-Math.PI/2+(i-2)*.5; trace(x,almond(px+Math.cos(a)*10*S,g0-3*S+Math.sin(a)*10*S,24*S,3.5*S,a),true); x.fillStyle='#93a487'; x.fill(); ink(x,.7) }
       for(let i=0;i<n;i++){ const f=(i-(n-1)/2)/((n-1)/2||1), tx=px+f*22*S, ty=topy+Math.abs(f)*14*S+(i%2)*6*S;
-        const p=waver([[px+f*3*S,gy-2*S],[(px+tx)/2+f*4*S,(gy+ty)/2],[tx,ty]],.6,false); trace(x,p,false); x.strokeStyle='#7d9070'; x.lineWidth=1.6*S; x.stroke(); trace(x,p,false); ink(x,.5);
+        const p=waver([[px+f*3*S,g0],[(px+tx)/2+f*4*S,(g0+ty)/2],[tx,ty]],.6,false); trace(x,p,false); x.strokeStyle='#7d9070'; x.lineWidth=1.6*S; x.stroke(); trace(x,p,false); ink(x,.5);
         for(let k=0;k<7;k++){ const by=ty+k*4.2*S, sz=(1-k/9)*S;
           for(const sd of [-1,1]){ trace(x,almond(tx+sd*2.3*sz,by,6*sz,3.6*sz,-Math.PI/2+sd*.5),true); x.fillStyle=k%2?'#8a74b8':'#7461a6'; x.fill(); ink(x,.55) } } } }
-    // the artichoke in flower: lobed silver leaves, a globe of overlapping bracts tipped purple, and a violet thistle crown
-    function artichoke(px,topy){ boxes.push([px-34*S,px+34*S,topy-16*S]);
-      for(const sd of [-1,1]) for(let j=0;j<2;j++){ const ly=gy-8*S-j*(gy-topy)*.38, a=-Math.PI/2+sd*(1.0-j*.25), L=(54-j*14)*S;
-        const cxl=px+Math.cos(a)*L*.5, cyl=ly+Math.sin(a)*L*.5, pts=[];
-        for(let k=0;k<=24;k++){ const u=k/24, along=(u<.5?u*2:2-u*2), side=u<.5?1:-1, lob=1+.45*Math.max(0,Math.sin(along*Math.PI*4));
-          const ww=Math.sin(along*Math.PI)*L*.2*lob*side, ll=(along-.5)*L; pts.push([cxl+Math.cos(a)*ll-Math.sin(a)*ww,cyl+Math.sin(a)*ll+Math.cos(a)*ww]) }
-        trace(x,waver(pts,.5,true),true); x.fillStyle='#93a88a'; x.fill(); ink(x,.9);
-        trace(x,[[px,ly],[px+Math.cos(a)*L,ly+Math.sin(a)*L]],false); x.strokeStyle='rgba(240,245,230,.7)'; x.lineWidth=.9*S; x.stroke() }
-      const p=waver([[px,gy],[px+2*S,(gy+topy)/2],[px,topy+18*S]],.6,false); trace(x,p,false); x.strokeStyle='#6f8f5a'; x.lineWidth=4*S; x.stroke(); trace(x,p,false); ink(x,.8);
-      const hy=topy+10*S, R=21*S;
-      const globe=waver(curve(a=>[px+Math.cos(a)*R,hy+Math.sin(a)*R*.95],0,6.283,24),.6,true); trace(x,globe,true); x.fillStyle='#7f9a62'; x.fill();
-      x.save(); trace(x,globe,true); x.clip();
-      for(let row=0;row<5;row++) for(let k=-3;k<=3;k++){ const bx=px+k*9*S+(row%2)*4.5*S, by=hy+R*.95-row*8.5*S;
-        const br=[[bx-5*S,by+3*S],[bx,by-7*S],[bx+5*S,by+3*S]]; trace(x,br,true); x.fillStyle=row>1?'#7b8f5a':'#87a26a'; x.fill(); ink(x,.7);
-        x.fillStyle='#7d4f7a'; x.beginPath(); x.arc(bx,by-5.5*S,1.4*S,0,6.3); x.fill() }
-      x.restore(); trace(x,globe,true); ink(x,1);
-      for(let k=0;k<22;k++){ const a=-Math.PI/2+(k/21-.5)*2.2, L=(13+(k%3)*4)*S;                       // the thistle crown
-        trace(x,waver([[px+Math.cos(a)*4*S,hy-R*.8+Math.sin(a)*2*S],[px+Math.cos(a)*L,hy-R*.8+Math.sin(a)*L]],.4,false),false); x.strokeStyle=k%2?'#8a4fa8':'#6f3d8e'; x.lineWidth=1.5*S; x.stroke() } }
+    // the artichoke in flower, as a herbal draws it: deeply cut silver leaves arching from the foot, a stout stem
+    // with a side bud, and a great head of overlapping bracts, green at the base and purple at the tips, opening
+    // into a crown of violet florets
+    function cardoon(x0,y0,ang,len,curl,flip){                                  // a pinnately lobed leaf along a curved midrib
+      const dx=Math.cos(ang),dy=Math.sin(ang),nx=-dy*flip,ny=dx*flip;
+      const m=u=>[x0+dx*len*u+nx*curl*len*u*u, y0+dy*len*u+ny*curl*len*u*u];
+      const tan=u=>{ const [ax,ay]=m(Math.max(0,u-.01)),[bx,by]=m(Math.min(1,u+.01)),l=Math.hypot(bx-ax,by-ay)||1; return [(bx-ax)/l,(by-ay)/l] };
+      const wid=u=>len*.24*Math.pow(Math.sin(Math.PI*Math.min(1,u*1.05)),.7), side=sg=>{ const P=[];
+        for(let i=0;i<=12;i++){ const u=i/12*.96, [mx,my]=m(u), [tx,ty]=tan(u), qx=-ty*sg, qy=tx*sg, tip=i%2===1, ww=wid(u)*(tip?1:.32), fw=tip?len*.05:0;
+          P.push([mx+qx*ww+tx*fw,my+qy*ww+ty*fw]) } return P };
+      const L=side(1), R=side(-1), [ex,ey]=m(1), pts=[...L,[ex,ey],...R.reverse()];
+      trace(x,waver(pts,.5,true),true); x.fillStyle='#9db195'; x.fill(); ink(x,.9);
+      for(let i=1;i<12;i+=2){ const u=i/12*.96,[mx,my]=m(u),[tx,ty]=tan(u);                                   // veins to the lobe tips
+        for(const sg of [-1,1]){ const ww=wid(u)*.85; x.beginPath(); x.moveTo(mx,my); x.lineTo(mx-ty*sg*ww+tx*len*.04,my+tx*sg*ww+ty*len*.04); x.strokeStyle='rgba(60,85,55,.55)'; x.lineWidth=.7*S; x.stroke() } }
+      trace(x,curve(m,0,1,12),false); x.strokeStyle='rgba(248,250,240,.85)'; x.lineWidth=1.3*S; x.stroke() }
+    function head(px,hy,R,crown){
+      if(crown) for(let k=0;k<46;k++){ const a=-Math.PI/2+(k/45-.5)*2.5, L=R*(.8+.5*Math.abs(Math.sin(k*1.7))), bx=px+Math.cos(a)*R*.25, by=hy-R*.72;
+        trace(x,waver([[bx,by],[bx+Math.cos(a)*L,by+Math.sin(a)*L]],.3,false),false); x.strokeStyle=['#8a4fa8','#6f3d8e','#a874c4'][k%3]; x.lineWidth=1.4*S; x.stroke();
+        x.fillStyle='#5e2f78'; x.beginPath(); x.arc(bx+Math.cos(a)*L,by+Math.sin(a)*L,1.1*S,0,6.3); x.fill() }
+      x.beginPath(); x.ellipse(px,hy,R,R*.92,0,0,6.3); x.fillStyle='#55703f'; x.fill();
+      const rows=5;
+      for(let r0=0;r0<rows;r0++){ const yy=hy-R*.78+r0*(R*1.62/(rows-1)), hw=R*Math.sqrt(Math.max(0,1-((yy-hy)/R)**2))*.98, n=Math.max(2,Math.round(2*hw/(R*.36)));
+        for(let k=0;k<n;k++){ const f=(k+.5+(r0%2?.25:-.25))/n*2-1; if(Math.abs(f)>1) continue; const cx=px+f*hw, sq=Math.sqrt(1-f*f*.75), bw=R*.24*sq+1*S, bh=R*.46;
+          const br=waver([[cx-bw,yy+bh*.35],[cx-bw*.8,yy-bh*.2],[cx,yy-bh*.62],[cx+bw*.8,yy-bh*.2],[cx+bw,yy+bh*.35]],.3,false);
+          const gr=x.createLinearGradient(0,yy+bh*.35,0,yy-bh*.62); gr.addColorStop(0,'#5f7d45'); gr.addColorStop(.55,'#86a062'); gr.addColorStop(1,'#7d4a7c');
+          trace(x,br,false); x.closePath(); x.fillStyle=gr; x.fill(); ink(x,.75);
+          x.beginPath(); x.moveTo(cx,yy-bh*.62); x.lineTo(cx,yy-bh*.86); x.strokeStyle=INK; x.lineWidth=.8*S; x.stroke();          // the spine at each tip
+          if(f<0){ x.beginPath(); x.moveTo(cx-bw*.45,yy+bh*.15); x.lineTo(cx-bw*.2,yy-bh*.3); x.strokeStyle='rgba(250,252,235,.7)'; x.lineWidth=1*S; x.stroke() } } }
+      x.beginPath(); x.ellipse(px,hy,R,R*.92,0,0,6.3); ink(x,1.1) }
+    function artichoke(px,topy){ boxes.push([px-56*S,px+56*S,topy-10*S]);
+      const g0=ga(px)+3*S, R=27*S, hy=topy+R*1.15;
+      for(const [sg,a,l,c] of [[-1,-2.75,74,.35],[1,-.39,74,.35],[-1,-2.2,58,.5],[1,-.95,58,.5]]) cardoon(px+sg*3*S,g0-4*S,a,l*S,c,sg);   // the arching foot leaves
+      const st=waver([[px,g0],[px-3*S,(g0+hy)/2],[px,hy+R*.8]],.6,false); trace(x,st,false); x.strokeStyle='#6f8f5a'; x.lineWidth=6*S; x.stroke(); trace(x,st,false); ink(x,.9);
+      const by=g0-(g0-hy)*.45, bx=px+26*S, bud=waver([[px-1*S,by+12*S],[px+14*S,by],[bx,by-14*S]],.5,false);       // the side branch and bud
+      trace(x,bud,false); x.strokeStyle='#6f8f5a'; x.lineWidth=3.5*S; x.stroke(); trace(x,bud,false); ink(x,.7);
+      cardoon(px-2*S,by+16*S,-2.5,40*S,.4,-1); cardoon(px+2*S,(by+hy)/2+8*S,-.7,36*S,.45,1);
+      head(bx,by-14*S-R*.42,R*.5,false); head(px,hy,R,true) }
     function flowersB(px,topy,bend,n,col){ boxes.push([px-22*S,px+22*S,topy]); flowers(px,topy,bend,n,col) }
     if(wide){ lavender(w*.065,h*.58,7); flowersB(w*.33,h*.5,3,4,'#8a5a3a'); flowersB(w*.42,h*.44,-5,5,'#a8553a');
-      lavender(w*.78,h*.6,6); artichoke(w*.91,h*.6) }
+      lavender(w*.77,h*.6,6); artichoke(w*.905,h*.5) }
     else { flowersB(w*.4,h*.44,-5,5,'#a8553a'); lavender(w*.075,h*.6,5) }
     boxes.push([TX-60*S,TX+60*S,h*.24]);
     // the bees, flying in from the flowers towards the hive
