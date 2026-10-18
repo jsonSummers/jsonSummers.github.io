@@ -139,60 +139,59 @@
         const p=waver([[px+f*3*S,g0],[(px+tx)/2+f*4*S,(g0+ty)/2],[tx,ty]],.6,false); trace(x,p,false); x.strokeStyle='#7d9070'; x.lineWidth=1.6*S; x.stroke(); trace(x,p,false); ink(x,.5);
         for(let k=0;k<7;k++){ const by=ty+k*4.2*S, sz=(1-k/9)*S;
           for(const sd of [-1,1]){ trace(x,almond(tx+sd*2.3*sz,by,6*sz,3.6*sz,-Math.PI/2+sd*.5),true); x.fillStyle=k%2?'#8a74b8':'#7461a6'; x.fill(); ink(x,.55) } } } }
-    // a stalk drawn as illuminators drew them: an ink edge, the colour inside, a fine white highlight along one side;
-    // ends left square, as the stalks in the Luttrell Psalter stop short
-    function tube(P,wd,col,hi){ x.lineJoin='round'; x.lineCap='butt';
-      trace(x,P,false); x.strokeStyle=INK; x.lineWidth=(wd+1.8)*S; x.stroke(); trace(x,P,false); x.strokeStyle=col; x.lineWidth=wd*S; x.stroke();
-      if(hi){ const Q=P.map((p,i)=>{ const q=P[Math.min(P.length-1,i+1)], o=P[Math.max(0,i-1)], dx=q[0]-o[0], dy=q[1]-o[1], l=Math.hypot(dx,dy)||1; return [p[0]-dy/l*wd*.22*S,p[1]+dx/l*wd*.22*S] });
-        trace(x,Q.slice(1,-1),false); x.strokeStyle=hi; x.lineWidth=.9*S; x.stroke() } x.lineCap='round' }
+    // plants that grow: each stalk is traced from a start point and heading, turning a little more with each step
+    // (k0 + k1*u*u radians per pixel), so stems sway and tips curl; branches leave their parent along its line
+    function grow(x0,y0,th,L,k0,k1,n){ n=n||Math.max(12,Math.round(L/(3*S))); const P=[[x0,y0]],T=[th]; let px=x0,py=y0,t=th; const ds=L/n;
+      for(let i=1;i<=n;i++){ const u=i/n; t+=(k0+k1*u*u)*ds; px+=Math.cos(t)*ds; py+=Math.sin(t)*ds;
+        P.push([px+(vnoise(px*.04,py*.04)-.5)*1.1*S,py+(vnoise(px*.04+7,py*.04)-.5)*1.1*S]); T.push(t) } return {P,T} }
+    const at=(g,u)=>{ const i=Math.round(u*(g.P.length-1)); return [g.P[i][0],g.P[i][1],g.T[i]] };
+    // the stalks are painted together: every ink edge first, then every colour over it, so where a branch leaves its
+    // parent the two run into one another without a seam; each tapers from w0 to w1, and its end is cut square or round
+    function paintStalks(list,col,hi){ for(const pass of [0,1,2]) for(const st of list){ const P=st.g.P, n=P.length-1;
+      for(let i=0;i<n;i++){ const u=i/n, wd=(st.w0+(st.w1-st.w0)*u)*S;
+        x.lineCap=(i===n-1&&st.cut)?'butt':'round';
+        if(pass===2){ if(!hi||i<2||i>n-3) continue; const [ax,ay]=P[i],[bx,by]=P[i+1], l=Math.hypot(bx-ax,by-ay)||1, ox=-(by-ay)/l*wd*.26, oy=(bx-ax)/l*wd*.26;
+          x.beginPath(); x.moveTo(ax+ox,ay+oy); x.lineTo(bx+ox,by+oy); x.strokeStyle=hi; x.lineWidth=.85*S; x.stroke(); continue }
+        x.beginPath(); x.moveTo(P[i][0],P[i][1]); x.lineTo(P[i+1][0],P[i+1][1]);
+        x.strokeStyle=pass?col:INK; x.lineWidth=pass?wd:wd+1.9*S; x.stroke() } } x.lineCap='round' }
     // a Luttrell bud: a green cup of three sepals holding a round head, orange above and white below
     function bud(bx,by,a,sz){ x.save(); x.translate(bx,by); x.rotate(a+Math.PI/2); x.scale(sz*S,sz*S);
       x.beginPath(); x.ellipse(0,-8.4,4.8,4.6,0,0,6.3); x.fillStyle='#f2ead4'; x.fill();
       x.save(); x.clip(); x.fillStyle='#e0874a'; x.fillRect(-6,-14,12,5.8); x.restore(); x.strokeStyle=INK; x.lineWidth=.8/sz; x.stroke();
       x.beginPath(); x.moveTo(-5.2,-4.6); x.lineTo(-3.6,-8.2); x.lineTo(-1.8,-5.2); x.lineTo(0,-8.8); x.lineTo(1.8,-5.2); x.lineTo(3.6,-8.2); x.lineTo(5.2,-4.6); x.quadraticCurveTo(4.4,1.6,0,2); x.quadraticCurveTo(-4.4,1.6,-5.2,-4.6);
-      x.fillStyle='#4f9a72'; x.fill(); x.stroke(); x.restore() }
-    // after the Luttrell Psalter: a blue stem that rises and curls into a spiral, buds on short stalks, some stalks cut short
-    function luttrell(px,topy){ const R=44*S, g0=ga(px)+3*S, cx=px+R, cy=topy+R; boxes.push([px-30*S,px+2*R+30*S,topy-10*S]);
-      const sp=curve(th=>{ const r=R*(1-.62*(th-Math.PI)/(2.3*Math.PI)); return [cx+Math.cos(th)*r,cy+Math.sin(th)*r] },Math.PI,3.3*Math.PI,60);
-      const stem=waver(curve(v=>[px+6*S*Math.sin(v*3)-6*S*v,g0-v*(g0-cy)],0,1,14),.5,false);
-      const all=stem.concat(sp);
-      const at=th=>{ const r=R*(1-.62*(th-Math.PI)/(2.3*Math.PI)); return [cx+Math.cos(th)*r,cy+Math.sin(th)*r,r] };
-      const branches=[];
-      for(const [th,len,out,cut] of [[1.25,34,1,0],[1.7,36,1,0],[2.15,30,1,1],[2.55,34,1,0],[2.3,24,-1,0],[2.95,16,-1,0]]){
-        const [bx,by]=at(th*Math.PI), n=out*1, ox=Math.cos(th*Math.PI)*n, oy=Math.sin(th*Math.PI)*n, tx=-Math.sin(th*Math.PI), ty=Math.cos(th*Math.PI);
-        const ex=bx+(ox*.8+tx*.5)*len*S, ey=by+(oy*.8+ty*.5)*len*S;
-        branches.push([waver([[bx,by],[bx+(ox*.6+tx*.2)*len*.55*S,by+(oy*.6+ty*.2)*len*.55*S],[ex,ey]],.4,false),cut,Math.atan2(ey-by,ex-bx)]) }
-      for(const [v,sd,len,cut] of [[.28,-1,40,0],[.5,1,36,0],[.7,-1,26,1],[.38,1,22,1],[.62,-1,34,0]]){
-        const [bx,by]=stem[Math.round(v*(stem.length-1))], ex=bx+sd*len*S, ey=by-len*.55*S;
-        branches.push([waver([[bx,by],[bx+sd*len*.5*S,by-len*.05*S],[ex,ey]],.4,false),cut,Math.atan2(ey-by,ex-bx)]) }
-      for(const [P] of branches) tube(P,3.6,'#2f4f9a','rgba(235,240,255,.85)');
-      tube(all,6,'#2f4f9a','rgba(235,240,255,.9)');
-      for(const [P,cut,a] of branches) if(!cut){ const [ex,ey]=P[P.length-1]; bud(ex+Math.cos(a)*7*S,ey+Math.sin(a)*7*S,a,1.75) } }
-    // after the Voynich plant on folio 46v: big saw-toothed leaves at the foot, a pale forking stalk, aster heads
-    // (a dark blue cup under a fringe of cream petals) at the ends, and a stalk or two cut short
-    function voynich(px,topy){ const g0=ga(px)+3*S; boxes.push([px-80*S,px+80*S,topy-20*S]);
-      for(const [a,L,c] of [[-2.6,84,'#5d9e88'],[-.55,80,'#6aa894'],[-1.95,60,'#57937e'],[-1.2,56,'#62a28c']]){                       // the leaves
-        const dx=Math.cos(a),dy=Math.sin(a),nx=-dy,ny=dx, pts=[];
-        for(let i=0;i<=20;i++){ const u=i/20, ww=Math.sin(Math.PI*u)**.8*L*.22*S*(i%2?1.12:.88); pts.push([px+dx*L*S*u+nx*ww,g0-4*S+dy*L*S*u+ny*ww]) }
-        for(let i=20;i>=0;i--){ const u=i/20, ww=Math.sin(Math.PI*u)**.8*L*.22*S*(i%2?1.12:.88); pts.push([px+dx*L*S*u-nx*ww,g0-4*S+dy*L*S*u-ny*ww]) }
-        trace(x,waver(pts,.4,true),true); x.fillStyle=c; x.fill(); ink(x,.9);
-        for(let k=0;k<7;k++){ const u=.15+k*.11; x.beginPath(); x.moveTo(px+dx*L*S*u,g0-4*S+dy*L*S*u); x.lineTo(px+dx*L*S*(u+.08)+nx*L*.12*S*(k%2?1:-1),g0-4*S+dy*L*S*(u+.08)+ny*L*.12*S*(k%2?1:-1)); x.strokeStyle='rgba(30,70,55,.6)'; x.lineWidth=.8*S; x.stroke() } }
-      const qc=(a,c,b)=>curve(u=>[(1-u)*(1-u)*a[0]+2*u*(1-u)*c[0]+u*u*b[0],(1-u)*(1-u)*a[1]+2*u*(1-u)*c[1]+u*u*b[1]],0,1,14);   // smooth arcs, as the Voynich stalks bend
-      const fy=g0-(g0-topy)*.42, st=waver([[px,g0],[px+2*S,(g0+fy)/2],[px,fy]],.4,false);
-      const arms=[]; const arm=(P)=>{ arms.push(P); return P[P.length-1] };
-      const L1=arm(qc([px,fy],[px-46*S,fy-2*S],[px-52*S,fy-40*S])), R1=arm(qc([px,fy],[px+44*S,fy-4*S],[px+50*S,fy-44*S]));
-      const heads=[];
-      const fork=(o,a,l)=>{ const e=[o[0]+Math.cos(a)*l*S,o[1]+Math.sin(a)*l*S]; arm(qc(o,[(o[0]+e[0])/2+Math.sin(a)*7*S,(o[1]+e[1])/2-Math.cos(a)*7*S],e)); heads.push([e,a]); return e };
-      const A0=arms[0], A1=arms[1];                                              // heads branch off along each arm, not all at its end
-      fork(A0[5],-2.0,26); fork(A0[10],-2.75,28); fork(L1,-1.75,24); fork(A1[5],-1.15,26); fork(A1[10],-.4,28); fork(R1,-1.4,24);
-      fork([px,fy-6*S],-1.57,Math.max(30,(fy-topy)/S-10));
-      arm(waver([[px-5*S,fy+6*S],[px-16*S,fy-2*S]],.3,false));                                                   // stalks cut short
-      arm(waver([[R1[0]-6*S,R1[1]+12*S],[R1[0]+4*S,R1[1]+16*S]],.3,false));
-      for(const P of [st,...arms]) tube(P,3.4,'#cdb88e','rgba(255,250,235,.7)');
-      for(const [[hx,hy],a] of heads){ x.save(); x.translate(hx,hy); x.rotate(a+Math.PI/2); const k=1.75*S;
+      x.fillStyle='#4f9a72'; x.fill(); x.stroke(); x.beginPath(); x.moveTo(-2.6,-3.6); x.quadraticCurveTo(-2.4,-.4,-.6,.8); x.strokeStyle='rgba(235,250,240,.6)'; x.lineWidth=.7/sz; x.stroke(); x.restore() }
+    // after the Luttrell Psalter: a blue stem that sways up and curls over into a spiral; tendrils leave it along its
+    // line and curl, most ending in a bud, a few stopping short, cut square
+    function luttrell(px,topy){ const g0=ga(px)+3*S, H0=g0-topy; boxes.push([px-40*S,px+110*S,topy-10*S]);
+      const main=grow(px,g0,-Math.PI/2-.38,H0*1.38,.0016/S,.052/S);
+      const list=[{g:main,w0:6.4,w1:3,cut:0}], ends=[];
+      for(const [u,sd,L,cut] of [[.2,-1,44,0],[.3,1,40,0],[.42,-1,50,0],[.52,1,24,1],[.6,-1,42,0],[.7,1,30,0],[.8,-1,26,0],[.47,-1,20,1]]){
+        const [bx,by,t]=at(main,u), g=grow(bx,by,t+sd*.62,L*S,sd*.012/S,sd*.06/S);
+        list.push({g,w0:3.4,w1:2.2,cut}); if(!cut) ends.push(g) }
+      paintStalks(list,'#2f4f9a','rgba(236,242,255,.9)');
+      for(const g of ends){ const n=g.P.length-1, [ex,ey]=g.P[n], t=g.T[n]; bud(ex+Math.cos(t)*1.5*S,ey+Math.sin(t)*1.5*S,t,1.6) }
+      const [ex,ey]=main.P[main.P.length-1], te=main.T[main.T.length-1]; bud(ex+Math.cos(te)*1.5*S,ey+Math.sin(te)*1.5*S,te,1.45) }
+    // after the Voynich plant on folio 46v: saw-toothed leaves bending out from the foot, a pale stalk parting into
+    // arms that sweep out and turn up again, side stalks along them, and an aster head at each end
+    function voynich(px,topy){ const g0=ga(px)+3*S, H0=g0-topy; boxes.push([px-85*S,px+85*S,topy-20*S]);
+      for(const [th,L,k,c] of [[-2.55,92,-.007,'#5d9e88'],[-.59,88,.007,'#6aa894'],[-2.05,68,-.005,'#57937e'],[-1.1,64,.005,'#62a28c']]){
+        const m=grow(px,g0-3*S,th,L*S,k/S*1,k/S*1.6,24), n=m.P.length-1, Lw=L*.21*S, edgeA=[], edgeB=[];
+        for(let i=0;i<=n;i++){ const u=i/n, [mx,my]=m.P[i], t=m.T[i], ww=Lw*Math.pow(Math.sin(Math.PI*Math.min(.999,u*1.02)),.75), z=i%2?1.14:.86;
+          edgeA.push([mx-Math.sin(t)*ww*z+Math.cos(t)*(i%2?2*S:0),my+Math.cos(t)*ww*z+Math.sin(t)*(i%2?2*S:0)]); edgeB.push([mx+Math.sin(t)*ww*z+Math.cos(t)*(i%2?2*S:0),my-Math.cos(t)*ww*z+Math.sin(t)*(i%2?2*S:0)]) }
+        trace(x,edgeA.concat(edgeB.reverse()),true); x.fillStyle=c; x.fill(); ink(x,.85);
+        trace(x,m.P,false); x.strokeStyle='rgba(225,245,235,.55)'; x.lineWidth=1*S; x.stroke();
+        for(let i=3;i<n-1;i+=2){ const [mx,my]=m.P[i], t=m.T[i]; for(const sd of [-1,1]){ x.beginPath(); x.moveTo(mx,my); x.lineTo(mx+Math.cos(t+sd*.9)*Lw*.75,my+Math.sin(t+sd*.9)*Lw*.75); x.strokeStyle='rgba(30,75,60,.5)'; x.lineWidth=.7*S; x.stroke() } } }
+      const stem=grow(px,g0,-Math.PI/2+.04,H0*.46,-.0008/S,0);
+      const [fx,fy,ft]=at(stem,1), list=[{g:stem,w0:4.4,w1:3.4,cut:0}], heads=[];
+      const centre=grow(fx,fy,ft,H0*.42,.002/S,-.004/S); list.push({g:centre,w0:3.2,w1:2.2,cut:0}); heads.push(centre);
+      for(const sd of [-1,1]){ const armg=grow(fx,fy,ft+sd*.78,82*S,-sd*.006/S,-sd*.03/S); list.push({g:armg,w0:3.2,w1:2.2,cut:0}); heads.push(armg);
+        for(const [u,L,off] of [[.38,40,.7],[.7,34,.8]]){ const [bx,by,t]=at(armg,u), g=grow(bx,by,t+sd*off,L*S,-sd*.008/S,-sd*.03/S); list.push({g,w0:2.4,w1:1.8,cut:0}); heads.push(g) }
+        const [cx2,cy2,t2]=at(armg,.2), stub=grow(cx2,cy2,t2-sd*.7,14*S,0,0); list.push({g:stub,w0:2.4,w1:2.1,cut:1}) }
+      paintStalks(list,'#cdb88e','rgba(255,250,235,.75)');
+      for(const g of heads){ const n=g.P.length-1, [hx,hy]=g.P[n], a=g.T[n]; x.save(); x.translate(hx+Math.cos(a)*3*S,hy+Math.sin(a)*3*S); x.rotate(a+Math.PI/2); const k=1.75*S;
         x.beginPath(); x.moveTo(-6.6*k,-2*k);                                                  // the petals: one crown of points
         for(let i=0;i<9;i++){ const t=(i/8-.5)*2.3; x.lineTo(Math.sin(t)*9*k,-7.2*k+Math.abs(Math.sin(t))*2*k); if(i<8){ const t2=t+1.15/8; x.lineTo(Math.sin(t2)*6.8*k,-3.8*k) } }
-        x.lineTo(6.6*k,-2*k); x.closePath(); x.fillStyle='#f3e8c6'; x.fill(); x.strokeStyle=INK; x.lineWidth=.45*k; x.stroke();                                              // the petals
+        x.lineTo(6.6*k,-2*k); x.closePath(); x.fillStyle='#f3e8c6'; x.fill(); x.strokeStyle=INK; x.lineWidth=.45*k; x.stroke();
         x.beginPath(); x.ellipse(0,-2.6*k,6.4*k,2.2*k,0,0,6.3); x.fillStyle='#d9b24a'; x.fill(); x.stroke();
         for(let i=0;i<7;i++){ x.fillStyle='#8a6a20'; x.beginPath(); x.arc((i-3)*1.6*k,-2.8*k+(i%2)*.8*k,.5*k,0,6.3); x.fill() }
         x.beginPath(); x.moveTo(-7*k,-2*k); x.quadraticCurveTo(-6.5*k,5*k,0,5.5*k); x.quadraticCurveTo(6.5*k,5*k,7*k,-2*k); x.closePath();             // the blue cup
@@ -201,7 +200,7 @@
         x.restore() } }
     function flowersB(px,topy,bend,n,col){ boxes.push([px-22*S,px+22*S,topy]); flowers(px,topy,bend,n,col) }
     if(wide){ lavender(w*.065,h*.58,7); voynich(w*.365,h*.55);
-      lavender(w*.775,h*.6,6); luttrell(w*.845,h*.52) }
+      lavender(w*.775,h*.6,6); luttrell(w*.855,h*.5) }
     else { flowersB(w*.4,h*.44,-5,5,'#a8553a'); lavender(w*.075,h*.6,5) }
     boxes.push([TX-60*S,TX+60*S,h*.24]);
     // the bees, flying in from the flowers towards the hive
