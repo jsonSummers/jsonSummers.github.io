@@ -130,9 +130,10 @@
         x.fillStyle='#e0b24a'; x.beginPath(); x.arc(fx,fy,2.6*S,0,6.3); x.fill(); ink(x,.7) } }
     flowers(w*.4,h*.44,-5,5,'#a8553a'); flowers(w*.08,h*.6,3,3,'#8a5a3a');
     // the bees, flying in from the flowers towards the hive
+    const links=[...document.querySelectorAll('.bee')].map(e=>[+e.dataset.x*w,+e.dataset.y*h]);   // the link bees (in the page) take these places
     const keep=[]; let tries=0;
-    while(keep.length<16&&tries++<600){ const bx=t+20*S+r()*(w-2*t-40*S), by=o+nd+t+20*S+r()*(gy-o-nd-t-50*S);
-      if(Math.abs(bx-sx)<sw+14*S&&by>sb-sh-14*S) continue; if(bx<w*.34&&by>h*.24) continue; if(keep.some(([kx,ky])=>Math.hypot(kx-bx,ky-by)<38*S)) continue; keep.push([bx,by]) }
+    while(keep.length<8&&tries++<1200){ const bx=t+20*S+r()*(w-2*t-40*S), by=o+nd+t+20*S+r()*(gy-o-nd-t-50*S);
+      if(Math.abs(bx-sx)<sw+14*S&&by>sb-sh-14*S) continue; if(bx<w*.34&&by>h*.24) continue; if(keep.some(([kx,ky])=>Math.hypot(kx-bx,ky-by)<38*S)) continue; if(links.some(([kx,ky])=>Math.abs(kx-bx)<78*S&&by-ky>-45*S&&by-ky<85*S)) continue; keep.push([bx,by]) }
     for(const [bx,by] of keep){ const face=bx<sx?1:-1, a=(r()-.5)*.6;
       x.save(); x.translate(bx,by); x.rotate(a); x.scale(face*S*1.45,S*1.45);
       for(const k of [-1,1]){ const wg=almond(-1+k*1.5,-7,13,6,-Math.PI/2-k*.5-.3); trace(x,wg,true); x.fillStyle='#a7b4cf'; x.fill(); x.strokeStyle=INK; x.lineWidth=.9; x.stroke() }

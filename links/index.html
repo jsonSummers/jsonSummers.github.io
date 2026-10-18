@@ -17,8 +17,9 @@
 <style>
 /* A leaf of a bestiary. The window is the vellum (assets/apiary.js: cockle, follicles, ruling, worn edges, a water
    stain, foxing); the text is written on it in iron-gall ink with a red rubric, under a painted initial; beside it
-   the miniature "De apibus", a skep and its bees in a frame of gold leaf. The links stay a piece of comb: cells
-   walled in gold (work) and vermilion (personal) that fill with honey when pointed at. A list on phones. */
+   the miniature "De apibus", a skep and its bees in a frame of gold leaf. The links are bees in it: each flies
+   at its place by the hive with a banderole of its name, gold-edged for work and vermilion for the rest; pointed
+   at, it lifts, beats its wings and its banderole fills with honey. The other bees are painted. */
 :root{
   --bg:#ece0c2; --ink:#24180d; --dim:#6b5233; --line:#cdb68a; --acc:#a8321f; --gold:#b98a2e; --verm:#b0402a; --lapis:#2d4a95; --honey:#d9a23c;
   --f-disp:'IM Fell English',Georgia,serif; --f-body:'EB Garamond','IM Fell English',Georgia,serif;
@@ -28,7 +29,7 @@ body{background:#e6d6b0;color:var(--ink)}
 #vellum{image-rendering:auto}
 body .page{max-width:1240px;background:transparent!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 body .page>.bar{background:transparent;border-bottom:1px solid color-mix(in srgb,var(--verm) 50%,transparent);box-shadow:0 3px 0 -2px color-mix(in srgb,var(--verm) 40%,transparent);border-radius:0}
-.leaf{max-width:none;display:grid;grid-template-columns:minmax(0,620px) minmax(0,1fr);gap:clamp(28px,4vw,48px);align-items:start;padding-block:clamp(28px,5vh,52px) 24px}
+.leaf{max-width:none;display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);gap:clamp(28px,4vw,48px);align-items:start;padding-block:clamp(28px,5vh,52px) 24px}
 .leaf>*{min-width:0}
 h1{font:400 clamp(3rem,7vw,4.4rem)/1 var(--f-disp);margin:0;color:var(--ink);display:flex;align-items:flex-end;gap:.04em}
 /* the initial: a lapis L on a square of gold, with red penwork trailing down the margin */
@@ -37,37 +38,35 @@ h1{font:400 clamp(3rem,7vw,4.4rem)/1 var(--f-disp);margin:0;color:var(--ink);dis
 .ini::after{content:"";position:absolute;left:-34%;top:72%;width:44%;height:1.7em;
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 100' fill='none' stroke='%23b0402a' stroke-width='1.4' stroke-linecap='round'%3E%3Cpath d='M12 0c0 20 8 26 4 44s-10 22-4 40'/%3E%3Cpath d='M16 18c6 2 12-2 14 4M16 34c-7 2-9 8-5 10M14 56c6-1 10 3 8 8M12 74c-6 2-6 8-1 9'/%3E%3Ccircle cx='30' cy='22' r='1.6' fill='%23b0402a'/%3E%3Ccircle cx='11' cy='44' r='1.6' fill='%23b0402a'/%3E%3Ccircle cx='22' cy='64' r='1.6' fill='%23b0402a'/%3E%3C/svg%3E") no-repeat top left/contain}
 .rub{margin:14px 0 34px;color:var(--verm);font:italic 400 1.3rem/1.4 var(--f-disp)}
-/* the comb: pointy-topped hexagons; each row tucks a quarter of a cell into the one above */
-.comb{--w:146px;--h:calc(var(--w)*1.1547);list-style:none;margin:0;padding:0}
-.row{display:flex;gap:6px;margin:0;padding:0;list-style:none}
-.row+.row{margin-top:calc(var(--h)*-.25 + 5px)}
-.row.top{padding-left:calc(var(--w)/2 + 3px)}
-.cellk{position:relative;display:grid;place-items:center;width:var(--w);height:var(--h);text-align:center;text-decoration:none;color:var(--ink);
-  clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);background:var(--c);transition:transform .25s}
-.cellk::before{content:"";position:absolute;inset:3px;clip-path:inherit;background:linear-gradient(to top,var(--honey) 0 var(--fill,0%),#efe4c6 var(--fill,0%));transition:--fill .5s}
-.cellk span{position:relative;display:block;padding:0 14px}
-.cellk b{display:block;font:400 1.22rem/1.1 var(--f-disp)}
-.cellk small{display:block;margin-top:5px;font:400 .78rem/1.25 var(--f-body);color:var(--dim);overflow-wrap:anywhere}
-.cellk:hover,.cellk:focus-visible{--fill:100%}
-.cellk:hover small,.cellk:focus-visible small{color:#3e2a12}
-.cellk:focus-visible{outline:none;transform:scale(1.04)}
-.pro{--c:var(--gold)} .own{--c:var(--verm)}
-@property --fill{syntax:'<percentage>';inherits:true;initial-value:0%}
-.key{display:flex;gap:22px;margin:24px 0 0;padding:0;list-style:none;font:400 .95rem var(--f-disp);font-variant:small-caps;letter-spacing:.08em;color:var(--dim)}
+.note{margin:0 0 18px;max-width:34ch;font:400 1.12rem/1.6 var(--f-body);color:var(--ink)}
+.key{display:flex;gap:22px;margin:0;padding:0;list-style:none;font:400 .95rem var(--f-disp);font-variant:small-caps;letter-spacing:.08em;color:var(--dim)}
 .key li{display:flex;align-items:center;gap:8px}
-.key i{width:10px;height:11.5px;background:var(--c);clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%)}
+.key i{width:22px;height:9px;background:var(--c);clip-path:polygon(0 0,100% 0,84% 50%,100% 100%,0 100%,16% 50%)}
+.pro{--c:var(--gold)} .own{--c:var(--verm)}
 /* the miniature */
-.mini{margin:0;justify-self:end;width:100%;max-width:460px}
-.mini canvas{display:block;width:100%;aspect-ratio:46/56;height:auto}
+.mini{margin:0;justify-self:center;width:100%;max-width:540px}
+.stage{position:relative;container-type:inline-size}
+.stage canvas{display:block;width:100%;aspect-ratio:46/56;height:auto}
+/* the bees are the links: each flies at its place by the hive, trailing a banderole with its name */
+.bee{position:absolute;left:calc(var(--x)*100%);top:calc(var(--y)*100%);transform:translate(-50%,-30%);display:flex;flex-direction:column;align-items:center;text-decoration:none;color:var(--ink);-webkit-tap-highlight-color:transparent}
+.bee svg{width:max(30px,9cqw);height:auto;overflow:visible;transition:transform .3s;filter:drop-shadow(0 1px 0 rgba(36,24,13,.15))}
+.bee.l svg{transform:scaleX(-1)}
+.bee .wings{transform-box:fill-box;transform-origin:50% 100%}
+.rib{display:block;margin-top:-1px;padding:1.5px 0;background:var(--c);clip-path:polygon(0 0,100% 0,91% 50%,100% 100%,0 100%,9% 50%)}
+.rib b{display:block;padding:1px clamp(10px,3.2cqw,18px);background:#f1e6c8;clip-path:polygon(0 0,100% 0,91.5% 50%,100% 100%,0 100%,8.5% 50%);
+  font:400 clamp(.76rem,2.9cqw,1.08rem)/1.25 var(--f-disp);white-space:nowrap;transition:background .3s}
+.bee:hover svg,.bee:focus-visible svg{transform:translateY(-4px) rotate(-8deg)}
+.bee.l:hover svg,.bee.l:focus-visible svg{transform:scaleX(-1) translateY(-4px) rotate(-8deg)}
+.bee:hover .wings,.bee:focus-visible .wings{animation:flap .1s linear infinite alternate}
+.bee:hover .rib b,.bee:focus-visible .rib b{background:var(--honey)}
+.bee:focus-visible{outline:none}.bee:focus-visible .rib{outline:2px dotted var(--ink);outline-offset:3px}
+@keyframes flap{to{transform:scaleY(.55)}}
+@media (prefers-reduced-motion:reduce){.bee:hover .wings{animation:none}}
+@media (max-width:620px){.stage canvas{aspect-ratio:46/62}}
 .mini figcaption{margin-top:10px;text-align:center;color:var(--verm);font:italic 400 1.15rem var(--f-disp)}
 .mini figcaption span{color:var(--dim);font-style:normal;font-size:.95rem}
-@media (max-width:1100px){.leaf{grid-template-columns:1fr}.mini{justify-self:center;max-width:420px}}
-@media (max-width:620px){
-  .comb,.row{display:block}.row+.row{margin-top:0}.row.top{padding-left:0}
-  .cellk{display:grid;grid-template-columns:26px minmax(0,1fr);gap:14px;width:auto;height:auto;padding:12px 2px;text-align:left;place-items:center start;clip-path:none;background:none;border-top:1px solid var(--line)}
-  .cellk::before{position:static;width:22px;height:25px;inset:auto;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);background:linear-gradient(to top,var(--honey) 0 var(--fill,0%),var(--c) var(--fill,0%))}
-  .cellk span{padding:0}.cellk b{font-size:1.3rem}
-}
+@media (max-width:900px){.leaf{grid-template-columns:1fr}.mini{max-width:560px}}
+
 footer.foot{border-top:1px solid color-mix(in srgb,var(--verm) 50%,transparent);margin-top:20px;padding-block:16px 26px;color:var(--dim);font-family:var(--f-disp)}
 footer.foot .wrap{max-width:none}
 .leaf .text{padding-left:4px}
@@ -86,22 +85,19 @@ footer.foot a{color:var(--ink)}
   <div class="text">
   <h1 aria-label="Links"><span class="ini" aria-hidden="true">L</span><span aria-hidden="true">inks</span></h1>
   <p class="rub">Where else to find me, work first.</p>
-  <ul class="comb" aria-label="Links">
-    <li><ul class="row top">
-      <li><a class="cellk pro" href="https://scholar.google.com/citations?user=W-gpECkAAAAJ&amp;hl=en"><span><b>Google Scholar</b><small>publications and citations</small></span></a></li>
-      <li><a class="cellk pro" href="https://github.com/jsonSummers"><span><b>GitHub</b><small>jsonSummers</small></span></a></li>
-      <li><a class="cellk pro" href="https://orcid.org/0009-0006-4161-2865"><span><b>ORCID</b><small>0009-0006-4161-2865</small></span></a></li>
-    </ul></li>
-    <li><ul class="row">
-      <li><a class="cellk own" href="https://bucatini-mickey.github.io/"><span><b>Bucatini Mickey</b><small>films, games, music and writing</small></span></a></li>
-      <li><a class="cellk own" href="https://www.instagram.com/json_summers/"><span><b>Instagram</b><small>@json_summers</small></span></a></li>
-      <li><a class="cellk own" href="https://letterboxd.com/bucatini_mickey/"><span><b>Letterboxd</b><small>bucatini_mickey</small></span></a></li>
-      <li><a class="cellk own" href="https://open.spotify.com/user/jmsummers98"><span><b>Spotify</b><small>playlists</small></span></a></li>
-    </ul></li>
-  </ul>
+  <p class="note">Each bee carries a name; follow one. Gold for work, red for the rest.</p>
   <ul class="key"><li class="pro"><i></i>Work</li><li class="own"><i></i>Personal</li></ul>
   </div>
-  <figure class="mini"><canvas id="mini" role="img" aria-label="A miniature in the manner of a medieval bestiary: bees flying between flowering plants and a green straw skep, in a frame of gold leaf"></canvas>
+  <figure class="mini"><div class="stage"><canvas id="mini" role="img" aria-label="A miniature in the manner of a medieval bestiary: bees flying between flowering plants and a green straw skep, in a frame of gold leaf"></canvas>
+    <nav aria-label="Links">
+      <a class="bee pro" href="https://scholar.google.com/citations?user=W-gpECkAAAAJ&amp;hl=en" title="publications and citations" style="--x:0.42;--y:0.19" data-x="0.42" data-y="0.19"><svg viewBox="-14 -16 30 24" aria-hidden="true"><g stroke="#21160c" stroke-linejoin="round"><g class="wings"><ellipse cx="-4" cy="-6.5" rx="3" ry="6.5" transform="rotate(-48 -4 -6.5)" fill="#a7b4cf" stroke-width=".9"/><ellipse cx="0" cy="-7" rx="2.8" ry="6.2" transform="rotate(-18 0 -7)" fill="#b8c3da" stroke-width=".9"/></g><path d="M-3 3.5l-1.5 3.5M0 4l-1 3.5M3 3.6l-.5 3.4" stroke-width=".7" fill="none"/><ellipse cx="0" cy="0" rx="8.5" ry="4" fill="#a26f40" stroke-width="1.1"/><path d="M-4-3.6q1.5 3.6 0 7.2M-.5-3.9q1.5 3.9 0 7.8" fill="none" stroke-width="1.2"/><circle cx="10" cy="-.3" r="3" fill="#5a3b20" stroke-width=".9"/></g></svg><span class="rib"><b>Google Scholar</b></span></a>
+      <a class="bee pro" href="https://github.com/jsonSummers" title="github.com/jsonSummers" style="--x:0.63;--y:0.13" data-x="0.63" data-y="0.13"><svg viewBox="-14 -16 30 24" aria-hidden="true"><g stroke="#21160c" stroke-linejoin="round"><g class="wings"><ellipse cx="-4" cy="-6.5" rx="3" ry="6.5" transform="rotate(-48 -4 -6.5)" fill="#a7b4cf" stroke-width=".9"/><ellipse cx="0" cy="-7" rx="2.8" ry="6.2" transform="rotate(-18 0 -7)" fill="#b8c3da" stroke-width=".9"/></g><path d="M-3 3.5l-1.5 3.5M0 4l-1 3.5M3 3.6l-.5 3.4" stroke-width=".7" fill="none"/><ellipse cx="0" cy="0" rx="8.5" ry="4" fill="#a26f40" stroke-width="1.1"/><path d="M-4-3.6q1.5 3.6 0 7.2M-.5-3.9q1.5 3.9 0 7.8" fill="none" stroke-width="1.2"/><circle cx="10" cy="-.3" r="3" fill="#5a3b20" stroke-width=".9"/></g></svg><span class="rib"><b>GitHub</b></span></a>
+      <a class="bee pro l" href="https://orcid.org/0009-0006-4161-2865" title="0009-0006-4161-2865" style="--x:0.84;--y:0.21" data-x="0.84" data-y="0.21"><svg viewBox="-14 -16 30 24" aria-hidden="true"><g stroke="#21160c" stroke-linejoin="round"><g class="wings"><ellipse cx="-4" cy="-6.5" rx="3" ry="6.5" transform="rotate(-48 -4 -6.5)" fill="#a7b4cf" stroke-width=".9"/><ellipse cx="0" cy="-7" rx="2.8" ry="6.2" transform="rotate(-18 0 -7)" fill="#b8c3da" stroke-width=".9"/></g><path d="M-3 3.5l-1.5 3.5M0 4l-1 3.5M3 3.6l-.5 3.4" stroke-width=".7" fill="none"/><ellipse cx="0" cy="0" rx="8.5" ry="4" fill="#a26f40" stroke-width="1.1"/><path d="M-4-3.6q1.5 3.6 0 7.2M-.5-3.9q1.5 3.9 0 7.8" fill="none" stroke-width="1.2"/><circle cx="10" cy="-.3" r="3" fill="#5a3b20" stroke-width=".9"/></g></svg><span class="rib"><b>ORCID</b></span></a>
+      <a class="bee own" href="https://bucatini-mickey.github.io/" title="films, games, music and writing" style="--x:0.62;--y:0.29" data-x="0.62" data-y="0.29"><svg viewBox="-14 -16 30 24" aria-hidden="true"><g stroke="#21160c" stroke-linejoin="round"><g class="wings"><ellipse cx="-4" cy="-6.5" rx="3" ry="6.5" transform="rotate(-48 -4 -6.5)" fill="#a7b4cf" stroke-width=".9"/><ellipse cx="0" cy="-7" rx="2.8" ry="6.2" transform="rotate(-18 0 -7)" fill="#b8c3da" stroke-width=".9"/></g><path d="M-3 3.5l-1.5 3.5M0 4l-1 3.5M3 3.6l-.5 3.4" stroke-width=".7" fill="none"/><ellipse cx="0" cy="0" rx="8.5" ry="4" fill="#a26f40" stroke-width="1.1"/><path d="M-4-3.6q1.5 3.6 0 7.2M-.5-3.9q1.5 3.9 0 7.8" fill="none" stroke-width="1.2"/><circle cx="10" cy="-.3" r="3" fill="#5a3b20" stroke-width=".9"/></g></svg><span class="rib"><b>Bucatini Mickey</b></span></a>
+      <a class="bee own" href="https://www.instagram.com/json_summers/" title="@json_summers" style="--x:0.42;--y:0.4" data-x="0.42" data-y="0.4"><svg viewBox="-14 -16 30 24" aria-hidden="true"><g stroke="#21160c" stroke-linejoin="round"><g class="wings"><ellipse cx="-4" cy="-6.5" rx="3" ry="6.5" transform="rotate(-48 -4 -6.5)" fill="#a7b4cf" stroke-width=".9"/><ellipse cx="0" cy="-7" rx="2.8" ry="6.2" transform="rotate(-18 0 -7)" fill="#b8c3da" stroke-width=".9"/></g><path d="M-3 3.5l-1.5 3.5M0 4l-1 3.5M3 3.6l-.5 3.4" stroke-width=".7" fill="none"/><ellipse cx="0" cy="0" rx="8.5" ry="4" fill="#a26f40" stroke-width="1.1"/><path d="M-4-3.6q1.5 3.6 0 7.2M-.5-3.9q1.5 3.9 0 7.8" fill="none" stroke-width="1.2"/><circle cx="10" cy="-.3" r="3" fill="#5a3b20" stroke-width=".9"/></g></svg><span class="rib"><b>Instagram</b></span></a>
+      <a class="bee own" href="https://letterboxd.com/bucatini_mickey/" title="bucatini_mickey" style="--x:0.4;--y:0.56" data-x="0.4" data-y="0.56"><svg viewBox="-14 -16 30 24" aria-hidden="true"><g stroke="#21160c" stroke-linejoin="round"><g class="wings"><ellipse cx="-4" cy="-6.5" rx="3" ry="6.5" transform="rotate(-48 -4 -6.5)" fill="#a7b4cf" stroke-width=".9"/><ellipse cx="0" cy="-7" rx="2.8" ry="6.2" transform="rotate(-18 0 -7)" fill="#b8c3da" stroke-width=".9"/></g><path d="M-3 3.5l-1.5 3.5M0 4l-1 3.5M3 3.6l-.5 3.4" stroke-width=".7" fill="none"/><ellipse cx="0" cy="0" rx="8.5" ry="4" fill="#a26f40" stroke-width="1.1"/><path d="M-4-3.6q1.5 3.6 0 7.2M-.5-3.9q1.5 3.9 0 7.8" fill="none" stroke-width="1.2"/><circle cx="10" cy="-.3" r="3" fill="#5a3b20" stroke-width=".9"/></g></svg><span class="rib"><b>Letterboxd</b></span></a>
+      <a class="bee own" href="https://open.spotify.com/user/jmsummers98" title="playlists" style="--x:0.4;--y:0.72" data-x="0.4" data-y="0.72"><svg viewBox="-14 -16 30 24" aria-hidden="true"><g stroke="#21160c" stroke-linejoin="round"><g class="wings"><ellipse cx="-4" cy="-6.5" rx="3" ry="6.5" transform="rotate(-48 -4 -6.5)" fill="#a7b4cf" stroke-width=".9"/><ellipse cx="0" cy="-7" rx="2.8" ry="6.2" transform="rotate(-18 0 -7)" fill="#b8c3da" stroke-width=".9"/></g><path d="M-3 3.5l-1.5 3.5M0 4l-1 3.5M3 3.6l-.5 3.4" stroke-width=".7" fill="none"/><ellipse cx="0" cy="0" rx="8.5" ry="4" fill="#a26f40" stroke-width="1.1"/><path d="M-4-3.6q1.5 3.6 0 7.2M-.5-3.9q1.5 3.9 0 7.8" fill="none" stroke-width="1.2"/><circle cx="10" cy="-.3" r="3" fill="#5a3b20" stroke-width=".9"/></g></svg><span class="rib"><b>Spotify</b></span></a>
+    </nav></div>
     <figcaption>De apibus <span>· of bees</span></figcaption></figure>
 </main>
 
