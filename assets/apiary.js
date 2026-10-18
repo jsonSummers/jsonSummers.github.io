@@ -139,46 +139,69 @@
         const p=waver([[px+f*3*S,g0],[(px+tx)/2+f*4*S,(g0+ty)/2],[tx,ty]],.6,false); trace(x,p,false); x.strokeStyle='#7d9070'; x.lineWidth=1.6*S; x.stroke(); trace(x,p,false); ink(x,.5);
         for(let k=0;k<7;k++){ const by=ty+k*4.2*S, sz=(1-k/9)*S;
           for(const sd of [-1,1]){ trace(x,almond(tx+sd*2.3*sz,by,6*sz,3.6*sz,-Math.PI/2+sd*.5),true); x.fillStyle=k%2?'#8a74b8':'#7461a6'; x.fill(); ink(x,.55) } } } }
-    // the artichoke in flower, as a herbal draws it: deeply cut silver leaves arching from the foot, a stout stem
-    // with a side bud, and a great head of overlapping bracts, green at the base and purple at the tips, opening
-    // into a crown of violet florets
-    function cardoon(x0,y0,ang,len,curl,flip){                                  // a pinnately lobed leaf along a curved midrib
-      const dx=Math.cos(ang),dy=Math.sin(ang),nx=-dy*flip,ny=dx*flip;
-      const m=u=>[x0+dx*len*u+nx*curl*len*u*u, y0+dy*len*u+ny*curl*len*u*u];
-      const tan=u=>{ const [ax,ay]=m(Math.max(0,u-.01)),[bx,by]=m(Math.min(1,u+.01)),l=Math.hypot(bx-ax,by-ay)||1; return [(bx-ax)/l,(by-ay)/l] };
-      const wid=u=>len*.24*Math.pow(Math.sin(Math.PI*Math.min(1,u*1.05)),.7), side=sg=>{ const P=[];
-        for(let i=0;i<=12;i++){ const u=i/12*.96, [mx,my]=m(u), [tx,ty]=tan(u), qx=-ty*sg, qy=tx*sg, tip=i%2===1, ww=wid(u)*(tip?1:.32), fw=tip?len*.05:0;
-          P.push([mx+qx*ww+tx*fw,my+qy*ww+ty*fw]) } return P };
-      const L=side(1), R=side(-1), [ex,ey]=m(1), pts=[...L,[ex,ey],...R.reverse()];
-      trace(x,waver(pts,.5,true),true); x.fillStyle='#9db195'; x.fill(); ink(x,.9);
-      for(let i=1;i<12;i+=2){ const u=i/12*.96,[mx,my]=m(u),[tx,ty]=tan(u);                                   // veins to the lobe tips
-        for(const sg of [-1,1]){ const ww=wid(u)*.85; x.beginPath(); x.moveTo(mx,my); x.lineTo(mx-ty*sg*ww+tx*len*.04,my+tx*sg*ww+ty*len*.04); x.strokeStyle='rgba(60,85,55,.55)'; x.lineWidth=.7*S; x.stroke() } }
-      trace(x,curve(m,0,1,12),false); x.strokeStyle='rgba(248,250,240,.85)'; x.lineWidth=1.3*S; x.stroke() }
-    function head(px,hy,R,crown){
-      if(crown) for(let k=0;k<46;k++){ const a=-Math.PI/2+(k/45-.5)*2.5, L=R*(.8+.5*Math.abs(Math.sin(k*1.7))), bx=px+Math.cos(a)*R*.25, by=hy-R*.72;
-        trace(x,waver([[bx,by],[bx+Math.cos(a)*L,by+Math.sin(a)*L]],.3,false),false); x.strokeStyle=['#8a4fa8','#6f3d8e','#a874c4'][k%3]; x.lineWidth=1.4*S; x.stroke();
-        x.fillStyle='#5e2f78'; x.beginPath(); x.arc(bx+Math.cos(a)*L,by+Math.sin(a)*L,1.1*S,0,6.3); x.fill() }
-      x.beginPath(); x.ellipse(px,hy,R,R*.92,0,0,6.3); x.fillStyle='#55703f'; x.fill();
-      const rows=5;
-      for(let r0=0;r0<rows;r0++){ const yy=hy-R*.78+r0*(R*1.62/(rows-1)), hw=R*Math.sqrt(Math.max(0,1-((yy-hy)/R)**2))*.98, n=Math.max(2,Math.round(2*hw/(R*.36)));
-        for(let k=0;k<n;k++){ const f=(k+.5+(r0%2?.25:-.25))/n*2-1; if(Math.abs(f)>1) continue; const cx=px+f*hw, sq=Math.sqrt(1-f*f*.75), bw=R*.24*sq+1*S, bh=R*.46;
-          const br=waver([[cx-bw,yy+bh*.35],[cx-bw*.8,yy-bh*.2],[cx,yy-bh*.62],[cx+bw*.8,yy-bh*.2],[cx+bw,yy+bh*.35]],.3,false);
-          const gr=x.createLinearGradient(0,yy+bh*.35,0,yy-bh*.62); gr.addColorStop(0,'#5f7d45'); gr.addColorStop(.55,'#86a062'); gr.addColorStop(1,'#7d4a7c');
-          trace(x,br,false); x.closePath(); x.fillStyle=gr; x.fill(); ink(x,.75);
-          x.beginPath(); x.moveTo(cx,yy-bh*.62); x.lineTo(cx,yy-bh*.86); x.strokeStyle=INK; x.lineWidth=.8*S; x.stroke();          // the spine at each tip
-          if(f<0){ x.beginPath(); x.moveTo(cx-bw*.45,yy+bh*.15); x.lineTo(cx-bw*.2,yy-bh*.3); x.strokeStyle='rgba(250,252,235,.7)'; x.lineWidth=1*S; x.stroke() } } }
-      x.beginPath(); x.ellipse(px,hy,R,R*.92,0,0,6.3); ink(x,1.1) }
-    function artichoke(px,topy){ boxes.push([px-56*S,px+56*S,topy-10*S]);
-      const g0=ga(px)+3*S, R=27*S, hy=topy+R*1.15;
-      for(const [sg,a,l,c] of [[-1,-2.75,74,.35],[1,-.39,74,.35],[-1,-2.2,58,.5],[1,-.95,58,.5]]) cardoon(px+sg*3*S,g0-4*S,a,l*S,c,sg);   // the arching foot leaves
-      const st=waver([[px,g0],[px-3*S,(g0+hy)/2],[px,hy+R*.8]],.6,false); trace(x,st,false); x.strokeStyle='#6f8f5a'; x.lineWidth=6*S; x.stroke(); trace(x,st,false); ink(x,.9);
-      const by=g0-(g0-hy)*.45, bx=px+26*S, bud=waver([[px-1*S,by+12*S],[px+14*S,by],[bx,by-14*S]],.5,false);       // the side branch and bud
-      trace(x,bud,false); x.strokeStyle='#6f8f5a'; x.lineWidth=3.5*S; x.stroke(); trace(x,bud,false); ink(x,.7);
-      cardoon(px-2*S,by+16*S,-2.5,40*S,.4,-1); cardoon(px+2*S,(by+hy)/2+8*S,-.7,36*S,.45,1);
-      head(bx,by-14*S-R*.42,R*.5,false); head(px,hy,R,true) }
+    // a stalk drawn as illuminators drew them: an ink edge, the colour inside, a fine white highlight along one side;
+    // ends left square, as the stalks in the Luttrell Psalter stop short
+    function tube(P,wd,col,hi){ x.lineJoin='round'; x.lineCap='butt';
+      trace(x,P,false); x.strokeStyle=INK; x.lineWidth=(wd+1.8)*S; x.stroke(); trace(x,P,false); x.strokeStyle=col; x.lineWidth=wd*S; x.stroke();
+      if(hi){ const Q=P.map((p,i)=>{ const q=P[Math.min(P.length-1,i+1)], o=P[Math.max(0,i-1)], dx=q[0]-o[0], dy=q[1]-o[1], l=Math.hypot(dx,dy)||1; return [p[0]-dy/l*wd*.22*S,p[1]+dx/l*wd*.22*S] });
+        trace(x,Q.slice(1,-1),false); x.strokeStyle=hi; x.lineWidth=.9*S; x.stroke() } x.lineCap='round' }
+    // a Luttrell bud: a green cup of three sepals holding a round head, orange above and white below
+    function bud(bx,by,a,sz){ x.save(); x.translate(bx,by); x.rotate(a+Math.PI/2); x.scale(sz*S,sz*S);
+      x.beginPath(); x.ellipse(0,-8.4,4.8,4.6,0,0,6.3); x.fillStyle='#f2ead4'; x.fill();
+      x.save(); x.clip(); x.fillStyle='#e0874a'; x.fillRect(-6,-14,12,5.8); x.restore(); x.strokeStyle=INK; x.lineWidth=.8/sz; x.stroke();
+      x.beginPath(); x.moveTo(-5.2,-4.6); x.lineTo(-3.6,-8.2); x.lineTo(-1.8,-5.2); x.lineTo(0,-8.8); x.lineTo(1.8,-5.2); x.lineTo(3.6,-8.2); x.lineTo(5.2,-4.6); x.quadraticCurveTo(4.4,1.6,0,2); x.quadraticCurveTo(-4.4,1.6,-5.2,-4.6);
+      x.fillStyle='#4f9a72'; x.fill(); x.stroke(); x.restore() }
+    // after the Luttrell Psalter: a blue stem that rises and curls into a spiral, buds on short stalks, some stalks cut short
+    function luttrell(px,topy){ const R=44*S, g0=ga(px)+3*S, cx=px+R, cy=topy+R; boxes.push([px-30*S,px+2*R+30*S,topy-10*S]);
+      const sp=curve(th=>{ const r=R*(1-.62*(th-Math.PI)/(2.3*Math.PI)); return [cx+Math.cos(th)*r,cy+Math.sin(th)*r] },Math.PI,3.3*Math.PI,60);
+      const stem=waver(curve(v=>[px+6*S*Math.sin(v*3)-6*S*v,g0-v*(g0-cy)],0,1,14),.5,false);
+      const all=stem.concat(sp);
+      const at=th=>{ const r=R*(1-.62*(th-Math.PI)/(2.3*Math.PI)); return [cx+Math.cos(th)*r,cy+Math.sin(th)*r,r] };
+      const branches=[];
+      for(const [th,len,out,cut] of [[1.25,34,1,0],[1.7,36,1,0],[2.15,30,1,1],[2.55,34,1,0],[2.3,24,-1,0],[2.95,16,-1,0]]){
+        const [bx,by]=at(th*Math.PI), n=out*1, ox=Math.cos(th*Math.PI)*n, oy=Math.sin(th*Math.PI)*n, tx=-Math.sin(th*Math.PI), ty=Math.cos(th*Math.PI);
+        const ex=bx+(ox*.8+tx*.5)*len*S, ey=by+(oy*.8+ty*.5)*len*S;
+        branches.push([waver([[bx,by],[bx+(ox*.6+tx*.2)*len*.55*S,by+(oy*.6+ty*.2)*len*.55*S],[ex,ey]],.4,false),cut,Math.atan2(ey-by,ex-bx)]) }
+      for(const [v,sd,len,cut] of [[.28,-1,40,0],[.5,1,36,0],[.7,-1,26,1],[.38,1,22,1],[.62,-1,34,0]]){
+        const [bx,by]=stem[Math.round(v*(stem.length-1))], ex=bx+sd*len*S, ey=by-len*.55*S;
+        branches.push([waver([[bx,by],[bx+sd*len*.5*S,by-len*.05*S],[ex,ey]],.4,false),cut,Math.atan2(ey-by,ex-bx)]) }
+      for(const [P] of branches) tube(P,3.6,'#2f4f9a','rgba(235,240,255,.85)');
+      tube(all,6,'#2f4f9a','rgba(235,240,255,.9)');
+      for(const [P,cut,a] of branches) if(!cut){ const [ex,ey]=P[P.length-1]; bud(ex+Math.cos(a)*7*S,ey+Math.sin(a)*7*S,a,1.75) } }
+    // after the Voynich plant on folio 46v: big saw-toothed leaves at the foot, a pale forking stalk, aster heads
+    // (a dark blue cup under a fringe of cream petals) at the ends, and a stalk or two cut short
+    function voynich(px,topy){ const g0=ga(px)+3*S; boxes.push([px-80*S,px+80*S,topy-20*S]);
+      for(const [a,L,c] of [[-2.6,84,'#5d9e88'],[-.55,80,'#6aa894'],[-1.95,60,'#57937e'],[-1.2,56,'#62a28c']]){                       // the leaves
+        const dx=Math.cos(a),dy=Math.sin(a),nx=-dy,ny=dx, pts=[];
+        for(let i=0;i<=20;i++){ const u=i/20, ww=Math.sin(Math.PI*u)**.8*L*.22*S*(i%2?1.12:.88); pts.push([px+dx*L*S*u+nx*ww,g0-4*S+dy*L*S*u+ny*ww]) }
+        for(let i=20;i>=0;i--){ const u=i/20, ww=Math.sin(Math.PI*u)**.8*L*.22*S*(i%2?1.12:.88); pts.push([px+dx*L*S*u-nx*ww,g0-4*S+dy*L*S*u-ny*ww]) }
+        trace(x,waver(pts,.4,true),true); x.fillStyle=c; x.fill(); ink(x,.9);
+        for(let k=0;k<7;k++){ const u=.15+k*.11; x.beginPath(); x.moveTo(px+dx*L*S*u,g0-4*S+dy*L*S*u); x.lineTo(px+dx*L*S*(u+.08)+nx*L*.12*S*(k%2?1:-1),g0-4*S+dy*L*S*(u+.08)+ny*L*.12*S*(k%2?1:-1)); x.strokeStyle='rgba(30,70,55,.6)'; x.lineWidth=.8*S; x.stroke() } }
+      const qc=(a,c,b)=>curve(u=>[(1-u)*(1-u)*a[0]+2*u*(1-u)*c[0]+u*u*b[0],(1-u)*(1-u)*a[1]+2*u*(1-u)*c[1]+u*u*b[1]],0,1,14);   // smooth arcs, as the Voynich stalks bend
+      const fy=g0-(g0-topy)*.42, st=waver([[px,g0],[px+2*S,(g0+fy)/2],[px,fy]],.4,false);
+      const arms=[]; const arm=(P)=>{ arms.push(P); return P[P.length-1] };
+      const L1=arm(qc([px,fy],[px-46*S,fy-2*S],[px-52*S,fy-40*S])), R1=arm(qc([px,fy],[px+44*S,fy-4*S],[px+50*S,fy-44*S]));
+      const heads=[];
+      const fork=(o,a,l)=>{ const e=[o[0]+Math.cos(a)*l*S,o[1]+Math.sin(a)*l*S]; arm(qc(o,[(o[0]+e[0])/2+Math.sin(a)*7*S,(o[1]+e[1])/2-Math.cos(a)*7*S],e)); heads.push([e,a]); return e };
+      const A0=arms[0], A1=arms[1];                                              // heads branch off along each arm, not all at its end
+      fork(A0[5],-2.0,26); fork(A0[10],-2.75,28); fork(L1,-1.75,24); fork(A1[5],-1.15,26); fork(A1[10],-.4,28); fork(R1,-1.4,24);
+      fork([px,fy-6*S],-1.57,Math.max(30,(fy-topy)/S-10));
+      arm(waver([[px-5*S,fy+6*S],[px-16*S,fy-2*S]],.3,false));                                                   // stalks cut short
+      arm(waver([[R1[0]-6*S,R1[1]+12*S],[R1[0]+4*S,R1[1]+16*S]],.3,false));
+      for(const P of [st,...arms]) tube(P,3.4,'#cdb88e','rgba(255,250,235,.7)');
+      for(const [[hx,hy],a] of heads){ x.save(); x.translate(hx,hy); x.rotate(a+Math.PI/2); const k=1.75*S;
+        x.beginPath(); x.moveTo(-6.6*k,-2*k);                                                  // the petals: one crown of points
+        for(let i=0;i<9;i++){ const t=(i/8-.5)*2.3; x.lineTo(Math.sin(t)*9*k,-7.2*k+Math.abs(Math.sin(t))*2*k); if(i<8){ const t2=t+1.15/8; x.lineTo(Math.sin(t2)*6.8*k,-3.8*k) } }
+        x.lineTo(6.6*k,-2*k); x.closePath(); x.fillStyle='#f3e8c6'; x.fill(); x.strokeStyle=INK; x.lineWidth=.45*k; x.stroke();                                              // the petals
+        x.beginPath(); x.ellipse(0,-2.6*k,6.4*k,2.2*k,0,0,6.3); x.fillStyle='#d9b24a'; x.fill(); x.stroke();
+        for(let i=0;i<7;i++){ x.fillStyle='#8a6a20'; x.beginPath(); x.arc((i-3)*1.6*k,-2.8*k+(i%2)*.8*k,.5*k,0,6.3); x.fill() }
+        x.beginPath(); x.moveTo(-7*k,-2*k); x.quadraticCurveTo(-6.5*k,5*k,0,5.5*k); x.quadraticCurveTo(6.5*k,5*k,7*k,-2*k); x.closePath();             // the blue cup
+        const cg=x.createLinearGradient(0,-2*k,0,5.5*k); cg.addColorStop(0,'#5b7fb4'); cg.addColorStop(1,'#2c4677'); x.fillStyle=cg; x.fill(); x.lineWidth=.9*k; x.stroke();
+        x.strokeStyle='rgba(20,30,60,.6)'; x.lineWidth=.5*k; for(let i=-2;i<=2;i++){ x.beginPath(); x.moveTo(i*2.4*k,-1.6*k); x.lineTo(i*1.6*k,4.6*k); x.stroke() }
+        x.restore() } }
     function flowersB(px,topy,bend,n,col){ boxes.push([px-22*S,px+22*S,topy]); flowers(px,topy,bend,n,col) }
-    if(wide){ lavender(w*.065,h*.58,7); flowersB(w*.33,h*.5,3,4,'#8a5a3a'); flowersB(w*.42,h*.44,-5,5,'#a8553a');
-      lavender(w*.77,h*.6,6); artichoke(w*.905,h*.5) }
+    if(wide){ lavender(w*.065,h*.58,7); voynich(w*.365,h*.55);
+      lavender(w*.775,h*.6,6); luttrell(w*.845,h*.52) }
     else { flowersB(w*.4,h*.44,-5,5,'#a8553a'); lavender(w*.075,h*.6,5) }
     boxes.push([TX-60*S,TX+60*S,h*.24]);
     // the bees, flying in from the flowers towards the hive
